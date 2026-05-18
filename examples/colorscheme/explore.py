@@ -6,13 +6,14 @@ Render the current SOTA colorscheme draft as:
 Run from repo root:
   nix-shell -p python3Packages.plotly --run "python3 examples/colorscheme/explore.py"
 
-Writes tmp/colorscheme.html (gitignored) and opens it in the browser.
+Writes a temp HTML file and opens it in the browser.
 
 The palette lives in PALETTE below; edit the (L, C, H) triples and re-run to
 iterate. Recipe behind the values is in log/colorscheme.md.
 """
 
 import math
+import tempfile
 import webbrowser
 from pathlib import Path
 
@@ -342,9 +343,7 @@ def main():
 </body>
 </html>
 """
-    repo_root = Path(__file__).resolve().parent.parent.parent
-    out = repo_root / "tmp" / "colorscheme.html"
-    out.parent.mkdir(exist_ok=True)
+    out = Path(tempfile.mkdtemp(prefix="colorscheme-")) / "explore.html"
     out.write_text(page)
     print(f"wrote {out}")
     webbrowser.open(out.as_uri())

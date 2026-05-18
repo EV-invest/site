@@ -1,7 +1,8 @@
 cargo-features = ["codegen-backend"]
 
 [workspace]
-members = ["site", "site_*"]
+#members = ["site", "site_*"]
+members = ["site"]
 resolver = "3"
 default-members = ["site"]
 
