@@ -1,10 +1,8 @@
 cargo-features = ["codegen-backend"]
 
 [workspace]
-#members = ["site", "site_*"]
-members = ["ev_site*"]
+members = ["ev_site", "ev_site_*"]
 resolver = "3"
-default-members = ["ev_site"]
 
 [workspace.lints.clippy]
 float_cmp = "allow"
@@ -32,9 +30,3 @@ serde = { version = "^1", features = ["derive"] }
 syn = "2"
 ui_test = "0.30"
 v_utils = { version = "^2.15.43", features = ["io", "macros", "cli"] }
-
-# Pull `default_field_values` macro support directly from the local v_utils checkout
-# until those changes are released on crates.io.
-[patch.crates-io]
-v_utils = { path = "/home/v/s/v_utils/v_utils" }
-v_utils_macros = { path = "/home/v/s/v_utils/v_utils_macros" }
