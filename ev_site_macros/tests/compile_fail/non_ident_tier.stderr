@@ -1,0 +1,8 @@
+error: expected one of `P0`, `P1`, `P2`, `P3`
+ --> $DIR/ev_site_macros/tests/compile_fail/non_ident_tier.rs:5:17
+  |
+5 |         Block { tier: 1 + 2 }
+  |                       ^^^^^
+
+error: aborting due to 1 previous error
+

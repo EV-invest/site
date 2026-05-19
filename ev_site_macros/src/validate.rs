@@ -49,10 +49,7 @@ fn walk(node: &Node, parent: Option<TierIdent>, acc: &mut Option<syn::Error>) {
 
 	let descend_with = match (parent, own) {
 		(None, None) => {
-			push(
-				acc,
-				syn::Error::new(*name_span, "root element of `tiered!` must declare `tier: PN`"),
-			);
+			push(acc, syn::Error::new(*name_span, "root element of `tiered!` must declare `tier: PN`"));
 			None
 		}
 		(None, Some(t)) => Some(t),
@@ -60,24 +57,10 @@ fn walk(node: &Node, parent: Option<TierIdent>, acc: &mut Option<syn::Error>) {
 		(Some(p), Some(c)) => {
 			let span = tier_expr.map(Spanned::span).unwrap_or(*name_span);
 			if c == p {
-				push(
-					acc,
-					syn::Error::new(
-						span,
-						format!(
-							"tier {c} equals enclosing tier; omit `tier:` to inherit from parent"
-						),
-					),
-				);
+				push(acc, syn::Error::new(span, format!("tier {c} equals enclosing tier; omit `tier:` to inherit from parent")));
 				Some(p)
 			} else if c < p {
-				push(
-					acc,
-					syn::Error::new(
-						span,
-						format!("tier {c} must be strictly greater than enclosing tier {p}"),
-					),
-				);
+				push(acc, syn::Error::new(span, format!("tier {c} must be strictly greater than enclosing tier {p}")));
 				Some(p)
 			} else {
 				Some(c)

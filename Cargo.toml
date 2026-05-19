@@ -24,8 +24,13 @@ clap = { version = "^4.5.4", features = ["derive"] }
 color-eyre = "^0.6.5"
 derive-new = "^0"
 dioxus = "0.7"
+ev_site_macros = { path = "ev_site_macros" }
 miette = { version = "^7.6.0", features = ["fancy", "serde", "syntect-highlighter"] }
+proc-macro2 = "1"
+quote = "1"
 serde = { version = "^1", features = ["derive"] }
+syn = "2"
+ui_test = "0.30"
 v_utils = { version = "^2.15.0", features = ["io", "macros", "cli"] }
 
 # Pull `default_field_values` macro support directly from the local v_utils checkout

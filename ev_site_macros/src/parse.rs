@@ -20,7 +20,6 @@ use syn::{
 	token,
 };
 
-
 pub struct Body {
 	pub items: Vec<BodyItem>,
 }
@@ -47,6 +46,20 @@ impl Parse for Body {
 	}
 }
 
+/// Iterate the element nodes of a body (skipping attributes and opaque children).
+pub fn elements(body: &Body) -> impl Iterator<Item = &Node> {
+	body.items.iter().filter_map(|it| match it {
+		BodyItem::Child(node @ Node::Element { .. }) => Some(node),
+		_ => None,
+	})
+}
+/// Look up the `tier:` attribute on a body, if present.
+pub fn find_tier_attr(body: &Body) -> Option<&Expr> {
+	body.items.iter().find_map(|it| match it {
+		BodyItem::Attr { name, value } if name == "tier" => Some(value),
+		_ => None,
+	})
+}
 fn parse_body_item(input: ParseStream) -> syn::Result<BodyItem> {
 	// (1) attribute: `ident :` — single colon, not `::`.
 	if input.peek(Ident) && input.peek2(Token![:]) && !input.peek2(Token![::]) {
@@ -89,20 +102,4 @@ fn parse_body_item(input: ParseStream) -> syn::Result<BodyItem> {
 	// don't leak out.
 	input.parse::<TokenTree>()?;
 	Ok(BodyItem::Child(Node::Opaque))
-}
-
-/// Iterate the element nodes of a body (skipping attributes and opaque children).
-pub fn elements(body: &Body) -> impl Iterator<Item = &Node> {
-	body.items.iter().filter_map(|it| match it {
-		BodyItem::Child(node @ Node::Element { .. }) => Some(node),
-		_ => None,
-	})
-}
-
-/// Look up the `tier:` attribute on a body, if present.
-pub fn find_tier_attr(body: &Body) -> Option<&Expr> {
-	body.items.iter().find_map(|it| match it {
-		BodyItem::Attr { name, value } if name == "tier" => Some(value),
-		_ => None,
-	})
 }

@@ -6,7 +6,7 @@
 
 use syn::{Expr, ExprPath, spanned::Spanned};
 
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 pub enum TierIdent {
 	P0,
 	P1,

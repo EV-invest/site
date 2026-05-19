@@ -1,3 +1,4 @@
+#![feature(default_field_values)]
 //! Proc-macros for `ev_site`.
 //!
 //! Currently provides `tiered!` — a thin layer over `dioxus::rsx!` that enforces

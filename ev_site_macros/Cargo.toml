@@ -7,12 +7,17 @@ edition = "2024"
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1"
-quote = "1"
-syn = { version = "2", features = ["full", "extra-traits"] }
+proc-macro2.workspace = true
+quote.workspace = true
+syn = { workspace = true, features = ["full", "extra-traits"] }
 
 [dev-dependencies]
-trybuild = "1"
+ui_test.workspace = true
+
+[[test]]
+name = "compile_fail"
+path = "tests/compile_fail.rs"
+harness = false
 
 [lints]
 workspace = true

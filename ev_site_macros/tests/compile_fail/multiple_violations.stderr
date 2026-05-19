@@ -1,0 +1,14 @@
+error: tier P1 equals enclosing tier; omit `tier:` to inherit from parent
+ --> $DIR/ev_site_macros/tests/compile_fail/multiple_violations.rs:7:14
+  |
+7 |             A { tier: P1 }
+  |                       ^^
+
+error: tier P0 must be strictly greater than enclosing tier P1
+ --> $DIR/ev_site_macros/tests/compile_fail/multiple_violations.rs:8:14
+  |
+8 |             B { tier: P0 }
+  |                       ^^
+
+error: aborting due to 2 previous errors
+

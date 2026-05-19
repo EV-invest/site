@@ -1,0 +1,8 @@
+error: tier P1 equals enclosing tier; omit `tier:` to inherit from parent
+ --> $DIR/ev_site_macros/tests/compile_fail/equal_to_parent.rs:7:18
+  |
+7 |             Child { tier: P1 }
+  |                           ^^
+
+error: aborting due to 1 previous error
+
