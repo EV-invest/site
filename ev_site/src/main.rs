@@ -4,6 +4,11 @@
 //! Layout & design mirror `examples/colorscheme/explore.py` (the hero page block).
 //! Concrete user-facing strings live as `const`s at the top of this file. They will be
 //! swapped for real data later.
+//!
+//! Styling convention: every element carries its own visual info — either via an inline
+//! `style:` attribute, or via a sibling `<style>` block (for `:hover`, `:focus`,
+//! `::placeholder`, descendant rules). The only globally-defined CSS is the colorscheme
+//! variables and the document reset (see `build_root_css`). All lengths are in `rem`.
 
 use dioxus::prelude::*;
 use ev_site::config::{COLORSCHEME_MAIN, Colorscheme};
@@ -42,6 +47,26 @@ const SUBSCRIBE_PLACEHOLDER: &str = "your@email — quarterly memos";
 const SUBSCRIBE_CTA: &str = "Subscribe";
 
 const COPYRIGHT: &str = "\u{00A9} EV Investment 2026";
+
+// Reused inline-style fragments. Kept here purely to avoid retyping the same long
+// string across multiple call-sites; each is a single CSS declaration block. To move
+// or delete a button/card, copy or remove its callsite — these consts can stay if
+// unused (they're plain `&str`s) or be inlined back.
+const STYLE_BTN_BASE: &str = "display: inline-flex; align-items: center; gap: 0.5rem; \
+                              padding: 0.75rem 1.375rem; border-radius: var(--radius); \
+                              font-size: 0.9375rem; font-weight: 600; text-decoration: none; \
+                              border: 0.0625rem solid transparent; cursor: pointer;";
+const STYLE_BTN_PRIMARY: &str = "background: var(--brand_fg); color: var(--bg_deep);";
+const STYLE_BTN_GHOST: &str = "background: transparent; color: var(--text); \
+                               border-color: var(--border);";
+
+const STYLE_CARD: &str = "border: 0.0625rem solid var(--border); border-radius: var(--radius); \
+                          padding: 1.25rem;";
+const STYLE_CARD_H3: &str = "margin: 0 0 0.5rem; font-size: 0.9375rem; color: var(--text);";
+const STYLE_CARD_NUM: &str = "font-size: 1.75rem; font-weight: 700; color: var(--brand_fg);";
+const STYLE_CARD_P: &str = "margin: 0; font-size: 0.8125rem; color: var(--muted);";
+
+const STYLE_PILL_DOT: &str = "width: 0.5rem; height: 0.5rem; border-radius: 50%;";
 
 // ---------- Routes ---------------------------------------------------------
 
@@ -94,7 +119,13 @@ enum Route {
 #[component]
 fn App() -> Element {
 	rsx! {
-		style { {build_css(&COLORSCHEME_MAIN)} }
+		style { {build_root_css(&COLORSCHEME_MAIN)} }
+		// Shared button hover behaviour — kept at app level because `.btn-*` classes
+		// recur across many pages. Base look stays inline on each button.
+		style { {r#"
+			.btn-primary:hover { background: var(--brand_hi); }
+			.btn-ghost:hover { border-color: var(--brand_fg); color: var(--brand_fg); }
+		"#} }
 		Router::<Route> {}
 	}
 }
@@ -104,10 +135,33 @@ fn App() -> Element {
 #[component]
 fn Shell() -> Element {
 	rsx! {
-		div { class: "demo-root",
-			nav { class: "nav",
-				Link { to: Route::Home {}, class: "logo",
-					span { class: "mark", "{LOGO_MARK}" }
+		div {
+			style: "color: var(--text); background: var(--bg); margin: 0 auto; \
+					max-width: 68.75rem; border: 0.0625rem solid var(--border); \
+					border-radius: 0.75rem; overflow: hidden;",
+
+			nav {
+				style: "display: flex; align-items: center; justify-content: space-between; \
+						padding: 1rem 1.75rem; background: var(--bg_deep); \
+						border-bottom: 0.0625rem solid var(--border);",
+				// Default link look inside the nav + hover. Logo overrides via inline style.
+				style { {r#"
+					nav a { color: var(--subtle); margin-left: 1.375rem; text-decoration: none; font-size: 0.875rem; }
+					nav a:hover { color: var(--brand_fg); }
+				"#} }
+
+				Link {
+					to: Route::Home {},
+					style: "display: inline-flex; align-items: center; gap: 0.625rem; \
+							font-weight: 700; letter-spacing: 0.04em; color: var(--text); \
+							text-decoration: none; margin-left: 0;",
+					span {
+						style: "width: 1.75rem; height: 1.75rem; border-radius: 0.375rem; \
+								background: var(--brand); display: inline-flex; \
+								align-items: center; justify-content: center; \
+								color: var(--text); font-size: 0.8125rem; font-weight: 800;",
+						"{LOGO_MARK}"
+					}
 					" {COMPANY}"
 				}
 				div {
@@ -120,7 +174,15 @@ fn Shell() -> Element {
 
 			Outlet::<Route> {}
 
-			footer { class: "footer",
+			footer {
+				style: "padding: 1.375rem 3rem; border-top: 0.0625rem solid var(--border); \
+						background: var(--bg_deep); color: var(--muted); font-size: 0.8125rem; \
+						display: flex; justify-content: space-between;",
+				style { {r#"
+					footer a { color: var(--subtle); text-decoration: none; }
+					footer a:hover { color: var(--brand_fg); }
+				"#} }
+
 				span { "{COPYRIGHT}" }
 				span {
 					Link { to: Route::Privacy {}, "Privacy" }
@@ -139,52 +201,145 @@ fn Shell() -> Element {
 #[component]
 fn Home() -> Element {
 	rsx! {
-		section { class: "hero",
-			h1 { "{HERO_TITLE}" }
-			p { class: "lead", "{HERO_LEAD}" }
-			Link { to: Route::Thesis {}, class: "btn btn-primary", "Read our thesis \u{2192}" }
+		section {
+			style: "padding: 4rem 3rem 3rem; background: var(--brand);",
+
+			h1 {
+				style: "margin: 0 0 1rem; font-size: 2.75rem; line-height: 1.1; \
+						color: var(--text); max-width: 40rem;",
+				"{HERO_TITLE}"
+			}
+			p {
+				style: "margin: 0 0 2rem; font-size: 1.125rem; color: var(--brand_hi); \
+						max-width: 35rem; opacity: 0.9;",
+				"{HERO_LEAD}"
+			}
+			Link {
+				to: Route::Thesis {},
+				class: "btn-primary",
+				style: "{STYLE_BTN_BASE} {STYLE_BTN_PRIMARY}",
+				"Read our thesis \u{2192}"
+			}
 			" "
-			Link { to: Route::Portfolio {}, class: "btn btn-ghost", "Portfolio \u{2192}" }
+			Link {
+				to: Route::Portfolio {},
+				class: "btn-ghost",
+				style: "{STYLE_BTN_BASE} {STYLE_BTN_GHOST}",
+				"Portfolio \u{2192}"
+			}
 		}
 
-		section { class: "body",
-			h2 { "{PERF_HEADING}" }
+		section {
+			style: "padding: 3rem; background: var(--bg);",
+
+			h2 {
+				style: "margin: 0 0 0.75rem; font-size: 1.375rem; color: var(--text);",
+				"{PERF_HEADING}"
+			}
 			p {
+				style: "color: var(--subtle); line-height: 1.6;",
 				"{PERF_INTRO} "
-				span { class: "muted", "{PERF_DISCLAIMER}" }
+				span { style: "color: var(--muted);", "{PERF_DISCLAIMER}" }
 				" See our "
-				Link { to: Route::Methodology {}, class: "link", "methodology \u{2192}" }
+				Link {
+					to: Route::Methodology {},
+					style: "color: var(--brand_fg);",
+					"methodology \u{2192}"
+				}
 				"."
 			}
 
-			div { class: "cards",
-				div { class: "card",
-					h3 { "{YTD_LABEL}" }
-					div { class: "num", "{YTD_VALUE}" }
-					p { "{YTD_SUB}" }
+			div {
+				style: "display: grid; grid-template-columns: repeat(3, 1fr); \
+						gap: 1.25rem; margin-top: 1.75rem;",
+
+				div {
+					style: "background: var(--surface); {STYLE_CARD}",
+					h3 { style: "{STYLE_CARD_H3}", "{YTD_LABEL}" }
+					div { style: "{STYLE_CARD_NUM}", "{YTD_VALUE}" }
+					p { style: "{STYLE_CARD_P}", "{YTD_SUB}" }
 				}
-				div { class: "card elevated",
-					h3 { "{AUM_LABEL}" }
-					div { class: "num", "{AUM_VALUE}" }
-					p { "{AUM_SUB}" }
+				div {
+					style: "background: var(--elevated); {STYLE_CARD}",
+					h3 { style: "{STYLE_CARD_H3}", "{AUM_LABEL}" }
+					div { style: "{STYLE_CARD_NUM}", "{AUM_VALUE}" }
+					p { style: "{STYLE_CARD_P}", "{AUM_SUB}" }
 				}
-				div { class: "card",
-					h3 { "{HOLD_LABEL}" }
-					div { class: "num", "{HOLD_VALUE}" }
-					p { "{HOLD_SUB}" }
+				div {
+					style: "background: var(--surface); {STYLE_CARD}",
+					h3 { style: "{STYLE_CARD_H3}", "{HOLD_LABEL}" }
+					div { style: "{STYLE_CARD_NUM}", "{HOLD_VALUE}" }
+					p { style: "{STYLE_CARD_P}", "{HOLD_SUB}" }
 				}
 			}
 
-			div { class: "states",
-				span { class: "pill success", span { class: "dot" } " {PILL_SUCCESS}" }
-				span { class: "pill info",    span { class: "dot" } " {PILL_INFO}" }
-				span { class: "pill warning", span { class: "dot" } " {PILL_WARNING}" }
-				span { class: "pill danger",  span { class: "dot" } " {PILL_DANGER}" }
+			div {
+				style: "display: flex; flex-wrap: wrap; gap: 0.625rem; margin-top: 1.75rem;",
+
+				span {
+					style: "display: inline-flex; align-items: center; gap: 0.5rem; \
+							padding: 0.375rem 0.75rem; border-radius: 999rem; \
+							font-size: 0.8125rem; background: var(--surface); \
+							color: var(--success); \
+							border: 0.0625rem solid color-mix(in oklch, var(--success) 40%, var(--border));",
+					span { style: "{STYLE_PILL_DOT} background: var(--success);" }
+					" {PILL_SUCCESS}"
+				}
+				span {
+					style: "display: inline-flex; align-items: center; gap: 0.5rem; \
+							padding: 0.375rem 0.75rem; border-radius: 999rem; \
+							font-size: 0.8125rem; background: var(--surface); \
+							color: var(--info); \
+							border: 0.0625rem solid color-mix(in oklch, var(--info) 40%, var(--border));",
+					span { style: "{STYLE_PILL_DOT} background: var(--info);" }
+					" {PILL_INFO}"
+				}
+				span {
+					style: "display: inline-flex; align-items: center; gap: 0.5rem; \
+							padding: 0.375rem 0.75rem; border-radius: 999rem; \
+							font-size: 0.8125rem; background: var(--surface); \
+							color: var(--warning); \
+							border: 0.0625rem solid color-mix(in oklch, var(--warning) 40%, var(--border));",
+					span { style: "{STYLE_PILL_DOT} background: var(--warning);" }
+					" {PILL_WARNING}"
+				}
+				span {
+					style: "display: inline-flex; align-items: center; gap: 0.5rem; \
+							padding: 0.375rem 0.75rem; border-radius: 999rem; \
+							font-size: 0.8125rem; background: var(--surface); \
+							color: var(--danger); \
+							border: 0.0625rem solid color-mix(in oklch, var(--danger) 40%, var(--border));",
+					span { style: "{STYLE_PILL_DOT} background: var(--danger);" }
+					" {PILL_DANGER}"
+				}
 			}
 
-			div { class: "formrow",
-				input { placeholder: "{SUBSCRIBE_PLACEHOLDER}" }
-				Link { to: Route::Subscribe {}, class: "btn btn-primary", "{SUBSCRIBE_CTA}" }
+			div {
+				style: "display: flex; gap: 0.75rem; margin-top: 1.5rem; align-items: center;",
+				// `:focus` and `::placeholder` can't live on the inline attribute, so they
+				// sit alongside the input. Scoped via a one-off class so we don't catch
+				// other inputs that might appear later.
+				style { {r#"
+					.subscribe-input::placeholder { color: var(--muted); }
+					.subscribe-input:focus {
+						border-color: var(--brand_fg);
+						box-shadow: 0 0 0 0.1875rem color-mix(in oklch, var(--brand_fg) 25%, transparent);
+					}
+				"#} }
+
+				input {
+					class: "subscribe-input",
+					style: "flex: 1; padding: 0.6875rem 0.875rem; border-radius: var(--radius); \
+							background: var(--bg_deep); border: 0.0625rem solid var(--border); \
+							color: var(--text); font-size: 0.875rem; outline: none;",
+					placeholder: "{SUBSCRIBE_PLACEHOLDER}"
+				}
+				Link {
+					to: Route::Subscribe {},
+					class: "btn-primary",
+					style: "{STYLE_BTN_BASE} {STYLE_BTN_PRIMARY}",
+					"{SUBSCRIBE_CTA}"
+				}
 			}
 		}
 	}
@@ -246,29 +401,43 @@ fn Disclosures() -> Element {
 fn PageNotFound(route: Vec<String>) -> Element {
 	let path = route.join("/");
 	rsx! {
-		section { class: "body",
-			h2 { "Page not found" }
-			p { "No page at /{path}." }
+		section {
+			style: "padding: 3rem; background: var(--bg);",
+			h2 {
+				style: "margin: 0 0 0.75rem; font-size: 1.375rem; color: var(--text);",
+				"Page not found"
+			}
+			p {
+				style: "color: var(--subtle); line-height: 1.6;",
+				"No page at /{path}."
+			}
 		}
 	}
 }
 
 fn placeholder_page(title: &'static str) -> Element {
 	rsx! {
-		section { class: "body",
-			h2 { "{title}" }
-			p { "Coming soon." }
+		section {
+			style: "padding: 3rem; background: var(--bg);",
+			h2 {
+				style: "margin: 0 0 0.75rem; font-size: 1.375rem; color: var(--text);",
+				"{title}"
+			}
+			p {
+				style: "color: var(--subtle); line-height: 1.6;",
+				"Coming soon."
+			}
 		}
 	}
 }
 
-// ---------- CSS ------------------------------------------------------------
+// ---------- Global CSS -----------------------------------------------------
 //
-// Mirrors the inline stylesheet from `examples/colorscheme/explore.py::build_hero_html`.
-// Color values come from the active `Colorscheme` via CSS custom properties so a
-// future scheme switch only re-renders the `:root` block.
+// Only what truly has to be global lives here: the colorscheme variables (so
+// switching schemes re-renders one place) and the document-wide reset. All
+// element-specific styling lives co-located with its rsx above.
 
-fn build_css(c: &Colorscheme) -> String {
+fn build_root_css(c: &Colorscheme) -> String {
 	format!(
 		r#"
 :root {{
@@ -287,7 +456,7 @@ fn build_css(c: &Colorscheme) -> String {
   --warning: {warning};
   --success: {success};
   --info: {info};
-  --radius: 8px;
+  --radius: 0.5rem;
 }}
 
 html, body {{
@@ -297,109 +466,7 @@ html, body {{
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }}
 
-.demo-root {{
-  color: var(--text);
-  background: var(--bg);
-  margin: 0 auto;
-  max-width: 1100px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-}}
-.demo-root * {{ box-sizing: border-box; }}
-
-.nav {{
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 28px; background: var(--bg_deep);
-  border-bottom: 1px solid var(--border);
-}}
-.nav .logo {{
-  display: inline-flex; align-items: center; gap: 10px;
-  font-weight: 700; letter-spacing: 0.04em; color: var(--text);
-  text-decoration: none;
-}}
-.nav .logo .mark {{
-  width: 28px; height: 28px; border-radius: 6px;
-  background: var(--brand);
-  display: inline-flex; align-items: center; justify-content: center;
-  color: var(--text); font-size: 13px; font-weight: 800;
-}}
-.nav a {{ color: var(--subtle); margin-left: 22px; text-decoration: none; font-size: 14px; }}
-.nav a:hover {{ color: var(--brand_fg); }}
-
-.hero {{ padding: 64px 48px 48px; background: var(--brand); }}
-.hero h1 {{
-  margin: 0 0 16px; font-size: 44px; line-height: 1.1; color: var(--text);
-  max-width: 640px;
-}}
-.hero p.lead {{
-  margin: 0 0 32px; font-size: 18px; color: var(--brand_hi);
-  max-width: 560px; opacity: 0.9;
-}}
-
-.btn {{
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 22px; border-radius: var(--radius);
-  font-size: 15px; font-weight: 600; text-decoration: none;
-  border: 1px solid transparent; cursor: pointer;
-}}
-.btn-primary {{ background: var(--brand_fg); color: var(--bg_deep); }}
-.btn-primary:hover {{ background: var(--brand_hi); }}
-.btn-ghost {{
-  background: transparent; color: var(--text);
-  border-color: var(--border);
-}}
-.btn-ghost:hover {{ border-color: var(--brand_fg); color: var(--brand_fg); }}
-
-.body {{ padding: 48px; background: var(--bg); }}
-.body h2 {{ margin: 0 0 12px; font-size: 22px; color: var(--text); }}
-.body p {{ color: var(--subtle); line-height: 1.6; }}
-.body p .muted {{ color: var(--muted); }}
-
-.cards {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 28px; }}
-.card {{
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 20px;
-}}
-.card h3 {{ margin: 0 0 8px; font-size: 15px; color: var(--text); }}
-.card p  {{ margin: 0; font-size: 13px; color: var(--muted); }}
-.card .num {{ font-size: 28px; font-weight: 700; color: var(--brand_fg); }}
-.card.elevated {{ background: var(--elevated); }}
-
-.states {{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }}
-.pill {{
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 12px; border-radius: 999px; font-size: 13px;
-  background: var(--surface); border: 1px solid var(--border);
-  color: var(--text);
-}}
-.pill .dot {{ width: 8px; height: 8px; border-radius: 50%; }}
-.pill.success .dot {{ background: var(--success); }}
-.pill.success {{ color: var(--success); border-color: color-mix(in oklch, var(--success) 40%, var(--border)); }}
-.pill.warning .dot {{ background: var(--warning); }}
-.pill.warning {{ color: var(--warning); border-color: color-mix(in oklch, var(--warning) 40%, var(--border)); }}
-.pill.danger  .dot {{ background: var(--danger);  }}
-.pill.danger  {{ color: var(--danger); border-color: color-mix(in oklch, var(--danger) 40%, var(--border)); }}
-.pill.info    .dot {{ background: var(--info);    }}
-.pill.info    {{ color: var(--info); border-color: color-mix(in oklch, var(--info) 40%, var(--border)); }}
-
-.formrow {{ display: flex; gap: 12px; margin-top: 24px; align-items: center; }}
-.formrow input {{
-  flex: 1; padding: 11px 14px; border-radius: var(--radius);
-  background: var(--bg_deep); border: 1px solid var(--border);
-  color: var(--text); font-size: 14px; outline: none;
-}}
-.formrow input::placeholder {{ color: var(--muted); }}
-.formrow input:focus {{ border-color: var(--brand_fg); box-shadow: 0 0 0 3px color-mix(in oklch, var(--brand_fg) 25%, transparent); }}
-
-.footer {{
-  padding: 22px 48px; border-top: 1px solid var(--border);
-  background: var(--bg_deep); color: var(--muted); font-size: 13px;
-  display: flex; justify-content: space-between;
-}}
-.footer a {{ color: var(--subtle); text-decoration: none; }}
-.footer a:hover {{ color: var(--brand_fg); }}
-a.link {{ color: var(--brand_fg); }}
+*, *::before, *::after {{ box-sizing: border-box; }}
 "#,
 		bg_deep = c.bg_deep,
 		bg = c.bg,
