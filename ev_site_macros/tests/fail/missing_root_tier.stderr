@@ -1,0 +1,7 @@
+error: root element of `tiered!` must declare `tier: PN`
+ --> tests/fail/missing_root_tier.rs:5:3
+  |
+5 |         Block { }
+  |         ^^^^^
+  |
+  = note: -Ztrack-diagnostics: created at /rustc-dev/8b03437a8ffc8f8b01e62ef5fce82a37ada09b12/compiler/rustc_builtin_macros/src/compile_error.rs:22:25
