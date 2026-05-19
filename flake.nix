@@ -20,7 +20,7 @@
           extensions = [ "rust-src" "rust-analyzer" "rust-docs" "rustc-codegen-cranelift-preview" ];
         });
         pre-commit-check = pre-commit-hooks.lib.${system}.run (v_flakes.files.preCommit { inherit pkgs; });
-        manifest = (pkgs.lib.importTOML ./site/Cargo.toml).package;
+        manifest = (pkgs.lib.importTOML ./ev_site/Cargo.toml).package;
         pname = manifest.name;
         stdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.stdenv;
 
@@ -76,6 +76,7 @@
               '';
 
             packages = [
+              dioxus-cli
               mold
               openssl
               pkg-config

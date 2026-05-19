@@ -2,9 +2,9 @@ cargo-features = ["codegen-backend"]
 
 [workspace]
 #members = ["site", "site_*"]
-members = ["site"]
+members = ["ev_site*"]
 resolver = "3"
-default-members = ["site"]
+default-members = ["ev_site"]
 
 [workspace.lints.clippy]
 float_cmp = "allow"
@@ -23,6 +23,7 @@ unused_features = "allow"
 clap = { version = "^4.5.4", features = ["derive"] }
 color-eyre = "^0.6.5"
 derive-new = "^0"
+dioxus = "0.7"
 miette = { version = "^7.6.0", features = ["fancy", "serde", "syntect-highlighter"] }
 serde = { version = "^1", features = ["derive"] }
 v_utils = { version = "^2.15.0", features = ["io", "macros", "cli"] }
