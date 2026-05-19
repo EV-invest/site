@@ -11,6 +11,7 @@ clap.workspace = true
 color-eyre.workspace = true
 derive-new.workspace = true
 dioxus = { workspace = true, features = ["web", "router"] }
+ev_site_macros = { path = "../ev_site_macros" }
 miette.workspace = true
 serde.workspace = true
 v_utils.workspace = true
