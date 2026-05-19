@@ -3,6 +3,9 @@ name = "ev_site"
 version = "0.1.0"
 edition = "2024"
 
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"] }
+
 [dependencies]
 clap.workspace = true
 color-eyre.workspace = true

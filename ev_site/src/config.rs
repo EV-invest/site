@@ -1,13 +1,15 @@
 use serde::Deserialize;
+#[cfg(not(target_arch = "wasm32"))]
 use v_utils::macros as v_macros;
 
-#[derive(Clone, Debug, v_macros::LiveSettings, v_macros::MyConfigPrimitives, v_macros::Settings)]
+#[cfg(not(target_arch = "wasm32"))]
+#[derive(Clone, Debug, Default, v_macros::LiveSettings, v_macros::MyConfigPrimitives, v_macros::Settings)]
 pub struct AppConfig {
 	#[primitives(skip)]
 	#[serde(default)]
 	pub colorscheme: PreconfiguredColorscheme,
-	#[serde(default = "default_port")]
-	pub port: u16,
+	#[serde(default)]
+	pub port: u16 = 50736,
 }
 
 /// A color in the OKLCH color space (hue in degrees). `Display` emits the CSS `oklch()` form.
@@ -48,19 +50,6 @@ impl PreconfiguredColorscheme {
 	pub fn colors(self) -> &'static Colorscheme {
 		match self {
 			Self::Main => &COLORSCHEME_MAIN,
-		}
-	}
-}
-
-fn default_port() -> u16 {
-	50736
-}
-
-impl Default for AppConfig {
-	fn default() -> Self {
-		Self {
-			colorscheme: PreconfiguredColorscheme::default(),
-			port: default_port(),
 		}
 	}
 }

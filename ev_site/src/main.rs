@@ -1,13 +1,12 @@
+#![feature(default_field_values)]
 //! EV Investment site — Dioxus implementation.
 //!
 //! Layout & design mirror `examples/colorscheme/explore.py` (the hero page block).
 //! Concrete user-facing strings live as `const`s at the top of this file. They will be
 //! swapped for real data later.
 
-pub mod config;
-
-use config::{COLORSCHEME_MAIN, Colorscheme};
 use dioxus::prelude::*;
+use ev_site::config::{COLORSCHEME_MAIN, Colorscheme};
 
 // ---------- Placeholder copy (will be replaced by real data) ---------------
 

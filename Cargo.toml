@@ -27,3 +27,9 @@ dioxus = "0.7"
 miette = { version = "^7.6.0", features = ["fancy", "serde", "syntect-highlighter"] }
 serde = { version = "^1", features = ["derive"] }
 v_utils = { version = "^2.15.0", features = ["io", "macros", "cli"] }
+
+# Pull `default_field_values` macro support directly from the local v_utils checkout
+# until those changes are released on crates.io.
+[patch.crates-io]
+v_utils = { path = "/home/v/s/v_utils/v_utils" }
+v_utils_macros = { path = "/home/v/s/v_utils/v_utils_macros" }

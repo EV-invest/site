@@ -18,11 +18,26 @@
         #NB: can't load rust-bin from nightly.latest, as there are week guarantees of which components will be available on each day.
         rust = pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
           extensions = [ "rust-src" "rust-analyzer" "rust-docs" "rustc-codegen-cranelift-preview" ];
+          targets = [ "wasm32-unknown-unknown" ];
         });
         pre-commit-check = pre-commit-hooks.lib.${system}.run (v_flakes.files.preCommit { inherit pkgs; });
         manifest = (pkgs.lib.importTOML ./ev_site/Cargo.toml).package;
         pname = manifest.name;
         stdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.stdenv;
+
+        wasm-bindgen-cli = pkgs.wasm-bindgen-cli.overrideAttrs (_: rec {
+          version = "0.2.121";
+          src = pkgs.fetchCrate {
+            pname = "wasm-bindgen-cli";
+            inherit version;
+            hash = "sha256-ZOMgFNOcGkO66Jz/Z83eoIu+DIzo3Z/vq6Z5g6BDY/w=";
+          };
+          cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
+            inherit src;
+            name = "wasm-bindgen-cli-${version}";
+            hash = "sha256-DPdCDPTAPBrbqLUqnCwQu1dePs9lGg85JCJOCIr9qjU=";
+          };
+        });
 
         rs = v_flakes.rs { inherit pkgs rust; };
         github = v_flakes.github {
@@ -81,6 +96,7 @@
               openssl
               pkg-config
               rust
+              wasm-bindgen-cli
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 
             env.RUST_BACKTRACE = 1;
