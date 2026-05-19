@@ -20,7 +20,7 @@ manual_is_multiple_of = "allow"
 unused_features = "allow"
 
 [workspace.dependencies]
-clap = { version = "^4.5.4", features = ["derive"] }
+clap = { version = "^4.6.1", features = ["derive"] }
 color-eyre = "^0.6.5"
 derive-new = "^0"
 dioxus = "0.7"
@@ -31,7 +31,7 @@ quote = "1"
 serde = { version = "^1", features = ["derive"] }
 syn = "2"
 ui_test = "0.30"
-v_utils = { version = "^2.15.0", features = ["io", "macros", "cli"] }
+v_utils = { version = "^2.15.43", features = ["io", "macros", "cli"] }
 
 # Pull `default_field_values` macro support directly from the local v_utils checkout
 # until those changes are released on crates.io.
