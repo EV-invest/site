@@ -1,0 +1,14 @@
+[package]
+name = "ev_site_manus"
+version = "0.1.0"
+edition = "2024"
+default-run = "ev_site_manus"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"] }
+
+[dependencies]
+dioxus = { workspace = true, features = ["web", "router"] }
+
+[lints]
+workspace = true
