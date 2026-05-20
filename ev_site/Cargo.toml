@@ -2,6 +2,7 @@
 name = "ev_site"
 version = "0.1.0"
 edition = "2024"
+default-run = "ev_site"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom = { version = "0.3", features = ["wasm_js"] }
