@@ -67,11 +67,24 @@ button:not(:disabled), a[href] { cursor: pointer; }
 @media (min-width: 640px) { .container { padding-left: 1.5rem; padding-right: 1.5rem; } }
 @media (min-width: 1024px) { .container { padding-left: 2rem; padding-right: 2rem; max-width: 1280px; } }
 
+/*
+ * In the original manus site, `<Button>` from shadcn merges its defaults
+ *   `inline-flex ... text-sm font-medium h-9 px-4 py-2 rounded-md`
+ * into every button, and (because they are Tailwind utilities while
+ * `.btn-primary`/`.btn-secondary` live in `@layer components`) they win the
+ * cascade against `btn-primary`'s `@apply px-6 py-3 font-semibold rounded-lg`.
+ *
+ * We don't have a Button wrapper, so we bake the effective defaults directly
+ * into the component classes here. Sites in markup that override with e.g.
+ * `h-12 text-base` continue to win because they appear later in the CSS.
+ */
 .btn-primary {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  white-space: nowrap;
+  height: 2.25rem; padding: 0.5rem 1rem;
   background: var(--primary); color: var(--primary-foreground);
-  border-radius: var(--radius); font-weight: 600;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;
   transition: all 200ms var(--ease-out);
 }
 .btn-primary:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); transform: scale(1.05); }
@@ -79,9 +92,11 @@ button:not(:disabled), a[href] { cursor: pointer; }
 
 .btn-secondary {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  white-space: nowrap;
+  height: 2.25rem; padding: 0.5rem 1rem;
   border: 1px solid var(--border); color: var(--foreground);
-  border-radius: var(--radius); font-weight: 600;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;
   transition: all 200ms var(--ease-out);
 }
 .btn-secondary:hover { background: var(--muted); }
