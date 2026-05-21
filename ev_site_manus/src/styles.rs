@@ -96,7 +96,7 @@ button:not(:disabled), a[href] { cursor: pointer; }
 .card-minimal:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
 
 .text-gradient {
-  background: linear-gradient(135deg, #00D084 0%, #00B4D8 50%, #00D084 100%);
+  background: linear-gradient(to right, #00D084, #00B4D8, #00D084);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -157,7 +157,7 @@ button:not(:disabled), a[href] { cursor: pointer; }
 .pt-12 { padding-top: 3rem; }
 .pb-8 { padding-bottom: 2rem; }
 
-.flex { display: flex; min-height: 0; min-width: 0; }
+.flex { display: flex; }
 .hidden { display: none; }
 .inline-block { display: inline-block; }
 .inline-flex { display: inline-flex; }
@@ -259,6 +259,9 @@ button:not(:disabled), a[href] { cursor: pointer; }
 .via-accent { --tw-gradient-via: var(--accent); }
 .via-background { --tw-gradient-via: var(--background); }
 .from-background { --tw-gradient-from: var(--background); --tw-gradient-via: var(--background); }
+.from-background\/40 { --tw-gradient-from: color-mix(in srgb, var(--background) 40%, transparent); --tw-gradient-via: color-mix(in srgb, var(--background) 40%, transparent); }
+.via-background\/20 { --tw-gradient-via: color-mix(in srgb, var(--background) 20%, transparent); }
+.to-background\/80 { --tw-gradient-to: color-mix(in srgb, var(--background) 80%, transparent); }
 .to-primary\/5 { --tw-gradient-to: color-mix(in srgb, var(--primary) 5%, transparent); }
 .from-primary\/5 { --tw-gradient-from: color-mix(in srgb, var(--primary) 5%, transparent); }
 .via-accent\/5 { --tw-gradient-via: color-mix(in srgb, var(--accent) 5%, transparent); }
@@ -313,7 +316,7 @@ button:not(:disabled), a[href] { cursor: pointer; }
   .sm\:flex-row { flex-direction: row; }
 }
 @media (min-width: 768px) {
-  .md\:flex { display: flex; min-height: 0; min-width: 0; }
+  .md\:flex { display: flex; }
   .md\:flex-row { flex-direction: row; }
   .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -327,9 +330,9 @@ button:not(:disabled), a[href] { cursor: pointer; }
 }
 
 @media (max-width: 640px) {
-  h1, .text-5xl { font-size: 1.875rem; line-height: 2.25rem; }
-  h2, .text-4xl { font-size: 1.5rem; line-height: 2rem; }
-  h3, .text-2xl { font-size: 1.25rem; line-height: 1.75rem; }
+  h1 { font-size: 1.875rem; line-height: 2.25rem; }
+  h2 { font-size: 1.5rem; line-height: 2rem; }
+  h3 { font-size: 1.25rem; line-height: 1.75rem; }
 }
 
 /* Focus visible */

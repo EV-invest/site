@@ -2,8 +2,10 @@
 
 use dioxus::prelude::*;
 
-use crate::Route;
-use crate::icons::{AlertCircle, Home as HomeIcon};
+use crate::{
+	Route,
+	icons::{AlertCircle, Home as HomeIcon},
+};
 
 #[component]
 pub fn NotFound(route: Vec<String>) -> Element {

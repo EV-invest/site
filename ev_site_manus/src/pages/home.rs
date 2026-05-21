@@ -56,7 +56,7 @@ pub fn Home() -> Element {
 					class: "absolute inset-0 z-0",
 					style: "background-image: {HERO_BG}; background-size: cover; background-position: center; background-attachment: fixed;",
 				}
-				div { class: "absolute inset-0 bg-gradient-to-b from-background via-background to-primary/5 z-10" }
+				div { class: "absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background/80 z-10" }
 				div {
 					class: "relative z-20 container max-w-4xl text-center px-4 md:px-8",
 					div { class: "space-y-6 fade-in-up",
