@@ -1,4 +1,5 @@
 #![feature(default_field_values)]
+mod components;
 mod icons;
 mod pages;
 mod styles;

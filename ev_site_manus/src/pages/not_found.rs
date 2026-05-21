@@ -4,6 +4,7 @@ use dioxus::prelude::*;
 
 use crate::{
 	Route,
+	components::Button,
 	icons::{AlertCircle, Home as HomeIcon},
 };
 
@@ -33,8 +34,8 @@ pub fn NotFound(route: Vec<String>) -> Element {
 					}
 
 					div { class: "flex flex-col sm:flex-row gap-3 justify-center",
-						button {
-							class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg inline-flex items-center justify-center",
+						Button {
+							class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg",
 							onclick: move |_| { nav.push(Route::Home {}); },
 							HomeIcon { class: "w-4 h-4 mr-2" }
 							"Go Home"

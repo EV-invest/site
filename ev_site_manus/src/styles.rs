@@ -68,23 +68,19 @@ button:not(:disabled), a[href] { cursor: pointer; }
 @media (min-width: 1024px) { .container { padding-left: 2rem; padding-right: 2rem; max-width: 1280px; } }
 
 /*
- * In the original manus site, `<Button>` from shadcn merges its defaults
- *   `inline-flex ... text-sm font-medium h-9 px-4 py-2 rounded-md`
- * into every button, and (because they are Tailwind utilities while
- * `.btn-primary`/`.btn-secondary` live in `@layer components`) they win the
- * cascade against `btn-primary`'s `@apply px-6 py-3 font-semibold rounded-lg`.
- *
- * We don't have a Button wrapper, so we bake the effective defaults directly
- * into the component classes here. Sites in markup that override with e.g.
- * `h-12 text-base` continue to win because they appear later in the CSS.
+ * Faithful port of manus index.css. These classes are designed to be paired
+ * with the shadcn `<Button>` defaults (text-sm / font-medium / h-9 / px-4 /
+ * py-2 / rounded-md), which override the larger values declared here via
+ * Tailwind's utility-over-component cascade. In Dioxus we replicate that by
+ * routing all buttons through `components::Button`, whose default utility
+ * classes appear later in this stylesheet than these rules and therefore win
+ * the cascade in the same way.
  */
 .btn-primary {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  white-space: nowrap;
-  height: 2.25rem; padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   background: var(--primary); color: var(--primary-foreground);
-  border-radius: calc(var(--radius) - 2px);
-  font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;
+  border-radius: var(--radius); font-weight: 600;
   transition: all 200ms var(--ease-out);
 }
 .btn-primary:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); transform: scale(1.05); }
@@ -92,11 +88,9 @@ button:not(:disabled), a[href] { cursor: pointer; }
 
 .btn-secondary {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  white-space: nowrap;
-  height: 2.25rem; padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border: 1px solid var(--border); color: var(--foreground);
-  border-radius: calc(var(--radius) - 2px);
-  font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;
+  border-radius: var(--radius); font-weight: 600;
   transition: all 200ms var(--ease-out);
 }
 .btn-secondary:hover { background: var(--muted); }
@@ -134,6 +128,7 @@ button:not(:disabled), a[href] { cursor: pointer; }
 .h-5 { height: 1.25rem; } .w-5 { width: 1.25rem; }
 .h-6 { height: 1.5rem; } .w-6 { width: 1.5rem; }
 .h-8 { height: 2rem; }   .w-8 { width: 2rem; }
+.h-9 { height: 2.25rem; }
 .h-12 { height: 3rem; }  .w-12 { width: 3rem; }
 .h-16 { height: 4rem; }  .w-16 { width: 4rem; }
 .w-1\.5 { width: 0.375rem; } .h-1\.5 { height: 0.375rem; }
@@ -245,6 +240,7 @@ button:not(:disabled), a[href] { cursor: pointer; }
 .text-white { color: #ffffff; }
 .text-foreground { color: var(--foreground); }
 .text-primary { color: var(--primary); }
+.text-primary-foreground { color: var(--primary-foreground); }
 .text-muted-foreground { color: var(--muted-foreground); }
 .text-primary\/20 { color: color-mix(in srgb, var(--primary) 20%, transparent); }
 .text-slate-600 { color: #475569; }
@@ -311,6 +307,7 @@ button:not(:disabled), a[href] { cursor: pointer; }
 
 /* Hover utilities */
 .hover\:text-primary:hover { color: var(--primary); }
+.hover\:bg-primary\/90:hover { background: color-mix(in srgb, var(--primary) 90%, transparent); }
 .hover\:border-primary\/50:hover { border-color: color-mix(in srgb, var(--primary) 50%, transparent); }
 .hover\:border-primary\/30:hover { border-color: color-mix(in srgb, var(--primary) 30%, transparent); }
 .hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }

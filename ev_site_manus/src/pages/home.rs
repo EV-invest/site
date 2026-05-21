@@ -7,7 +7,10 @@
 
 use dioxus::prelude::*;
 
-use crate::icons::{ArrowRight, BarChart3, Building2, Globe, Mail, TrendingUp, Zap};
+use crate::{
+	components::Button,
+	icons::{ArrowRight, BarChart3, Building2, Globe, Mail, TrendingUp, Zap},
+};
 
 const HERO_BG: &str = "url(https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/8bbPqutcwodgn4efm3i7rX/hero-abstract-geometric-aN4Syi2GikJPmcNcLqLZW6.webp)";
 const THESIS_BG: &str = "url(https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/8bbPqutcwodgn4efm3i7rX/investment-thesis-bg-FiurCJtFbt5x2tz3UJ3qfM.webp)";
@@ -41,7 +44,7 @@ pub fn Home() -> Element {
 						a { href: "#contact", class: "text-sm font-medium hover:text-primary transition-colors", "Contact" }
 					}
 
-					button {
+					Button {
 						class: "btn-primary hidden sm:inline-flex gap-2",
 						Mail { class: "w-4 h-4" }
 						"Get Started"
@@ -74,11 +77,11 @@ pub fn Home() -> Element {
 							"Institutional-grade real estate investment powered by data, technology, and forward-thinking strategy."
 						}
 						div { class: "flex flex-col sm:flex-row gap-4 justify-center pt-8",
-							button { class: "btn-primary gap-2 h-12 text-base",
+							Button { class: "btn-primary gap-2 h-12 text-base",
 								"Explore Opportunities"
 								ArrowRight { class: "w-5 h-5" }
 							}
-							button { class: "btn-secondary h-12 text-base", "Learn More" }
+							Button { class: "btn-secondary h-12 text-base", "Learn More" }
 						}
 					}
 				}
@@ -235,11 +238,11 @@ pub fn Home() -> Element {
 						"Join institutional investors in accessing premium real estate opportunities. Contact our team to discuss your investment objectives."
 					}
 					div { class: "flex flex-col sm:flex-row gap-4 justify-center",
-						button { class: "btn-primary gap-2 h-12 text-base",
+						Button { class: "btn-primary gap-2 h-12 text-base",
 							"Schedule a Consultation"
 							Mail { class: "w-5 h-5" }
 						}
-						button { class: "btn-secondary h-12 text-base", "Download Prospectus" }
+						Button { class: "btn-secondary h-12 text-base", "Download Prospectus" }
 					}
 					div { class: "mt-12 pt-12 border-t border-border",
 						p { class: "text-xs text-muted-foreground",
