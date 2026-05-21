@@ -8,7 +8,7 @@
 use dioxus::prelude::*;
 
 use crate::{
-	components::Button,
+	components::{Badge, BrandMark, Button, Section, SectionCTA, SectionHeader},
 	icons::{ArrowRight, BarChart3, Building2, Globe, Mail, TrendingUp, Zap},
 };
 
@@ -27,14 +27,7 @@ pub fn Home() -> Element {
 				class: "sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border",
 				div {
 					class: "container flex items-center justify-between py-4",
-					div {
-						class: "flex items-center gap-2",
-						div {
-							class: "w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center",
-							Building2 { class: "w-5 h-5 text-white" }
-						}
-						span { class: "font-bold text-lg tracking-tight", "RealEstate Fund" }
-					}
+					BrandMark {}
 
 					nav {
 						class: "hidden md:flex items-center gap-8",
@@ -63,8 +56,7 @@ pub fn Home() -> Element {
 				div {
 					class: "relative z-20 container max-w-4xl text-center px-4 md:px-8",
 					div { class: "space-y-6 fade-in-up",
-						div {
-							class: "inline-block px-4 py-2 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-sm",
+						Badge {
 							span { class: "text-sm font-semibold text-primary", "Real Estate Reimagined" }
 						}
 						h1 {
@@ -88,167 +80,138 @@ pub fn Home() -> Element {
 			}
 
 			// ---------- Investment Thesis ----------
-			section {
-				id: "thesis",
-				class: "relative py-24 md:py-32 overflow-hidden",
-				div {
-					class: "absolute inset-0 z-0",
-					style: "background-image: {THESIS_BG}; background-size: cover; background-position: center; opacity: 0.5;",
+			Section {
+				id: "thesis".to_string(),
+				bg_image: THESIS_BG,
+				bg_opacity: 0.5,
+				overlay_class: "absolute inset-0 bg-background/60".to_string(),
+				extra_class: "overflow-hidden".to_string(),
+				max_width: "5xl".to_string(),
+				SectionHeader {
+					title: "Investment Thesis",
+					description: "We identify and capitalize on emerging opportunities in the real estate market.",
 				}
-				div { class: "absolute inset-0 bg-background/60", style: "z-index: 5;" }
-				div {
-					class: "relative z-10 container max-w-5xl",
-					div { class: "text-center mb-16",
-						h2 { class: "text-4xl md:text-5xl font-bold mb-4", "Investment Thesis" }
-						p { class: "text-lg text-muted-foreground max-w-2xl mx-auto",
-							"We identify and capitalize on emerging opportunities in the real estate market."
-						}
+				div { class: "grid md:grid-cols-3 gap-8",
+					ThesisCard {
+						title: "Market Growth",
+						description: "Positioned to capture long-term appreciation in high-growth markets and emerging segments.",
+						icon: rsx! { TrendingUp { class: "w-6 h-6 text-primary" } },
 					}
-					div { class: "grid md:grid-cols-3 gap-8",
-						ThesisCard {
-							title: "Market Growth",
-							description: "Positioned to capture long-term appreciation in high-growth markets and emerging segments.",
-							icon: rsx! { TrendingUp { class: "w-6 h-6 text-primary" } },
-						}
-						ThesisCard {
-							title: "Operational Excellence",
-							description: "Technology-driven approach to asset management, tenant relations, and value creation.",
-							icon: rsx! { Zap { class: "w-6 h-6 text-primary" } },
-						}
-						ThesisCard {
-							title: "Global Diversification",
-							description: "Strategic exposure across geographies and property types to optimize risk-adjusted returns.",
-							icon: rsx! { Globe { class: "w-6 h-6 text-primary" } },
-						}
+					ThesisCard {
+						title: "Operational Excellence",
+						description: "Technology-driven approach to asset management, tenant relations, and value creation.",
+						icon: rsx! { Zap { class: "w-6 h-6 text-primary" } },
+					}
+					ThesisCard {
+						title: "Global Diversification",
+						description: "Strategic exposure across geographies and property types to optimize risk-adjusted returns.",
+						icon: rsx! { Globe { class: "w-6 h-6 text-primary" } },
 					}
 				}
 			}
 
 			// ---------- Strategies ----------
-			section {
-				id: "strategies",
-				class: "relative py-24 md:py-32 bg-gradient-to-b from-background via-background to-primary/5",
-				div { class: "container max-w-6xl",
-					div { class: "text-center mb-16",
-						h2 { class: "text-4xl md:text-5xl font-bold mb-4", "Investment Strategies" }
-						p { class: "text-lg text-muted-foreground max-w-2xl mx-auto",
-							"Diversified approaches tailored to market conditions and investor objectives."
-						}
+			Section {
+				id: "strategies".to_string(),
+				extra_class: "bg-gradient-to-b from-background via-background to-primary/5".to_string(),
+				max_width: "6xl".to_string(),
+				SectionHeader {
+					title: "Investment Strategies",
+					description: "Diversified approaches tailored to market conditions and investor objectives.",
+				}
+				div { class: "grid md:grid-cols-2 gap-8",
+					StrategyCard {
+						number: "01",
+						title: "Core Stabilized",
+						description: "Established properties with consistent cash flows and long-term tenant relationships.",
+						metrics: vec!["5-7% Target Yield", "Low Volatility", "Institutional Grade"],
 					}
-					div { class: "grid md:grid-cols-2 gap-8",
-						StrategyCard {
-							number: "01",
-							title: "Core Stabilized",
-							description: "Established properties with consistent cash flows and long-term tenant relationships.",
-							metrics: vec!["5-7% Target Yield", "Low Volatility", "Institutional Grade"],
-						}
-						StrategyCard {
-							number: "02",
-							title: "Value-Add Development",
-							description: "Strategic renovations and repositioning to unlock significant upside potential.",
-							metrics: vec!["12-15% IRR", "3-5 Year Hold", "Active Management"],
-						}
-						StrategyCard {
-							number: "03",
-							title: "Emerging Markets",
-							description: "High-growth regions with demographic tailwinds and infrastructure development.",
-							metrics: vec!["15-20% IRR", "Growth Focused", "Market Leaders"],
-						}
-						StrategyCard {
-							number: "04",
-							title: "Mixed-Use Innovation",
-							description: "Adaptive reuse and modern mixed-use developments for evolving urban needs.",
-							metrics: vec!["10-14% IRR", "Future-Proof", "Flexible Tenancy"],
-						}
+					StrategyCard {
+						number: "02",
+						title: "Value-Add Development",
+						description: "Strategic renovations and repositioning to unlock significant upside potential.",
+						metrics: vec!["12-15% IRR", "3-5 Year Hold", "Active Management"],
+					}
+					StrategyCard {
+						number: "03",
+						title: "Emerging Markets",
+						description: "High-growth regions with demographic tailwinds and infrastructure development.",
+						metrics: vec!["15-20% IRR", "Growth Focused", "Market Leaders"],
+					}
+					StrategyCard {
+						number: "04",
+						title: "Mixed-Use Innovation",
+						description: "Adaptive reuse and modern mixed-use developments for evolving urban needs.",
+						metrics: vec!["10-14% IRR", "Future-Proof", "Flexible Tenancy"],
 					}
 				}
 			}
 
 			// ---------- Portfolio ----------
-			section {
-				id: "portfolio",
-				class: "relative py-24 md:py-32",
-				div {
-					class: "absolute inset-0 z-0",
-					style: "background-image: {PORTFOLIO_BG}; background-size: cover; background-position: center; opacity: 0.3;",
+			Section {
+				id: "portfolio".to_string(),
+				bg_image: PORTFOLIO_BG,
+				bg_opacity: 0.3,
+				max_width: "6xl".to_string(),
+				SectionHeader {
+					title: "Portfolio Overview",
+					description: "Curated selection of institutional-quality real estate assets.",
 				}
-				div { class: "relative z-10 container max-w-6xl",
-					div { class: "text-center mb-16",
-						h2 { class: "text-4xl md:text-5xl font-bold mb-4", "Portfolio Overview" }
-						p { class: "text-lg text-muted-foreground max-w-2xl mx-auto",
-							"Curated selection of institutional-quality real estate assets."
-						}
-					}
-					div { class: "grid md:grid-cols-3 gap-6 mb-12",
-						PortfolioStat { label: "Total Assets", value: "$2.4B+", icon: rsx! { Building2 { class: "w-8 h-8 text-primary mx-auto mb-4" } } }
-						PortfolioStat { label: "Properties", value: "145+", icon: rsx! { BarChart3 { class: "w-8 h-8 text-primary mx-auto mb-4" } } }
-						PortfolioStat { label: "Avg. Yield", value: "7.2%", icon: rsx! { TrendingUp { class: "w-8 h-8 text-primary mx-auto mb-4" } } }
-					}
-					div { class: "grid md:grid-cols-2 gap-8",
-						AllocationBar { kind: "Office", allocation: "32%", gradient_from: "from-primary" }
-						AllocationBar { kind: "Residential", allocation: "28%", gradient_from: "from-accent" }
-						AllocationBar { kind: "Retail", allocation: "18%", gradient_from: "from-primary/60" }
-						AllocationBar { kind: "Industrial", allocation: "22%", gradient_from: "from-accent/60" }
-					}
+				div { class: "grid md:grid-cols-3 gap-6 mb-12",
+					PortfolioStat { label: "Total Assets", value: "$2.4B+", icon: rsx! { Building2 { class: "w-8 h-8 text-primary mx-auto mb-4" } } }
+					PortfolioStat { label: "Properties", value: "145+", icon: rsx! { BarChart3 { class: "w-8 h-8 text-primary mx-auto mb-4" } } }
+					PortfolioStat { label: "Avg. Yield", value: "7.2%", icon: rsx! { TrendingUp { class: "w-8 h-8 text-primary mx-auto mb-4" } } }
+				}
+				div { class: "grid md:grid-cols-2 gap-8",
+					AllocationBar { kind: "Office", allocation: "32%", gradient_from: "from-primary" }
+					AllocationBar { kind: "Residential", allocation: "28%", gradient_from: "from-accent" }
+					AllocationBar { kind: "Retail", allocation: "18%", gradient_from: "from-primary/60" }
+					AllocationBar { kind: "Industrial", allocation: "22%", gradient_from: "from-accent/60" }
 				}
 			}
 
 			// ---------- Market Intelligence ----------
-			section {
-				class: "relative py-24 md:py-32 bg-gradient-to-b from-background to-primary/5",
-				div {
-					class: "absolute inset-0 z-0",
-					style: "background-image: {MARKET_BG}; background-size: cover; background-position: center; opacity: 0.4;",
+			Section {
+				bg_image: MARKET_BG,
+				bg_opacity: 0.4,
+				extra_class: "bg-gradient-to-b from-background to-primary/5".to_string(),
+				max_width: "5xl".to_string(),
+				SectionHeader {
+					title: "Market Intelligence",
+					description: "Latest insights and market updates from our research team.",
 				}
-				div { class: "relative z-10 container max-w-5xl",
-					div { class: "text-center mb-16",
-						h2 { class: "text-4xl md:text-5xl font-bold mb-4", "Market Intelligence" }
-						p { class: "text-lg text-muted-foreground max-w-2xl mx-auto",
-							"Latest insights and market updates from our research team."
-						}
+				div { class: "space-y-6",
+					NewsItem {
+						date: "MAY 15, 2026",
+						title: "Urban Residential Market Shows Strong Momentum",
+						excerpt: "Demand for mixed-use residential properties continues to outpace supply in major metropolitan areas.",
 					}
-					div { class: "space-y-6",
-						NewsItem {
-							date: "MAY 15, 2026",
-							title: "Urban Residential Market Shows Strong Momentum",
-							excerpt: "Demand for mixed-use residential properties continues to outpace supply in major metropolitan areas.",
-						}
-						NewsItem {
-							date: "MAY 08, 2026",
-							title: "Industrial Sector Benefits from E-Commerce Growth",
-							excerpt: "Last-mile logistics facilities command premium valuations as supply chain optimization accelerates.",
-						}
-						NewsItem {
-							date: "APR 30, 2026",
-							title: "Interest Rate Environment Stabilizes Portfolio",
-							excerpt: "Fixed-rate debt refinancing opportunities emerge as market conditions normalize.",
-						}
+					NewsItem {
+						date: "MAY 08, 2026",
+						title: "Industrial Sector Benefits from E-Commerce Growth",
+						excerpt: "Last-mile logistics facilities command premium valuations as supply chain optimization accelerates.",
+					}
+					NewsItem {
+						date: "APR 30, 2026",
+						title: "Interest Rate Environment Stabilizes Portfolio",
+						excerpt: "Fixed-rate debt refinancing opportunities emerge as market conditions normalize.",
 					}
 				}
 			}
 
 			// ---------- Contact / CTA ----------
-			section {
-				id: "contact",
-				class: "relative py-24 md:py-32 overflow-hidden",
-				div { class: "absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 z-0" }
-				div { class: "relative z-10 container max-w-3xl text-center",
-					h2 { class: "text-4xl md:text-5xl font-bold mb-6", "Ready to Invest?" }
-					p { class: "text-lg text-muted-foreground mb-8 max-w-xl mx-auto",
-						"Join institutional investors in accessing premium real estate opportunities. Contact our team to discuss your investment objectives."
-					}
-					div { class: "flex flex-col sm:flex-row gap-4 justify-center",
-						Button { class: "btn-primary gap-2 h-12 text-base",
-							"Schedule a Consultation"
-							Mail { class: "w-5 h-5" }
-						}
-						Button { class: "btn-secondary h-12 text-base", "Download Prospectus" }
-					}
-					div { class: "mt-12 pt-12 border-t border-border",
-						p { class: "text-xs text-muted-foreground",
-							"This material is for informational purposes only and does not constitute an offer to sell or a solicitation to buy any securities."
-						}
-					}
+			Section {
+				id: "contact".to_string(),
+				overlay_class: "absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 z-0".to_string(),
+				extra_class: "overflow-hidden".to_string(),
+				max_width: "3xl".to_string(),
+				SectionCTA {
+					title: "Ready to Invest?",
+					description: "Join institutional investors in accessing premium real estate opportunities. Contact our team to discuss your investment objectives.",
+					primary_label: "Schedule a Consultation",
+					primary_icon: rsx! { Mail { class: "w-5 h-5" } },
+					secondary_label: "Download Prospectus",
+					disclaimer: "This material is for informational purposes only and does not constitute an offer to sell or a solicitation to buy any securities.",
 				}
 			}
 
@@ -257,12 +220,8 @@ pub fn Home() -> Element {
 				div { class: "container py-12",
 					div { class: "grid md:grid-cols-4 gap-8 mb-8",
 						div {
-							div { class: "flex items-center gap-2 mb-4",
-								div {
-									class: "w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center",
-									Building2 { class: "w-5 h-5 text-white" }
-								}
-								span { class: "font-bold", "RealEstate Fund" }
+							div { class: "mb-4",
+								BrandMark { text_class: "font-bold".to_string() }
 							}
 							p { class: "text-sm text-muted-foreground", "Institutional real estate investment for the future." }
 						}

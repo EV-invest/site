@@ -160,6 +160,7 @@ button:not(:disabled), a[href] { cursor: pointer; }
 .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
 .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
 .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
 .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
 .py-24 { padding-top: 6rem; padding-bottom: 6rem; }
 .pt-6 { padding-top: 1.5rem; }
@@ -239,6 +240,7 @@ button:not(:disabled), a[href] { cursor: pointer; }
 
 .text-white { color: #ffffff; }
 .text-foreground { color: var(--foreground); }
+.text-card-foreground { color: var(--card-foreground); }
 .text-primary { color: var(--primary); }
 .text-primary-foreground { color: var(--primary-foreground); }
 .text-muted-foreground { color: var(--muted-foreground); }

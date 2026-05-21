@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 use crate::{
 	Route,
-	components::Button,
+	components::{Button, Card, CardContent},
 	icons::{AlertCircle, Home as HomeIcon},
 };
 
@@ -14,8 +14,8 @@ pub fn NotFound(route: Vec<String>) -> Element {
 	let nav = navigator();
 	rsx! {
 		div { class: "min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100",
-			div { class: "w-full max-w-lg mx-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm rounded-xl",
-				div { class: "pt-8 pb-8 text-center px-6",
+			Card { class: "w-full max-w-lg mx-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm",
+				CardContent { class: "pt-8 pb-8 text-center",
 					div { class: "flex justify-center mb-6",
 						div { class: "relative",
 							div { class: "absolute inset-0 bg-red-100 rounded-full animate-pulse" }
