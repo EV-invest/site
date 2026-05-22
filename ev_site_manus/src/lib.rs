@@ -1,25 +1,23 @@
-#![feature(default_field_values)]
 mod components;
-mod icons;
 mod pages;
-mod styles;
 
 use dioxus::prelude::*;
 use pages::{Home, NotFound};
 
+const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css", CssAssetOptions::new());
+
 #[component]
 pub fn App() -> Element {
 	rsx! {
-		style { {styles::GLOBAL_CSS} }
+		document::Stylesheet { href: TAILWIND_CSS }
 		Router::<Route> {}
 	}
 }
+
 #[derive(Clone, PartialEq, Routable)]
-#[rustfmt::skip]
 enum Route {
 	#[route("/")]
 	Home {},
-
 	#[route("/:..route")]
 	NotFound { route: Vec<String> },
 }

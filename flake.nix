@@ -97,6 +97,7 @@
               openssl
               pkg-config
               rust
+              tailwindcss_4
               wasm-bindgen-cli
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 

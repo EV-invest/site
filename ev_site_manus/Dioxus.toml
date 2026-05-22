@@ -1,0 +1,12 @@
+[application]
+name = "ev_site_manus"
+
+[application.tailwind]
+input = "tailwind.css"
+output = "assets/tailwind.css"
+
+[web.app]
+title = "RealEstate Fund"
+
+[web.resource.dev]
+script = []

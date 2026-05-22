@@ -23,10 +23,13 @@ color-eyre = "^0.6.5"
 derive-new = "^0"
 dioxus = "0.7"
 ev_site_macros = { path = "ev_site_macros" }
+lucide-dioxus = { version = "3.11", features = ["all-icons"] }
 miette = { version = "^7.6.0", features = ["fancy", "serde", "syntect-highlighter"] }
 proc-macro2 = "1"
 quote = "1"
 serde = { version = "^1", features = ["derive"] }
+shadcn_ui = { git = "https://github.com/MBeliou/shadcn-dioxus", rev = "617ee8b188935e18c7dc0058bf47e2fe095b4f0d", package = "ui" }
 syn = "2"
 ui_test = "0.30"
 v_utils = { version = "^2.15.43", features = ["io", "macros", "cli"] }
+serde_json = "1"

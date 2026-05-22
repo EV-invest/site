@@ -1,0 +1,94 @@
+/*
+ * Tailwind v4 entry. Scans this crate's `src` AND the vendored shadcn_ui crate
+ * (so its component class strings are emitted into the bundle). Palette is the
+ * manus original — green/cyan accent on a light slate background. Bespoke
+ * component rules live in `styles.css` and are pulled in below.
+ */
+
+@import "tailwindcss";
+
+@source "./src/**/*.{rs,html,css}";
+/* shadcn_ui's class strings live in the cargo git checkout cache.
+ * `build.rs` appends an `@source "<abs-path>/packages/ui/src"` line below
+ * this file before invoking tailwindcss, so the variant classes get picked
+ * up no matter which machine builds the site. */
+
+@import "./styles.css";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+}
+
+/* Tailwind v4 only emits `bg-foo` / `text-foo` / `border-foo` utilities for
+ * tokens it knows are colors. The shadcn convention spells the palette with
+ * bare names (`--primary`, `--accent`, …), but Tailwind needs them under
+ * `--color-*` to wire up utilities. `@theme inline` keeps the runtime indirection
+ * via `var(--primary)` so live theme swaps still work while teaching Tailwind
+ * which utilities to emit. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.5rem;
+
+  --background: #F5F7FA;
+  --foreground: #0F1419;
+
+  --card: #FFFFFF;
+  --card-foreground: #0F1419;
+
+  --popover: #FFFFFF;
+  --popover-foreground: #0F1419;
+
+  --primary: #00D084;
+  --primary-foreground: #0F1419;
+
+  --secondary: #E5E7EB;
+  --secondary-foreground: #0F1419;
+
+  --muted: #D0D5DD;
+  --muted-foreground: #6B7280;
+
+  --accent: #00B4D8;
+  --accent-foreground: #0F1419;
+
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  --border: #D0D5DD;
+  --input: #FFFFFF;
+  --ring: #00D084;
+}

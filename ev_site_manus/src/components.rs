@@ -1,38 +1,10 @@
-//! Shared building blocks for the manus port.
-//!
-//! Thin ports of shadcn-ui primitives (`Button`, `Card`, `CardContent`) and
-//! semantic wrappers extracted from the repeated markup in `pages/home.rs` and
-//! `pages/not_found.rs`. Each component preserves the manus class strings
-//! verbatim so the cascade interaction with the bespoke `.btn-primary` /
-//! `.card-minimal` rules in `styles.rs` matches the original site.
+//! Manus-specific layout wrappers. Primitive components (Button, Card, Badge,
+//! …) come from `shadcn_ui`; everything here is bespoke to the manus page
+//! structure.
 
 use dioxus::prelude::*;
-
-use crate::icons::Building2;
-
-const BTN_DEFAULTS: &str = "inline-flex items-center justify-center gap-2 \
-                            whitespace-nowrap rounded-md text-sm font-medium \
-                            transition-all bg-primary text-primary-foreground \
-                            hover:bg-primary/90 h-9 px-4 py-2";
-
-/// Port of shadcn-ui's `Button` (manus/client/src/components/ui/button.tsx)
-/// restricted to the `default` variant/size — the only configuration used.
-/// Per-call overrides supplied in `class` win because they are appended after
-/// the defaults.
-#[component]
-pub fn Button(#[props(default)] class: String, onclick: Option<EventHandler<MouseEvent>>, children: Element) -> Element {
-	rsx! {
-		button {
-			class: "{BTN_DEFAULTS} {class}",
-			onclick: move |evt| {
-				if let Some(h) = &onclick {
-					h.call(evt);
-				}
-			},
-			{children}
-		}
-	}
-}
+use lucide_dioxus::Building2;
+use shadcn_ui::{Button, ButtonSize, ButtonVariant};
 
 /// Centered title + subtitle pair used above every non-hero section.
 #[component]
@@ -45,21 +17,18 @@ pub fn SectionHeader(title: String, description: String) -> Element {
 	}
 }
 
-/// Gradient square logo + "RealEstate Fund" wordmark. Header uses the default
-/// `font-bold text-lg tracking-tight`; footer overrides with plain `font-bold`.
+/// Gradient square logo + "RealEstate Fund" wordmark. Required `text_class` —
+/// no silent default; header passes the bold/tracking-tight string, footer
+/// overrides with plain `font-bold`.
 #[component]
-pub fn BrandMark(#[props(default)] text_class: Option<String>) -> Element {
-	let span_class = match text_class {
-		Some(c) => c,
-		None => "font-bold text-lg tracking-tight".to_string(),
-	};
+pub fn BrandMark(text_class: String) -> Element {
 	rsx! {
 		div { class: "flex items-center gap-2",
 			div {
 				class: "w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center",
 				Building2 { class: "w-5 h-5 text-white" }
 			}
-			span { class: "{span_class}", "RealEstate Fund" }
+			span { class: "{text_class}", "RealEstate Fund" }
 		}
 	}
 }
@@ -71,26 +40,23 @@ pub fn BrandMark(#[props(default)] text_class: Option<String>) -> Element {
 #[component]
 pub fn Section(
 	#[props(default)] id: Option<String>,
-	#[props(default)] bg_image: Option<&'static str>,
+	#[props(default)] bg_image: Option<String>,
 	#[props(default)] bg_opacity: Option<f32>,
 	#[props(default)] overlay_class: Option<String>,
 	#[props(default)] extra_class: Option<String>,
 	max_width: String,
 	children: Element,
 ) -> Element {
-	let section_class = match extra_class {
-		Some(extra) => format!("relative py-24 md:py-32 {extra}"),
-		None => "relative py-24 md:py-32".to_string(),
-	};
-	let wrapper_class = format!("relative z-10 container max-w-{max_width}");
-	let bg_style = bg_image.map(|img| {
-		let opacity = match bg_opacity {
-			Some(o) => format!(" opacity: {o};"),
-			None => String::new(),
-		};
+	let bg_style = bg_image.as_ref().map(|img| {
+		let opacity = bg_opacity.map(|o| format!(" opacity: {o};")).unwrap_or_default();
 		format!("background-image: {img}; background-size: cover; background-position: center;{opacity}")
 	});
 	let has_bg = bg_image.is_some();
+	let wrapper_class = format!("relative z-10 container max-w-{max_width}");
+	let section_class = match &extra_class {
+		Some(extra) => format!("relative py-24 md:py-32 {extra}"),
+		None => "relative py-24 md:py-32".to_string(),
+	};
 	rsx! {
 		section {
 			id,
@@ -117,37 +83,6 @@ pub fn Section(
 	}
 }
 
-/// Port of shadcn-ui's `Card` (manus/client/src/components/ui/card.tsx)
-/// restricted to the slots actually used (`Card`, `CardContent`).
-#[component]
-pub fn Card(#[props(default)] class: String, children: Element) -> Element {
-	let full = format!("bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm {class}");
-	rsx! {
-		div { class: "{full}", {children} }
-	}
-}
-
-#[component]
-pub fn CardContent(#[props(default)] class: String, children: Element) -> Element {
-	let full = format!("px-6 {class}");
-	rsx! {
-		div { class: "{full}", {children} }
-	}
-}
-
-/// Pill-style label used for the hero eyebrow.
-#[component]
-pub fn Badge(#[props(default)] class: Option<String>, children: Element) -> Element {
-	let extra = match class {
-		Some(c) => c,
-		None => String::new(),
-	};
-	let full = format!("inline-block px-4 py-2 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-sm {extra}");
-	rsx! {
-		div { class: "{full}", {children} }
-	}
-}
-
 /// Centered headline + primary/secondary buttons + optional disclaimer used by
 /// the Contact section. Sits inside a `Section`; wraps its own content in a
 /// `text-center` div so the surrounding `Section` keeps its plain wrapper.
@@ -158,11 +93,19 @@ pub fn SectionCTA(title: String, description: String, primary_label: String, pri
 			h2 { class: "text-4xl md:text-5xl font-bold mb-6", "{title}" }
 			p { class: "text-lg text-muted-foreground mb-8 max-w-xl mx-auto", "{description}" }
 			div { class: "flex flex-col sm:flex-row gap-4 justify-center",
-				Button { class: "btn-primary gap-2 h-12 text-base",
+				Button {
+					variant: ButtonVariant::Default,
+					size: ButtonSize::Lg,
+					class: "text-base",
 					"{primary_label}"
 					{primary_icon}
 				}
-				Button { class: "btn-secondary h-12 text-base", "{secondary_label}" }
+				Button {
+					variant: ButtonVariant::Outline,
+					size: ButtonSize::Lg,
+					class: "text-base",
+					"{secondary_label}"
+				}
 			}
 			if let Some(text) = disclaimer {
 				div { class: "mt-12 pt-12 border-t border-border",

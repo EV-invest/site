@@ -6,9 +6,14 @@ default-run = "ev_site_manus"
 
 [dependencies]
 dioxus = { workspace = true, features = ["web", "router"] }
+lucide-dioxus = { workspace = true }
+shadcn_ui = { workspace = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom = { version = "0.3", features = ["wasm_js"] }
+
+[build-dependencies]
+serde_json = { workspace = true }
 
 [lints]
 workspace = true
