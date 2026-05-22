@@ -39,9 +39,10 @@
           };
         });
 
+        py = v_flakes.py { inherit pkgs; };
         rs = v_flakes.rs { inherit pkgs rust; };
         github = v_flakes.github {
-          inherit pkgs pname rs;
+          inherit pkgs pname rs py;
           enable = true;
           lastSupportedVersion = "nightly-2026-05-12";
           jobs.default = true;
@@ -53,7 +54,7 @@
           rootDir = ./.;
           badges = [ "msrv" "crates_io" "docs_rs" "loc" "ci" ];
         };
-        combined = v_flakes.utils.combine [ rs github readme ];
+        combined = v_flakes.utils.combine [ py rs github readme ];
       in
       {
         packages =

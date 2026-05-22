@@ -1,144 +1,147 @@
-"""
-Render the current SOTA colorscheme draft as:
-  1. plotly horizontal swatches (top of HTML), one row per named color
-  2. a hand-styled example hero page below, using those same colors
+#!/home/v/nix/home/scripts/nix-run-cached
+---cargo
+[dependencies]
+---
 
-Run from repo root:
-  nix-shell -p python3Packages.plotly --run "python3 examples/colorscheme/explore.py"
+//! Render the current SOTA colorscheme draft as:
+//!   1. horizontal swatches (top of HTML), one row per named color
+//!   2. a hand-styled example hero page below, using those same colors
+//!
+//! Run from repo root:
+//!   ./examples/colorscheme/explore.rs
+//!
+//! Writes a temp HTML file and opens it in the browser. The palette lives in
+//! `palette()` below; edit the (L, C, H) triples and re-run to iterate.
+//! Recipe behind the values is in log/colorscheme.md.
 
-Writes a temp HTML file and opens it in the browser.
+use std::fmt::Write as _;
+use std::fs;
+use std::path::PathBuf;
+use std::process::Command;
+use std::time::{SystemTime, UNIX_EPOCH};
 
-The palette lives in PALETTE below; edit the (L, C, H) triples and re-run to
-iterate. Recipe behind the values is in log/colorscheme.md.
-"""
+// ---------- OKLCH -> sRGB hex (D65) ----------------------------------------
 
-import math
-import tempfile
-import webbrowser
-from pathlib import Path
+fn oklch_to_linear_srgb(l: f64, c: f64, h_deg: f64) -> (f64, f64, f64) {
+    let h = h_deg.to_radians();
+    let a = c * h.cos();
+    let b = c * h.sin();
 
-import plotly.graph_objects as go
+    let l_ = l + 0.396_337_777_4 * a + 0.215_803_757_3 * b;
+    let m_ = l - 0.105_561_345_8 * a - 0.063_854_172_8 * b;
+    let s_ = l - 0.089_484_177_5 * a - 1.291_485_548_0 * b;
 
+    let (l3, m3, s3) = (l_.powi(3), m_.powi(3), s_.powi(3));
 
-# ---------- OKLCH -> sRGB hex (D65) ----------------------------------------
+    let r = 4.076_741_662_1 * l3 - 3.307_711_591_3 * m3 + 0.230_969_929_2 * s3;
+    let g = -1.268_438_004_6 * l3 + 2.609_757_401_1 * m3 - 0.341_319_396_5 * s3;
+    let b_ = -0.004_196_086_3 * l3 - 0.703_418_614_7 * m3 + 1.707_614_701_0 * s3;
+    (r, g, b_)
+}
 
-def _oklch_to_linear_srgb(L, C, H_deg):
-    H = math.radians(H_deg)
-    a = C * math.cos(H)
-    b = C * math.sin(H)
+fn linear_to_srgb(c: f64) -> f64 {
+    let c = c.clamp(0.0, 1.0);
+    if c <= 0.003_130_8 { 12.92 * c } else { 1.055 * c.powf(1.0 / 2.4) - 0.055 }
+}
 
-    l_ = L + 0.3963377774 * a + 0.2158037573 * b
-    m_ = L - 0.1055613458 * a - 0.0638541728 * b
-    s_ = L - 0.0894841775 * a - 1.2914855480 * b
+fn oklch_hex(l: f64, c: f64, h: f64) -> String {
+    let (r, g, b) = oklch_to_linear_srgb(l, c, h);
+    let to_byte = |x: f64| (linear_to_srgb(x) * 255.0).round().clamp(0.0, 255.0) as u8;
+    format!("#{:02X}{:02X}{:02X}", to_byte(r), to_byte(g), to_byte(b))
+}
 
-    l, m, s = l_ ** 3, m_ ** 3, s_ ** 3
+fn oklch_css(l: f64, c: f64, h: f64) -> String {
+    format!("oklch({l:.3} {c:.3} {h:.1})")
+}
 
-    r =  4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s
-    g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s
-    b_ = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s
-    return r, g, b_
+// ---------- The palette ----------------------------------------------------
+// All values derived from anchor oklch(0.256 0.10 260) per log/colorscheme.md
 
+const H_BRAND: f64 = 260.0;
+const H_NEUTRAL: f64 = 280.0;
 
-def _linear_to_srgb(c):
-    c = max(0.0, min(1.0, c))
-    return 12.92 * c if c <= 0.0031308 else 1.055 * (c ** (1 / 2.4)) - 0.055
+struct Swatch {
+    name: &'static str,
+    l: f64,
+    c: f64,
+    h: f64,
+}
 
+const fn s(name: &'static str, l: f64, c: f64, h: f64) -> Swatch {
+    Swatch { name, l, c, h }
+}
 
-def oklch_hex(L, C, H):
-    """Return sRGB hex string for an OKLCH triple. Out-of-gamut is clamped."""
-    r, g, b = _oklch_to_linear_srgb(L, C, H)
-    rgb = [_linear_to_srgb(x) for x in (r, g, b)]
-    return "#{:02X}{:02X}{:02X}".format(
-        *(max(0, min(255, round(x * 255))) for x in rgb)
-    )
+fn palette() -> Vec<Swatch> {
+    vec![
+        s("bg_deep",  0.16,  0.020, H_NEUTRAL),
+        s("bg",       0.20,  0.025, H_NEUTRAL),
+        s("surface",  0.24,  0.030, H_NEUTRAL),
+        s("elevated", 0.30,  0.034, H_NEUTRAL),
+        s("border",   0.40,  0.038, H_NEUTRAL),
+        s("muted",    0.55,  0.040, H_NEUTRAL),
+        s("subtle",   0.70,  0.042, H_NEUTRAL),
+        s("text",     0.90,  0.040, H_NEUTRAL),
 
+        s("brand",    0.256, 0.10,  H_BRAND), // the anchor
+        s("brand_fg", 0.78,  0.11,  H_BRAND),
+        s("brand_hi", 0.88,  0.08,  H_BRAND),
 
-def oklch_css(L, C, H):
-    return f"oklch({L:.3f} {C:.3f} {H:.1f})"
-
-
-# ---------- The palette ----------------------------------------------------
-# All values derived from anchor oklch(0.256 0.10 260) per log/colorscheme.md
-
-H_BRAND = 260
-H_NEUTRAL = 280
-
-PALETTE = [
-    # group, name, (L, C, H)
-    ("neutral", "bg_deep",   (0.16, 0.020, H_NEUTRAL)),
-    ("neutral", "bg",        (0.20, 0.025, H_NEUTRAL)),
-    ("neutral", "surface",   (0.24, 0.030, H_NEUTRAL)),
-    ("neutral", "elevated",  (0.30, 0.034, H_NEUTRAL)),
-    ("neutral", "border",    (0.40, 0.038, H_NEUTRAL)),
-    ("neutral", "muted",     (0.55, 0.040, H_NEUTRAL)),
-    ("neutral", "subtle",    (0.70, 0.042, H_NEUTRAL)),
-    ("neutral", "text",      (0.90, 0.040, H_NEUTRAL)),
-
-    ("brand",   "brand",     (0.256, 0.10, H_BRAND)),  # the anchor
-    ("brand",   "brand_fg",  (0.78,  0.11, H_BRAND)),
-    ("brand",   "brand_hi",  (0.88,  0.08, H_BRAND)),
-
-    ("state",   "danger",    (0.70, 0.16,    8)),
-    ("state",   "warning",   (0.82, 0.13,   75)),
-    ("state",   "success",   (0.80, 0.13,  145)),
-    ("state",   "info",      (0.78, 0.10,  230)),
-]
-
-
-# ---------- Swatches via plotly --------------------------------------------
-
-def build_swatch_fig():
-    names = [name for _, name, _ in PALETTE]
-    hexes = [oklch_hex(*lch) for _, _, lch in PALETTE]
-    labels = [
-        f"{name:<10}  L={lch[0]:.3f}  C={lch[1]:.3f}  H={lch[2]:>5.1f}"
-        for _, name, lch in PALETTE
+        s("danger",   0.70,  0.16,    8.0),
+        s("warning",  0.82,  0.13,   75.0),
+        s("success",  0.80,  0.13,  145.0),
+        s("info",     0.78,  0.10,  230.0),
     ]
+}
 
-    # one horizontal bar per color, all the same width
-    fig = go.Figure()
-    for i, (name, hex_, label) in enumerate(zip(names, hexes, labels)):
-        y = len(PALETTE) - 1 - i  # top-to-bottom in declaration order
-        fig.add_shape(
-            type="rect",
-            x0=0, x1=1, y0=y - 0.45, y1=y + 0.45,
-            fillcolor=hex_, line=dict(width=0),
-        )
-        # label sits to the right of the swatch
-        fig.add_annotation(
-            x=1.02, y=y, xref="x", yref="y",
-            text=f"<span style='font-family:monospace'>{label}  {hex_}</span>",
-            showarrow=False, xanchor="left", yanchor="middle",
-            font=dict(color="#e5e5e5", size=13),
-        )
+// ---------- Swatches as plain HTML -----------------------------------------
 
-    fig.update_xaxes(visible=False, range=[0, 2.2])
-    fig.update_yaxes(visible=False, range=[-0.6, len(PALETTE) - 0.4])
-    fig.update_layout(
-        height=44 * len(PALETTE) + 40,
-        margin=dict(l=20, r=20, t=20, b=20),
-        paper_bgcolor="#111",
-        plot_bgcolor="#111",
-        showlegend=False,
+fn build_swatch_html(palette: &[Swatch]) -> String {
+    let mut rows = String::new();
+    for sw in palette {
+        let hex = oklch_hex(sw.l, sw.c, sw.h);
+        let label = format!(
+            "{:<10}  L={:.3}  C={:.3}  H={:>5.1}",
+            sw.name, sw.l, sw.c, sw.h
+        );
+        write!(
+            rows,
+            r##"<div class="swrow">
+  <div class="swbar" style="background:{hex}"></div>
+  <div class="swlabel">{label}  {hex}</div>
+</div>
+"##
+        ).expect("write into String never fails");
+    }
+
+    format!(
+        r##"<style>
+  .swatches {{ background:#111; padding:20px; border-radius:8px; }}
+  .swrow {{ display:flex; align-items:center; height:36px; margin:4px 0; }}
+  .swbar {{ width:38%; height:100%; border-radius:4px; }}
+  .swlabel {{
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color:#e5e5e5; font-size:13px; margin-left:14px; white-space:pre;
+  }}
+</style>
+<div class="swatches">
+{rows}</div>"##
     )
-    return fig
+}
 
+// ---------- Hero example HTML ----------------------------------------------
 
-# ---------- Hero example HTML ----------------------------------------------
+fn build_hero_html(palette: &[Swatch]) -> String {
+    let css_vars: String = palette
+        .iter()
+        .map(|s| format!("      --{}: {};", s.name, oklch_css(s.l, s.c, s.h)))
+        .collect::<Vec<_>>()
+        .join("\n");
 
-def build_hero_html():
-    """Return a <section> using the palette via CSS custom properties.
-
-    Native CSS oklch() — every recent browser supports it. We bind names
-    to values from PALETTE so this stays in sync with the swatch chart.
-    """
-    css_vars = "\n      ".join(
-        f"--{name}: {oklch_css(*lch)};" for _, name, lch in PALETTE
-    )
-    return f"""
+    format!(
+        r##"
     <style>
       .demo-root {{
-        {css_vars}
+{css_vars}
         --radius: 8px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         color: var(--text);
@@ -311,16 +314,19 @@ def build_hero_html():
         <span><a href="#">Privacy</a> &middot; <a href="#">Terms</a> &middot; <a href="#">Disclosures</a></span>
       </div>
     </div>
-    """
+    "##
+    )
+}
 
+// ---------- Compose final HTML ---------------------------------------------
 
-# ---------- Compose final HTML ---------------------------------------------
+fn main() {
+    let palette = palette();
+    let swatch_html = build_swatch_html(&palette);
+    let hero_html = build_hero_html(&palette);
 
-def main():
-    fig = build_swatch_fig()
-    swatch_html = fig.to_html(include_plotlyjs="cdn", full_html=False)
-
-    page = f"""<!doctype html>
+    let page = format!(
+        r#"<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -339,15 +345,26 @@ def main():
   <div class="section-title">Palette (OKLCH)</div>
   <div class="wrap">{swatch_html}</div>
   <div class="section-title">Hero example using the same colors</div>
-  <div class="wrap">{build_hero_html()}</div>
+  <div class="wrap">{hero_html}</div>
 </body>
 </html>
-"""
-    out = Path(tempfile.mkdtemp(prefix="colorscheme-")) / "explore.html"
-    out.write_text(page)
-    print(f"wrote {out}")
-    webbrowser.open(out.as_uri())
+"#
+    );
 
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("monotonic since epoch")
+        .as_nanos();
+    let dir = std::env::temp_dir().join(format!("colorscheme-{nanos}"));
+    fs::create_dir_all(&dir).expect("create temp dir");
+    let out: PathBuf = dir.join("explore.html");
+    fs::write(&out, page).expect("write explore.html");
+    println!("wrote {}", out.display());
 
-if __name__ == "__main__":
-    main()
+    let uri = format!("file://{}", out.display());
+    let status = Command::new("xdg-open")
+        .arg(&uri)
+        .status()
+        .expect("xdg-open must be on PATH to open browser");
+    assert!(status.success(), "xdg-open exited with {status}");
+}

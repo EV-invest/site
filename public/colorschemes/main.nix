@@ -15,7 +15,7 @@
   # brand (hue 260, anchor)
   brand = { L = 0.256; C = 0.100; H = 260; };
   brand_fg = { L = 0.780; C = 0.110; H = 260; };
-  brand_hi = { L = 0.880; C = 0.080; H = 260; };
+  brand_hi = { L = 0.880; C = 0.080; H = 260; }; #TODO: connect with colorscheme
 
   # state
   danger = { L = 0.700; C = 0.160; H = 8; };
