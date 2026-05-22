@@ -13,7 +13,7 @@ shadcn_ui = { workspace = true }
 getrandom = { version = "0.3", features = ["wasm_js"] }
 
 [build-dependencies]
-serde_json = { workspace = true }
+serde_json.workspace = true
 
 [lints]
 workspace = true

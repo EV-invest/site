@@ -1,120 +1,150 @@
-#!/home/v/nix/home/scripts/nix-run-cached
 ---cargo
 [dependencies]
+clap = { version = "4.5", features = ["derive"] }
 ---
 
-//! Render the current SOTA colorscheme draft as:
+//! Render a colorscheme draft as:
 //!   1. horizontal swatches (top of HTML), one row per named color
 //!   2. a hand-styled example hero page below, using those same colors
 //!
 //! Run from repo root:
-//!   ./examples/colorscheme/explore.rs
+//!   ./examples/colorscheme/run.sh
 //!
-//! Writes a temp HTML file and opens it in the browser. The palette lives in
-//! `palette()` below; edit the (L, C, H) triples and re-run to iterate.
-//! Recipe behind the values is in log/colorscheme.md.
+//! The palette is loaded from a .nix file (flat attrset of `{ L; C; H; }`),
+//! defaulting to `public/colorschemes/main.nix`. Recipe behind the values
+//! is in log/colorscheme.md.
 
-use std::fmt::Write as _;
-use std::fs;
-use std::path::PathBuf;
-use std::process::Command;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::{
+	fmt::Write as _,
+	fs,
+	path::{Path, PathBuf},
+	process::Command,
+	time::{SystemTime, UNIX_EPOCH},
+};
+
+use clap::Parser;
 
 // ---------- OKLCH -> sRGB hex (D65) ----------------------------------------
 
 fn oklch_to_linear_srgb(l: f64, c: f64, h_deg: f64) -> (f64, f64, f64) {
-    let h = h_deg.to_radians();
-    let a = c * h.cos();
-    let b = c * h.sin();
+	let h = h_deg.to_radians();
+	let a = c * h.cos();
+	let b = c * h.sin();
 
-    let l_ = l + 0.396_337_777_4 * a + 0.215_803_757_3 * b;
-    let m_ = l - 0.105_561_345_8 * a - 0.063_854_172_8 * b;
-    let s_ = l - 0.089_484_177_5 * a - 1.291_485_548_0 * b;
+	let l_ = l + 0.396_337_777_4 * a + 0.215_803_757_3 * b;
+	let m_ = l - 0.105_561_345_8 * a - 0.063_854_172_8 * b;
+	let s_ = l - 0.089_484_177_5 * a - 1.291_485_548_0 * b;
 
-    let (l3, m3, s3) = (l_.powi(3), m_.powi(3), s_.powi(3));
+	let (l3, m3, s3) = (l_.powi(3), m_.powi(3), s_.powi(3));
 
-    let r = 4.076_741_662_1 * l3 - 3.307_711_591_3 * m3 + 0.230_969_929_2 * s3;
-    let g = -1.268_438_004_6 * l3 + 2.609_757_401_1 * m3 - 0.341_319_396_5 * s3;
-    let b_ = -0.004_196_086_3 * l3 - 0.703_418_614_7 * m3 + 1.707_614_701_0 * s3;
-    (r, g, b_)
+	let r = 4.076_741_662_1 * l3 - 3.307_711_591_3 * m3 + 0.230_969_929_2 * s3;
+	let g = -1.268_438_004_6 * l3 + 2.609_757_401_1 * m3 - 0.341_319_396_5 * s3;
+	let b_ = -0.004_196_086_3 * l3 - 0.703_418_614_7 * m3 + 1.707_614_701_0 * s3;
+	(r, g, b_)
 }
 
 fn linear_to_srgb(c: f64) -> f64 {
-    let c = c.clamp(0.0, 1.0);
-    if c <= 0.003_130_8 { 12.92 * c } else { 1.055 * c.powf(1.0 / 2.4) - 0.055 }
+	let c = c.clamp(0.0, 1.0);
+	if c <= 0.003_130_8 { 12.92 * c } else { 1.055 * c.powf(1.0 / 2.4) - 0.055 }
 }
 
 fn oklch_hex(l: f64, c: f64, h: f64) -> String {
-    let (r, g, b) = oklch_to_linear_srgb(l, c, h);
-    let to_byte = |x: f64| (linear_to_srgb(x) * 255.0).round().clamp(0.0, 255.0) as u8;
-    format!("#{:02X}{:02X}{:02X}", to_byte(r), to_byte(g), to_byte(b))
+	let (r, g, b) = oklch_to_linear_srgb(l, c, h);
+	let to_byte = |x: f64| (linear_to_srgb(x) * 255.0).round().clamp(0.0, 255.0) as u8;
+	format!("#{:02X}{:02X}{:02X}", to_byte(r), to_byte(g), to_byte(b))
 }
 
 fn oklch_css(l: f64, c: f64, h: f64) -> String {
-    format!("oklch({l:.3} {c:.3} {h:.1})")
+	format!("oklch({l:.3} {c:.3} {h:.1})")
 }
 
-// ---------- The palette ----------------------------------------------------
-// All values derived from anchor oklch(0.256 0.10 260) per log/colorscheme.md
-
-const H_BRAND: f64 = 260.0;
-const H_NEUTRAL: f64 = 280.0;
+// ---------- Palette loaded from a .nix file --------------------------------
 
 struct Swatch {
-    name: &'static str,
-    l: f64,
-    c: f64,
-    h: f64,
+	name: String,
+	l: f64,
+	c: f64,
+	h: f64,
 }
 
-const fn s(name: &'static str, l: f64, c: f64, h: f64) -> Swatch {
-    Swatch { name, l, c, h }
-}
+/// Parse the small fixed format used by `public/colorschemes/*.nix`:
+///   `<name> = { L = <num>; C = <num>; H = <num>; };`
+/// Lines that don't match (blank, comment, braces) are skipped.
+fn load_palette(path: &Path) -> Vec<Swatch> {
+	let text = fs::read_to_string(path).unwrap_or_else(|e| panic!("read {}: {e}", path.display()));
 
-fn palette() -> Vec<Swatch> {
-    vec![
-        s("bg_deep",  0.16,  0.020, H_NEUTRAL),
-        s("bg",       0.20,  0.025, H_NEUTRAL),
-        s("surface",  0.24,  0.030, H_NEUTRAL),
-        s("elevated", 0.30,  0.034, H_NEUTRAL),
-        s("border",   0.40,  0.038, H_NEUTRAL),
-        s("muted",    0.55,  0.040, H_NEUTRAL),
-        s("subtle",   0.70,  0.042, H_NEUTRAL),
-        s("text",     0.90,  0.040, H_NEUTRAL),
+	let mut out = Vec::new();
+	for raw in text.lines() {
+		let line = raw.split('#').next().expect("split always yields one item").trim();
+		if line.is_empty() || !line.contains('=') || !line.contains('{') {
+			continue;
+		}
 
-        s("brand",    0.256, 0.10,  H_BRAND), // the anchor
-        s("brand_fg", 0.78,  0.11,  H_BRAND),
-        s("brand_hi", 0.88,  0.08,  H_BRAND),
+		let (name, rest) = line.split_once('=').expect("checked contains '='");
+		let name = name.trim().to_string();
 
-        s("danger",   0.70,  0.16,    8.0),
-        s("warning",  0.82,  0.13,   75.0),
-        s("success",  0.80,  0.13,  145.0),
-        s("info",     0.78,  0.10,  230.0),
-    ]
+		// rest: "{ L = X; C = Y; H = Z; };"
+		let inner = rest
+			.trim()
+			.strip_prefix('{')
+			.unwrap_or_else(|| panic!("expected '{{' in: {line}"))
+			.trim()
+			.trim_end_matches(';')
+			.trim()
+			.strip_suffix('}')
+			.unwrap_or_else(|| panic!("expected '}}' in: {line}"))
+			.trim();
+
+		let mut l = None;
+		let mut c = None;
+		let mut h = None;
+		for assign in inner.split(';') {
+			let assign = assign.trim();
+			if assign.is_empty() {
+				continue;
+			}
+			let (k, v) = assign.split_once('=').unwrap_or_else(|| panic!("expected 'k = v' in: {assign}"));
+			let v: f64 = v.trim().parse().unwrap_or_else(|e| panic!("parse {v:?} as f64: {e}"));
+			match k.trim() {
+				"L" => l = Some(v),
+				"C" => c = Some(v),
+				"H" => h = Some(v),
+				other => panic!("unknown key {other:?} in {line}"),
+			}
+		}
+
+		out.push(Swatch {
+			name,
+			l: l.expect("L set on every line"),
+			c: c.expect("C set on every line"),
+			h: h.expect("H set on every line"),
+		});
+	}
+
+	assert!(!out.is_empty(), "no swatches parsed from {}", path.display());
+	out
 }
 
 // ---------- Swatches as plain HTML -----------------------------------------
 
 fn build_swatch_html(palette: &[Swatch]) -> String {
-    let mut rows = String::new();
-    for sw in palette {
-        let hex = oklch_hex(sw.l, sw.c, sw.h);
-        let label = format!(
-            "{:<10}  L={:.3}  C={:.3}  H={:>5.1}",
-            sw.name, sw.l, sw.c, sw.h
-        );
-        write!(
-            rows,
-            r##"<div class="swrow">
+	let mut rows = String::new();
+	for sw in palette {
+		let hex = oklch_hex(sw.l, sw.c, sw.h);
+		let label = format!("{:<10}  L={:.3}  C={:.3}  H={:>5.1}", sw.name, sw.l, sw.c, sw.h);
+		write!(
+			rows,
+			r##"<div class="swrow">
   <div class="swbar" style="background:{hex}"></div>
   <div class="swlabel">{label}  {hex}</div>
 </div>
 "##
-        ).expect("write into String never fails");
-    }
+		)
+		.expect("write into String never fails");
+	}
 
-    format!(
-        r##"<style>
+	format!(
+		r##"<style>
   .swatches {{ background:#111; padding:20px; border-radius:8px; }}
   .swrow {{ display:flex; align-items:center; height:36px; margin:4px 0; }}
   .swbar {{ width:38%; height:100%; border-radius:4px; }}
@@ -125,20 +155,20 @@ fn build_swatch_html(palette: &[Swatch]) -> String {
 </style>
 <div class="swatches">
 {rows}</div>"##
-    )
+	)
 }
 
 // ---------- Hero example HTML ----------------------------------------------
 
 fn build_hero_html(palette: &[Swatch]) -> String {
-    let css_vars: String = palette
-        .iter()
-        .map(|s| format!("      --{}: {};", s.name, oklch_css(s.l, s.c, s.h)))
-        .collect::<Vec<_>>()
-        .join("\n");
+	let css_vars: String = palette
+		.iter()
+		.map(|s| format!("      --{}: {};", s.name, oklch_css(s.l, s.c, s.h)))
+		.collect::<Vec<_>>()
+		.join("\n");
 
-    format!(
-        r##"
+	format!(
+		r##"
     <style>
       .demo-root {{
 {css_vars}
@@ -315,18 +345,28 @@ fn build_hero_html(palette: &[Swatch]) -> String {
       </div>
     </div>
     "##
-    )
+	)
 }
 
 // ---------- Compose final HTML ---------------------------------------------
 
-fn main() {
-    let palette = palette();
-    let swatch_html = build_swatch_html(&palette);
-    let hero_html = build_hero_html(&palette);
+#[derive(Parser)]
+#[command(about = "Render a colorscheme as swatches + a hero example, open in browser")]
+struct Args {
+	/// Path to a colorscheme .nix file (flat attrset of `{ L; C; H; }` entries).
+	#[arg(long, default_value = "public/colorschemes/main.nix")]
+	colorscheme: PathBuf,
+}
 
-    let page = format!(
-        r#"<!doctype html>
+fn main() {
+	let args = Args::parse();
+
+	let palette = load_palette(&args.colorscheme);
+	let swatch_html = build_swatch_html(&palette);
+	let hero_html = build_hero_html(&palette);
+
+	let page = format!(
+		r#"<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -341,30 +381,25 @@ fn main() {
 </style>
 </head>
 <body>
-  <h1 class="page">EV colorscheme — exploration</h1>
+  <h1 class="page">EV colorscheme — exploration ({source})</h1>
   <div class="section-title">Palette (OKLCH)</div>
   <div class="wrap">{swatch_html}</div>
   <div class="section-title">Hero example using the same colors</div>
   <div class="wrap">{hero_html}</div>
 </body>
 </html>
-"#
-    );
+"#,
+		source = args.colorscheme.display(),
+	);
 
-    let nanos = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("monotonic since epoch")
-        .as_nanos();
-    let dir = std::env::temp_dir().join(format!("colorscheme-{nanos}"));
-    fs::create_dir_all(&dir).expect("create temp dir");
-    let out: PathBuf = dir.join("explore.html");
-    fs::write(&out, page).expect("write explore.html");
-    println!("wrote {}", out.display());
+	let nanos = SystemTime::now().duration_since(UNIX_EPOCH).expect("monotonic since epoch").as_nanos();
+	let dir = std::env::temp_dir().join(format!("colorscheme-{nanos}"));
+	fs::create_dir_all(&dir).expect("create temp dir");
+	let out: PathBuf = dir.join("explore.html");
+	fs::write(&out, page).expect("write explore.html");
+	println!("wrote {}", out.display());
 
-    let uri = format!("file://{}", out.display());
-    let status = Command::new("xdg-open")
-        .arg(&uri)
-        .status()
-        .expect("xdg-open must be on PATH to open browser");
-    assert!(status.success(), "xdg-open exited with {status}");
+	let uri = format!("file://{}", out.display());
+	let status = Command::new("xdg-open").arg(&uri).status().expect("xdg-open must be on PATH to open browser");
+	assert!(status.success(), "xdg-open exited with {status}");
 }
