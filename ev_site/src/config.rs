@@ -44,12 +44,14 @@ pub struct Colorscheme {
 #[serde(rename_all = "snake_case")]
 pub enum PreconfiguredColorscheme {
 	#[default]
-	Main,
+	Dark,
+	Light,
 }
 impl PreconfiguredColorscheme {
 	pub fn colors(self) -> &'static Colorscheme {
 		match self {
-			Self::Main => &COLORSCHEME_MAIN,
+			Self::Dark => &COLORSCHEME_DARK,
+			Self::Light => &COLORSCHEME_LIGHT,
 		}
 	}
 }

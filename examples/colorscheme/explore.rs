@@ -1,17 +1,38 @@
+#!/usr/bin/env nix
 ---cargo
+#! nix shell --impure --expr ``
+#! nix let rust_flake = builtins.getFlake ''github:oxalica/rust-overlay'';
+#! nix     nixpkgs_flake = builtins.getFlake ''nixpkgs'';
+#! nix     pkgs = import nixpkgs_flake {
+#! nix       system = builtins.currentSystem;
+#! nix       overlays = [rust_flake.overlays.default];
+#! nix     };
+#! nix     toolchain = pkgs.rust-bin.nightly."2025-10-10".default.override {
+#! nix       extensions = ["rust-src"];
+#! nix     };
+#! nix
+#! nix in pkgs.symlinkJoin {
+#! nix   name = "env";
+#! nix   paths = [ toolchain pkgs.wtype ];
+#! nix }
+#! nix ``
+#! nix --command sh -c ``cargo -Zscript -q "$0" "$@"``
+
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
 ---
+
+
 
 //! Render a colorscheme draft as:
 //!   1. horizontal swatches (top of HTML), one row per named color
 //!   2. a hand-styled example hero page below, using those same colors
 //!
 //! Run from repo root:
-//!   ./examples/colorscheme/run.sh
+//!   ./examples/colorscheme/explore.rs [--colorscheme PATH]
 //!
 //! The palette is loaded from a .nix file (flat attrset of `{ L; C; H; }`),
-//! defaulting to `public/colorschemes/main.nix`. Recipe behind the values
+//! defaulting to `public/colorschemes/dark.nix`. Recipe behind the values
 //! is in log/colorscheme.md.
 
 use std::{
@@ -173,9 +194,12 @@ fn build_hero_html(palette: &[Swatch]) -> String {
       .demo-root {{
 {css_vars}
         --radius: 8px;
+        /* Paper grain — inline SVG noise, layered above each surface's solid
+           color. Alpha is tiny on purpose (reads as fiber, not texture). */
+        --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         color: var(--text);
-        background: var(--bg);
+        background: var(--grain), var(--bg);
         padding: 0;
         margin: 0 auto;
         max-width: 1100px;
@@ -186,7 +210,7 @@ fn build_hero_html(palette: &[Swatch]) -> String {
       .demo-root * {{ box-sizing: border-box; }}
       .nav {{
         display: flex; align-items: center; justify-content: space-between;
-        padding: 16px 28px; background: var(--bg_deep);
+        padding: 16px 28px; background: var(--grain), var(--bg_deep);
         border-bottom: 1px solid var(--border);
       }}
       .nav .logo {{
@@ -202,14 +226,17 @@ fn build_hero_html(palette: &[Swatch]) -> String {
       .nav a {{ color: var(--subtle); margin-left: 22px; text-decoration: none; font-size: 14px; }}
       .nav a:hover {{ color: var(--brand_fg); }}
 
-      .hero {{ padding: 64px 48px 48px; background: var(--brand); }}
+      .hero {{
+        padding: 64px 48px 48px; background: var(--grain), var(--elevated);
+        border-top: 4px solid var(--brand);
+      }}
       .hero h1 {{
         margin: 0 0 16px; font-size: 44px; line-height: 1.1; color: var(--text);
         max-width: 640px;
       }}
       .hero p.lead {{
-        margin: 0 0 32px; font-size: 18px; color: var(--brand_hi);
-        max-width: 560px; opacity: 0.9;
+        margin: 0 0 32px; font-size: 18px; color: var(--muted);
+        max-width: 560px;
       }}
       .btn {{
         display: inline-flex; align-items: center; gap: 8px;
@@ -225,20 +252,20 @@ fn build_hero_html(palette: &[Swatch]) -> String {
       }}
       .btn-ghost:hover {{ border-color: var(--brand_fg); color: var(--brand_fg); }}
 
-      .body {{ padding: 48px; background: var(--bg); }}
+      .body {{ padding: 48px; background: var(--grain), var(--bg); }}
       .body h2 {{ margin: 0 0 12px; font-size: 22px; color: var(--text); }}
       .body p {{ color: var(--subtle); line-height: 1.6; }}
       .body p .muted {{ color: var(--muted); }}
 
       .cards {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 28px; }}
       .card {{
-        background: var(--surface); border: 1px solid var(--border);
+        background: var(--grain), var(--surface); border: 1px solid var(--border);
         border-radius: var(--radius); padding: 20px;
       }}
       .card h3 {{ margin: 0 0 8px; font-size: 15px; color: var(--text); }}
       .card p  {{ margin: 0; font-size: 13px; color: var(--muted); }}
       .card .num {{ font-size: 28px; font-weight: 700; color: var(--brand_fg); }}
-      .card.elevated {{ background: var(--elevated); }}
+      .card.elevated {{ background: var(--grain), var(--elevated); }}
 
       .states {{
         display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px;
@@ -354,7 +381,7 @@ fn build_hero_html(palette: &[Swatch]) -> String {
 #[command(about = "Render a colorscheme as swatches + a hero example, open in browser")]
 struct Args {
 	/// Path to a colorscheme .nix file (flat attrset of `{ L; C; H; }` entries).
-	#[arg(long, default_value = "public/colorschemes/main.nix")]
+	#[arg(long, default_value = "public/colorschemes/dark.nix")]
 	colorscheme: PathBuf,
 }
 

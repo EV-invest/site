@@ -6,7 +6,7 @@ mod routes;
 mod shell;
 mod utils;
 
-use config::{COLORSCHEME_MAIN, Colorscheme};
+use config::{COLORSCHEME_DARK, Colorscheme};
 use dioxus::prelude::*;
 use routes::{Contact, Disclosures, Home, Insights, Methodology, PageNotFound, Portfolio, Privacy, Strategy, Subscribe, Terms, Thesis};
 
@@ -15,7 +15,7 @@ use routes::{Contact, Disclosures, Home, Insights, Methodology, PageNotFound, Po
 #[component]
 pub fn App() -> Element {
 	rsx! {
-		style { {build_root_css(&COLORSCHEME_MAIN)} }
+		style { {build_root_css(&COLORSCHEME_DARK)} }
 		// Shared button hover behaviour — kept at app level because `.btn-*` classes
 		// recur across many pages. Base look stays inline on each button.
 		style { {r#"
