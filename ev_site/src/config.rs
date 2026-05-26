@@ -45,12 +45,14 @@ pub struct Colorscheme {
 pub enum PreconfiguredColorscheme {
 	#[default]
 	Dark,
+	DarkVietnam,
 	Light,
 }
 impl PreconfiguredColorscheme {
 	pub fn colors(self) -> &'static Colorscheme {
 		match self {
 			Self::Dark => &COLORSCHEME_DARK,
+			Self::DarkVietnam => &COLORSCHEME_DARK_VIETNAM,
 			Self::Light => &COLORSCHEME_LIGHT,
 		}
 	}
