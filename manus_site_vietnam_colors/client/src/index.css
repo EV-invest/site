@@ -1,0 +1,129 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* New Professional Palette from User Screenshot */
+  --color-bg-deep: #090B0F;
+  --color-bg-main: #111418;
+  --color-surface: #1A1D23;
+  --color-elevated: #272C32;
+  --color-border-custom: #3D434C;
+  --color-muted-custom: #6B727E;
+  --color-subtle-custom: #979FAC;
+  --color-text-custom: #DAE2EF;
+  --color-brand-blue: #011F52;
+  --color-brand-fg: #8EB8FE;
+  --color-brand-hi: #E6E1D3;
+  --color-danger-custom: #F17264;
+  --color-warning-custom: #E5C057;
+  --color-success-custom: #78D694;
+  --color-info-custom: #59CADC;
+}
+
+:root {
+  /* Default Theme: Deep Blue-Gray Institutional */
+  --background: #090B0F; /* bg_deep */
+  --foreground: #DAE2EF; /* text */
+  --card: #111418; /* bg */
+  --card-foreground: #DAE2EF;
+  --popover: #111418;
+  --popover-foreground: #DAE2EF;
+  --primary: #8EB8FE; /* brand_fg */
+  --primary-foreground: #090B0F;
+  --secondary: #011F52; /* brand */
+  --secondary-foreground: #DAE2EF;
+  --muted: #1A1D23; /* surface */
+  --muted-foreground: #6B727E; /* muted */
+  --accent: #8EB8FE;
+  --accent-foreground: #090B0F;
+  --destructive: #F17264; /* danger */
+  --destructive-foreground: #DAE2EF;
+  --border: #3D434C; /* border */
+  --input: #3D434C;
+  --ring: #8EB8FE;
+  --radius: 0px; /* Sharp corners for premium architectural aesthetic */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-brand-fg selection:text-bg-deep;
+  }
+  
+  h1, h2, h3, .font-serif-display {
+    font-family: 'Playfair Display', 'Merriweather', serif;
+    letter-spacing: -0.01em;
+  }
+  
+  .font-mono-tech {
+    font-family: 'Space Mono', monospace;
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+      max-width: 1440px;
+    }
+  }
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090B0F;
+}
+::-webkit-scrollbar-thumb {
+  background: #1A1D23;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8EB8FE;
+}
