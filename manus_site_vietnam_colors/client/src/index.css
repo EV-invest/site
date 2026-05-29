@@ -27,47 +27,69 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 
-  /* New Professional Palette from User Screenshot */
-  --color-bg-deep: #090B0F;
-  --color-bg-main: #111418;
-  --color-surface: #1A1D23;
-  --color-elevated: #272C32;
-  --color-border-custom: #3D434C;
-  --color-muted-custom: #6B727E;
-  --color-subtle-custom: #979FAC;
-  --color-text-custom: #DAE2EF;
-  --color-brand-blue: #011F52;
-  --color-brand-fg: #8EB8FE;
-  --color-brand-hi: #E6E1D3;
-  --color-danger-custom: #F17264;
-  --color-warning-custom: #E5C057;
-  --color-success-custom: #78D694;
-  --color-info-custom: #59CADC;
+  /* Vietnam-inspired Custom Colors */
+  --color-viet-red: #DA251D;
+  --color-viet-pink: #E58AAE;
+  --color-viet-gold: #F2C94C;
+  --color-viet-green: #1F6F43;
+  --color-viet-teal: #2A9D8F;
+  --color-viet-brown: #6B3F2A;
+  --color-viet-mist: #E6E1D3;
+  --color-viet-black: #171717;
 }
 
 :root {
-  /* Default Theme: Deep Blue-Gray Institutional */
-  --background: #090B0F; /* bg_deep */
-  --foreground: #DAE2EF; /* text */
-  --card: #111418; /* bg */
-  --card-foreground: #DAE2EF;
-  --popover: #111418;
-  --popover-foreground: #DAE2EF;
-  --primary: #8EB8FE; /* brand_fg */
-  --primary-foreground: #090B0F;
-  --secondary: #011F52; /* brand */
-  --secondary-foreground: #DAE2EF;
-  --muted: #1A1D23; /* surface */
-  --muted-foreground: #6B727E; /* muted */
-  --accent: #8EB8FE;
-  --accent-foreground: #090B0F;
-  --destructive: #F17264; /* danger */
-  --destructive-foreground: #DAE2EF;
-  --border: #3D434C; /* border */
-  --input: #3D434C;
-  --ring: #8EB8FE;
-  --radius: 0px; /* Sharp corners for premium architectural aesthetic */
+  /* Default Theme: Dark Premium */
+  --background: #171717; /* Ink Black */
+  --foreground: #E6E1D3; /* Limestone Mist */
+  --card: #1f1f1f;
+  --card-foreground: #E6E1D3;
+  --popover: #171717;
+  --popover-foreground: #E6E1D3;
+  --primary: #F2C94C; /* Rice Gold */
+  --primary-foreground: #171717;
+  --secondary: #2A9D8F; /* Ha Long Teal */
+  --secondary-foreground: #171717;
+  --muted: #2d2d2d;
+  --muted-foreground: #a39f95;
+  --accent: #2A9D8F;
+  --accent-foreground: #E6E1D3;
+  --destructive: #DA251D; /* Flag Red */
+  --destructive-foreground: #E6E1D3;
+  --border: #2d2d2d;
+  --input: #2d2d2d;
+  --ring: #F2C94C;
+  --radius: 0.25rem; /* Minimalist, sharp corners like high-end architecture */
+}
+
+/* Light Theme (For Academic/Research Section in Bridgewater style) */
+.light-academic {
+  --background: #E6E1D3; /* Limestone Mist */
+  --foreground: #171717; /* Ink Black */
+  --card: #f2ede4;
+  --card-foreground: #171717;
+  --popover: #E6E1D3;
+  --popover-foreground: #171717;
+  --primary: #2A9D8F; /* Ha Long Teal */
+  --primary-foreground: #E6E1D3;
+  --secondary: #1F6F43; /* Jungle Green */
+  --secondary-foreground: #E6E1D3;
+  --muted: #dad5c7;
+  --muted-foreground: #5c584f;
+  --accent: #1F6F43;
+  --accent-foreground: #E6E1D3;
+  --border: #cbc6ba;
+  --input: #cbc6ba;
+  --ring: #2A9D8F;
 }
 
 @layer base {
@@ -76,12 +98,13 @@
     font-family: 'Space Grotesk', 'Inter', sans-serif;
   }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-brand-fg selection:text-bg-deep;
+    @apply bg-background text-foreground antialiased selection:bg-viet-gold selection:text-viet-black;
   }
   
+  /* Custom serif headings for premium contrast */
   h1, h2, h3, .font-serif-display {
     font-family: 'Playfair Display', 'Merriweather', serif;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
   
   .font-mono-tech {
@@ -118,12 +141,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #090B0F;
+  background: #171717;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1A1D23;
-  border-radius: 0px;
+  background: #2d2d2d;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8EB8FE;
+  background: #F2C94C;
 }

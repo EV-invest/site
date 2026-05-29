@@ -111,12 +111,6 @@
               pkg-config
               rust
               tailwindcss_4
-              # `py` module's shellHook calls `uv venv` + activates it, but
-              # contributes no packages itself (its enabledPackages = []). It
-              # expects the consumer to provide `uv` (devenv does this via
-              # languages.python.uv.enable; we use plain mkShell, so add it here).
-              uv
-              python312
               wasm-bindgen-cli
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 
