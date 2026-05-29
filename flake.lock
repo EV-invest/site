@@ -255,11 +255,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1779213953,
-        "narHash": "sha256-75s/rC/+qEwRV7yfiATy4OWMqN5jUZOyN9Xvgn8IYIk=",
+        "lastModified": 1779767013,
+        "narHash": "sha256-zAi8YjD3m0BgDDiFN8odL9PnoeAm5+UZHXpA2ihZBUM=",
         "owner": "valeratrades",
         "repo": "v_flakes",
-        "rev": "5e993c1b5a8444fa118556de763a5e43e58acce3",
+        "rev": "4123e2354c782dd47dbba97660a58b147ea535b1",
         "type": "github"
       },
       "original": {

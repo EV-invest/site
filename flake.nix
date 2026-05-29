@@ -89,15 +89,34 @@
               + combined.shellHook
               + ''
                 cp -f ${(v_flakes.files.treefmt) { inherit pkgs; }} ./.treefmt.toml
+
+                # Provision the exact pnpm pinned by each subproject's
+                # `packageManager` field (e.g. manus_site_*: pnpm@10.4.1) via
+                # corepack. nixpkgs' `pnpm` tracks a single version and would
+                # not match the pin, so we let corepack resolve it instead.
+                # Shims live under .direnv (gitignored, writable) so the
+                # read-only /nix/store node install is never touched.
+                export COREPACK_HOME="$PWD/.direnv/corepack"
+                mkdir -p "$COREPACK_HOME/bin"
+                corepack enable --install-directory "$COREPACK_HOME/bin" pnpm
+                export PATH="$COREPACK_HOME/bin:$PATH"
               '';
 
             packages = [
+              corepack
               dioxus-cli
               mold
+              nodejs
               openssl
               pkg-config
               rust
               tailwindcss_4
+              # `py` module's shellHook calls `uv venv` + activates it, but
+              # contributes no packages itself (its enabledPackages = []). It
+              # expects the consumer to provide `uv` (devenv does this via
+              # languages.python.uv.enable; we use plain mkShell, so add it here).
+              uv
+              python312
               wasm-bindgen-cli
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 
