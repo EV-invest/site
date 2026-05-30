@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 #[cfg(not(target_arch = "wasm32"))]
 use v_utils::macros as v_macros;
 
@@ -40,12 +40,13 @@ pub struct Colorscheme {
 	pub info: Oklch,
 }
 /// User-facing selector for one of the colorschemes bundled at compile time from `public/colorschemes/`.
-#[derive(Clone, Copy, Debug, Default, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PreconfiguredColorscheme {
 	#[default]
 	Dark,
 	DarkVietnam,
+	VietnamColorful,
 	Light,
 }
 impl PreconfiguredColorscheme {
@@ -53,6 +54,7 @@ impl PreconfiguredColorscheme {
 		match self {
 			Self::Dark => &COLORSCHEME_DARK,
 			Self::DarkVietnam => &COLORSCHEME_DARK_VIETNAM,
+			Self::VietnamColorful => &COLORSCHEME_VIETNAM_COLORFUL,
 			Self::Light => &COLORSCHEME_LIGHT,
 		}
 	}
