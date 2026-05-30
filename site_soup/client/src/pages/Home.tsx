@@ -471,8 +471,8 @@ export default function Home() {
                   onClick={() => setActiveResearch(idx)}
                   className={`p-6 border border-l-2 cursor-pointer transition-all duration-300 ${
                     activeResearch === idx
-                      ? "bg-viet-card border-viet-mist/10 border-l-viet-teal"
-                      : "border-viet-mist/10 border-l-transparent hover:border-l-viet-mist/30 bg-transparent"
+                      ? "research-panel border-viet-mist/10 border-l-viet-teal shadow-lg shadow-viet-black/50"
+                      : "bg-viet-card/40 border-viet-mist/10 border-l-transparent hover:bg-viet-card/70 hover:border-l-viet-mist/30"
                   }`}
                 >
                   <span className="text-[10px] font-mono-tech text-viet-teal uppercase tracking-widest block mb-2">{report.cat}</span>
@@ -485,8 +485,10 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Research Preview Content Pane */}
-            <div className="lg:col-span-2 bg-viet-card border border-viet-mist/10 p-8 sm:p-12 flex flex-col justify-between">
+            {/* Research Preview Content Pane — darker, opaque reading field so the
+                dot texture stops at the edge and the dim body text is easy to focus on.
+                `.research-panel` adds a soft warm "low sun" from the top-left. */}
+            <div className="research-panel lg:col-span-2 border border-viet-mist/10 shadow-2xl shadow-viet-black/60 p-8 sm:p-12 flex flex-col justify-between">
               <div>
                 <div className="flex flex-wrap justify-between items-start gap-4 border-b border-viet-mist/10 pb-6 mb-8">
                   <div>
@@ -501,12 +503,12 @@ export default function Home() {
                         : "Post-Pandemic Hospitality Yield Shifts"}
                     </h3>
                   </div>
-                  <div className="flex items-center gap-2 font-mono-tech text-xs text-viet-mist/50 bg-viet-black/40 px-3 py-1.5 border border-viet-mist/10">
+                  <div className="flex items-center gap-2 font-mono-tech text-xs text-viet-mist/50 bg-viet-mist/[0.04] px-3 py-1.5">
                     <FileText className="w-4 h-4" /> PDF 4.2 MB
                   </div>
                 </div>
 
-                <div className="prose prose-sm text-viet-mist/70 font-light max-w-none space-y-6 leading-relaxed">
+                <div className="prose prose-sm text-viet-mist/80 font-light max-w-none space-y-6 leading-relaxed">
                   {activeResearch === 0 ? (
                     <>
                       <p className="font-serif-display italic text-lg text-viet-mist/90">
