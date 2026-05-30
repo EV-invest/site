@@ -1,0 +1,155 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ────────────────────────────────────────────────────────────────────
+     Navy-led institutional palette.
+
+     Mirrors public/colorschemes/dark_vietnam.nix in spirit: the resting
+     page is a quiet navy/charcoal ramp with ivory text (trust + legitimacy
+     first). The vibrant Vietnam colors are NOT chrome — Ha Long Teal is the
+     single recurring accent; Rice Gold is a rare highlight only; red/green
+     are status-only. The deep oceanic blue from the EV logo is the base.
+
+     `viet-black` is deliberately a deep NAVY-black (not pure ink), so every
+     `bg-viet-black` across the page inherits the trust-tint for free.
+     ──────────────────────────────────────────────────────────────────── */
+
+  /* Brand — deep oceanic blue from the EV Investment logo. */
+  --color-viet-navy: #001E4E;       /* logo brand */
+  --color-viet-navy-soft: #0a2a5e;  /* hover lift on brand surfaces */
+
+  /* Neutrals — navy-tinted dark ramp (the 90% of the page). */
+  --color-viet-black: #070d18;      /* bg_deep — was pure #171717 */
+  --color-viet-surface: #081020;    /* section alt background */
+  --color-viet-card: #0c1626;       /* card / panel surface */
+  --color-viet-mist: #E6E1D3;       /* Limestone Mist — ivory text */
+  --color-viet-silver: #9aa6b8;     /* muted cool-grey secondary text */
+
+  /* Accent — the ONE recurring vibrant: Ha Long Teal. */
+  --color-viet-teal: #2A9D8F;
+
+  /* Rare highlight + status-only Vietnam colors (never structural chrome). */
+  --color-viet-gold: #F2C94C;       /* rare highlight: one hero number, hover */
+  --color-viet-red: #DA251D;        /* status only */
+  --color-viet-pink: #E58AAE;       /* status only */
+  --color-viet-green: #1F6F43;      /* status only */
+  --color-viet-brown: #6B3F2A;      /* retired from chrome; kept for token parity */
+}
+
+:root {
+  /* Dark, navy-led. Brand navy is primary; teal is the accent. */
+  --background: #070d18;            /* navy-black */
+  --foreground: #E6E1D3;            /* Limestone Mist */
+  --card: #0c1626;                  /* navy card surface */
+  --card-foreground: #E6E1D3;
+  --popover: #0c1626;
+  --popover-foreground: #E6E1D3;
+  --primary: #001E4E;               /* logo navy — the brand IS the primary */
+  --primary-foreground: #E6E1D3;
+  --secondary: #081020;
+  --secondary-foreground: #E6E1D3;
+  --muted: #16213a;
+  --muted-foreground: #9aa6b8;      /* cool silver */
+  --accent: #2A9D8F;                /* Ha Long Teal — the single accent */
+  --accent-foreground: #070d18;
+  --destructive: #DA251D;           /* Flag Red — status only */
+  --destructive-foreground: #E6E1D3;
+  --border: #1b2742;                /* silver-navy hairline */
+  --input: #1b2742;
+  --ring: #2A9D8F;                  /* teal focus ring */
+  --radius: 0.5rem;                 /* softened from 0.25 to match good_team's calmer cards */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-viet-teal/30 selection:text-viet-mist;
+  }
+  
+  /* Custom serif headings for premium contrast */
+  h1, h2, h3, .font-serif-display {
+    font-family: 'Playfair Display', 'Merriweather', serif;
+    letter-spacing: -0.02em;
+  }
+  
+  .font-mono-tech {
+    font-family: 'Space Mono', monospace;
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+      max-width: 1440px;
+    }
+  }
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #070d18;
+}
+::-webkit-scrollbar-thumb {
+  background: #1b2742;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2A9D8F;
+}
