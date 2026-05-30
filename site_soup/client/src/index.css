@@ -173,9 +173,9 @@
   background-position: center top, center;
 }
 
-/* Research reading panel — solid dark field with a soft directional "low sun"
-   from the top-left: warm gold at the source, bleeding into brown as it falls
-   off toward the bottom-right, then to nothing. Pure light, no hard chrome. */
+/* Research reading panel — near-black field with a faint, cool, cloudy mottle
+   so the surface has some life without drawing attention to itself. No warmth,
+   no obvious light source; the eye stays on the text. */
 .research-panel {
   position: relative;
   background-color: var(--color-viet-black);
@@ -186,10 +186,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(120% 120% at 0% 0%,
-      rgba(242, 201, 76, 0.10) 0%,    /* gold at the source */
-      rgba(201, 138, 60, 0.06) 28%,   /* bleeding into brown */
-      transparent 62%);
+    radial-gradient(75% 60% at 30% 25%, rgba(154, 166, 184, 0.045), transparent 70%),
+    radial-gradient(60% 80% at 80% 90%, rgba(7, 13, 24, 0.6), transparent 70%);
 }
 .research-panel > * {
   position: relative;
