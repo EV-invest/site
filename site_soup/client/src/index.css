@@ -37,16 +37,24 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ────────────────────────────────────────────────────────────────────
-     Navy-led institutional palette.
+     Navy-led institutional base + a tiered Vietnam-accent system.
 
-     Mirrors public/colorschemes/dark_vietnam.nix in spirit: the resting
-     page is a quiet navy/charcoal ramp with ivory text (trust + legitimacy
-     first). The vibrant Vietnam colors are NOT chrome — Ha Long Teal is the
-     single recurring accent; Rice Gold is a rare highlight only; red/green
-     are status-only. The deep oceanic blue from the EV logo is the base.
+     The resting page is a quiet navy/charcoal ramp with ivory text (trust
+     first). On top of that sits a deliberate 3-tier accent hierarchy so the
+     page reads "jungle-vibrant" without becoming monotone teal:
 
-     `viet-black` is deliberately a deep NAVY-black (not pure ink), so every
-     `bg-viet-black` across the page inherits the trust-tint for free.
+       Tier 1 — Ha Long Teal: the connective workhorse (eyebrows, labels,
+                nav, secondary numbers). Recurring, calm.
+       Tier 2 — Jungle Green: positive financial signals only (yields,
+                growth %, profit, FDI). The "money/growth" read; the actual
+                jungle warmth, used meaningfully not decoratively.
+       Tier 3 — the rare jewels, ≤1 per section, reserved for "this matters":
+                · Rice Gold  — the headline return figures (IRR / ROI / appr.)
+                · Lotus Pink — the original's 3 punctuation moments
+                Flag Red stays status-only.
+
+     `viet-black` is a deep NAVY-black. Adjacent sections are separated by a
+     thin border + a step in the navy ramp (black → surface), never a clash.
      ──────────────────────────────────────────────────────────────────── */
 
   /* Brand — deep oceanic blue from the EV Investment logo. */
@@ -54,21 +62,24 @@
   --color-viet-navy-soft: #0a2a5e;  /* hover lift on brand surfaces */
 
   /* Neutrals — navy-tinted dark ramp (the 90% of the page). */
-  --color-viet-black: #070d18;      /* bg_deep — was pure #171717 */
+  --color-viet-black: #070d18;      /* bg_deep — base background */
   --color-viet-surface: #081020;    /* section alt background */
+  --color-viet-charcoal: #16161b;   /* near-neutral charcoal — for a section that wants a slight, non-stark step off the navy ramp */
   --color-viet-card: #0c1626;       /* card / panel surface */
   --color-viet-mist: #E6E1D3;       /* Limestone Mist — ivory text */
   --color-viet-silver: #9aa6b8;     /* muted cool-grey secondary text */
 
-  /* Accent — the ONE recurring vibrant: Ha Long Teal. */
-  --color-viet-teal: #2A9D8F;
+  /* Tier 1 — recurring workhorse accent. */
+  --color-viet-teal: #2A9D8F;       /* Ha Long Teal */
 
-  /* Rare highlight + status-only Vietnam colors (never structural chrome). */
-  --color-viet-gold: #F2C94C;       /* rare highlight: one hero number, hover */
+  /* Tier 2 — positive financial signal (the jungle "money/growth" read). */
+  --color-viet-green: #2E9E5B;      /* Jungle Green, lifted for legibility on dark */
+
+  /* Tier 3 — rare jewels (≤1 per section) + status. */
+  --color-viet-gold: #F2C94C;       /* headline return figures only */
+  --color-viet-pink: #E58AAE;       /* Lotus — the punctuation jewel */
   --color-viet-red: #DA251D;        /* status only */
-  --color-viet-pink: #E58AAE;       /* status only */
-  --color-viet-green: #1F6F43;      /* status only */
-  --color-viet-brown: #6B3F2A;      /* retired from chrome; kept for token parity */
+  --color-viet-brown: #C98A3C;      /* warm sienna — reserved for a faint accent (the old warm band hue, tamed) */
 }
 
 :root {
@@ -150,6 +161,18 @@
   background: #1b2742;
   border-radius: 3px;
 }
+/* Research-zone texture — a faint dot-grid (the "parked-domain" feel) over a
+   soft centre vignette. Quiet navy base, no colored chrome; the texture alone
+   gives the section depth so it reads as its own zone without a stark clash. */
+.research-texture {
+  background-color: var(--color-viet-surface);
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(42, 157, 143, 0.05), transparent 60%),
+    radial-gradient(rgba(230, 225, 211, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 22px 22px;
+  background-position: center top, center;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #2A9D8F;
 }

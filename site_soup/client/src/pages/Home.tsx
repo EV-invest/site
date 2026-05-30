@@ -14,7 +14,6 @@ import {
   ChevronLeft,
   Globe,
   ArrowRight,
-  ShieldCheck,
   FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -213,7 +212,7 @@ export default function Home() {
             </div>
             <div>
               <p className="text-xs font-mono-tech text-viet-mist/50 uppercase tracking-widest mb-1">Institutional Grade</p>
-              <p className="text-2xl sm:text-3xl font-serif-display text-white font-bold">100%</p>
+              <p className="text-2xl sm:text-3xl font-serif-display text-viet-pink font-bold">100%</p>{/* Lotus jewel #1 — the punchline stat */}
             </div>
           </div>
         </div>
@@ -275,7 +274,7 @@ export default function Home() {
                 <div className="grid grid-cols-3 gap-4 border-t border-viet-mist/10 pt-6 max-w-md">
                   <div>
                     <span className="text-[10px] font-mono-tech text-viet-mist/40 uppercase block mb-1">Target Yield</span>
-                    <span className="text-lg font-serif-display text-viet-teal font-bold">12.5% p.a.</span>
+                    <span className="text-lg font-serif-display text-viet-green font-bold">12.5% p.a.</span>
                   </div>
                   <div>
                     <span className="text-[10px] font-mono-tech text-viet-mist/40 uppercase block mb-1">Appreciation</span>
@@ -337,11 +336,11 @@ export default function Home() {
                 </li>
                 <li className="flex justify-between">
                   <span className="text-viet-mist/40">Tourism Growth Rate:</span>
-                  <span className="text-viet-teal font-bold">+28% YoY</span>
+                  <span className="text-viet-green font-bold">+28% YoY</span>
                 </li>
                 <li className="flex justify-between">
                   <span className="text-viet-mist/40">FDI Inflow (2025):</span>
-                  <span className="text-viet-teal font-bold">$420M</span>
+                  <span className="text-viet-green font-bold">$420M</span>
                 </li>
               </ul>
             </div>
@@ -418,7 +417,7 @@ export default function Home() {
                     </div>
                     <div>
                       <span className="text-[9px] font-mono-tech text-viet-mist/40 uppercase block mb-0.5">Net Profit</span>
-                      <span className="text-sm font-mono-tech text-viet-teal font-bold">${calculated.profit}</span>
+                      <span className="text-sm font-mono-tech text-viet-green font-bold">${calculated.profit}</span>
                     </div>
                   </div>
                 </div>
@@ -441,13 +440,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. RESEARCH SECTION (Bridgewater-grade rigor, dark navy — single coherent mood) */}
-      <section id="research" className="py-24 bg-viet-surface text-viet-mist relative overflow-hidden border-t border-viet-mist/10">
-        {/* Abstract watermark representing Bridgewater academic rigor */}
-        <div className="absolute right-0 top-0 opacity-[0.04] text-[20rem] font-serif-display select-none pointer-events-none transform translate-x-1/4 -translate-y-1/4 text-viet-teal">
-          R
-        </div>
-
+      {/* 4. RESEARCH SECTION — quiet navy base (same family as the page) with a
+          faint dot-grid texture so it reads as its own "document / library" zone
+          via depth rather than a stark color clash. */}
+      <section id="research" className="research-texture py-24 text-viet-mist relative overflow-hidden border-y border-viet-mist/10">
         <div className="container relative z-10">
 
           <div className="max-w-3xl mb-16">
@@ -473,10 +469,10 @@ export default function Home() {
                 <div
                   key={idx}
                   onClick={() => setActiveResearch(idx)}
-                  className={`p-6 border cursor-pointer transition-all duration-300 ${
+                  className={`p-6 border border-l-2 cursor-pointer transition-all duration-300 ${
                     activeResearch === idx
-                      ? "bg-viet-card border-viet-teal"
-                      : "border-viet-mist/10 hover:border-viet-mist/30 bg-transparent"
+                      ? "bg-viet-card border-viet-mist/10 border-l-viet-teal"
+                      : "border-viet-mist/10 border-l-transparent hover:border-l-viet-mist/30 bg-transparent"
                   }`}
                 >
                   <span className="text-[10px] font-mono-tech text-viet-teal uppercase tracking-widest block mb-2">{report.cat}</span>
@@ -574,8 +570,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. TEAM SECTION (ported from good_team page — photo cards + boardroom) */}
-      <section id="team" className="py-24 relative border-t border-viet-mist/10 bg-viet-surface">
+      {/* 5. TEAM SECTION (ported from good_team page — photo cards + boardroom).
+          Back on navy base so it separates cleanly from the charcoal research band. */}
+      <section id="team" className="py-24 relative border-t border-viet-mist/10 bg-viet-black">
         <div className="container">
 
           {/* Intro + boardroom image, split layout */}
@@ -583,7 +580,7 @@ export default function Home() {
             <div className="lg:col-span-6 space-y-4">
               <span className="text-xs font-mono-tech text-viet-teal tracking-[0.3em] uppercase block">Management &amp; Expertise</span>
               <h2 className="text-3xl sm:text-5xl font-serif-display text-white font-light">
-                Our <span className="italic text-viet-teal">Team</span>
+                Led by <span className="italic text-viet-teal">Institutional Pioneers</span>
               </h2>
               <p className="text-sm text-viet-mist/60 font-light leading-relaxed max-w-xl">
                 The EV Investment team combines international experience in investment, risk management, and real estate development. Our goal is to deliver maximum transparency and returns for our partners.
@@ -684,7 +681,7 @@ export default function Home() {
             <div className="group space-y-4">
               <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-viet-mist/10 bg-viet-card flex items-center justify-center p-6 text-center">
                 <div className="space-y-4">
-                  <div className="w-12 h-12 rounded-full bg-viet-mist/5 border border-viet-mist/10 flex items-center justify-center mx-auto text-viet-teal">
+                  <div className="w-12 h-12 rounded-full bg-viet-mist/5 border border-viet-mist/10 flex items-center justify-center mx-auto text-viet-gold">
                     <Globe className="w-6 h-6" />
                   </div>
                   <div>
@@ -708,22 +705,6 @@ export default function Home() {
               </div>
             </div>
 
-          </div>
-
-          {/* Institutional Trust Badges (SWF Institute Style) — teal-led */}
-          <div className="mt-24 pt-12 border-t border-viet-mist/10 grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center opacity-50 grayscale hover:grayscale-0 hover:opacity-80 transition-all duration-500">
-            <div className="flex items-center gap-2 font-serif-display text-lg text-white font-bold">
-              <ShieldCheck className="w-5 h-5 text-viet-teal" /> VIETNAM SEC COMPLIANT
-            </div>
-            <div className="flex items-center gap-2 font-serif-display text-lg text-white font-bold">
-              <ShieldCheck className="w-5 h-5 text-viet-teal" /> APREA MEMBER
-            </div>
-            <div className="flex items-center gap-2 font-serif-display text-lg text-white font-bold">
-              <ShieldCheck className="w-5 h-5 text-viet-teal" /> ISO 9001 CERTIFIED
-            </div>
-            <div className="flex items-center gap-2 font-serif-display text-lg text-white font-bold">
-              <ShieldCheck className="w-5 h-5 text-viet-teal" /> ESG COMPLIANT FUND
-            </div>
           </div>
 
         </div>
