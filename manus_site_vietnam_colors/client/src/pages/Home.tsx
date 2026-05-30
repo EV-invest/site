@@ -156,11 +156,6 @@ export default function Home() {
 
         <div className="container relative z-10 text-center flex flex-col items-center justify-center h-full max-w-4xl px-4">
           
-          {/* Tagline / Subtitle */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-viet-gold/30 bg-viet-gold/5 text-viet-gold font-mono-tech text-[10px] tracking-[0.25em] uppercase mb-8 animate-pulse">
-            <Compass className="w-3.5 h-3.5" /> Premium Coastal Real Estate Fund
-          </div>
-
           {/* Integrated Logo & Offering (Stronghold Metaphor) */}
           <div 
             className="transition-all duration-700 ease-out"
