@@ -543,8 +543,8 @@ export default function Home() {
 
               <div className="mt-12 pt-6 border-t border-viet-mist/10 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-viet-teal/15 border border-viet-teal/30 flex items-center justify-center font-serif-display font-bold text-viet-teal">
-                    EV
+                  <div className="w-12 h-12 rounded-full bg-viet-teal/15 border border-viet-teal/30 flex items-center justify-center text-viet-teal">
+                    <Logo className="w-7 h-7" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-white">EV Research Department</p>
@@ -765,7 +765,6 @@ export default function Home() {
 
           <div className="border-t border-viet-mist/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-mono-tech text-viet-mist/40">
             <p>© 2026 EV Investment. All rights reserved.</p>
-            <p>Designed for Bullmart Investment Fund.</p>
           </div>
         </div>
       </footer>

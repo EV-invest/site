@@ -729,7 +729,7 @@ export default function Home() {
 
           <div className="border-t border-viet-mist/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-mono-tech text-viet-mist/40">
             <p>© 2026 EV Investment. All rights reserved.</p>
-            <p>Designed for Bullmart Investment Fund.</p>
+            <p>Designed for EV Investment Fund.</p>
           </div>
         </div>
       </footer>

@@ -16,7 +16,7 @@ const LOGO_BG = "oklch(0.256 0.1 260)";
 export function Logo({ className, withBackground = false }: LogoProps) {
   const mark = (
     <svg
-      viewBox="0 0 1280 1280"
+      viewBox="259 246 804 708"
       preserveAspectRatio="xMidYMid meet"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
