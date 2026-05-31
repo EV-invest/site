@@ -39,9 +39,9 @@
   /* ────────────────────────────────────────────────────────────────────
      Navy-led institutional base + a tiered Vietnam-accent system.
 
-     The resting page is a quiet navy/charcoal ramp with ivory text (trust
-     first). On top of that sits a deliberate 3-tier accent hierarchy so the
-     page reads "jungle-vibrant" without becoming monotone teal:
+     The resting page is a quiet navy ramp with ivory text (trust first). On
+     top of that sits a deliberate 3-tier accent hierarchy so the page reads
+     "jungle-vibrant" without becoming monotone teal:
 
        Tier 1 — Ha Long Teal: the connective workhorse (eyebrows, labels,
                 nav, secondary numbers). Recurring, calm.
@@ -51,7 +51,9 @@
        Tier 3 — the rare jewels, ≤1 per section, reserved for "this matters":
                 · Rice Gold  — the headline return figures (IRR / ROI / appr.)
                 · Lotus Pink — the original's 3 punctuation moments
-                Flag Red stays status-only.
+
+     Flag Red (#DA251D) and the muted step (#16213a) live only in the shadcn
+     semantic layer (--destructive / --muted) below; no bespoke viet-* token.
 
      `viet-black` is a deep NAVY-black. Adjacent sections are separated by a
      thin border + a step in the navy ramp (black → surface), never a clash.
@@ -59,12 +61,10 @@
 
   /* Brand — deep oceanic blue from the EV Investment logo. */
   --color-viet-navy: #001E4E;       /* logo brand */
-  --color-viet-navy-soft: #0a2a5e;  /* hover lift on brand surfaces */
 
   /* Neutrals — navy-tinted dark ramp (the 90% of the page). */
   --color-viet-black: #070d18;      /* bg_deep — base background */
   --color-viet-surface: #081020;    /* section alt background */
-  --color-viet-charcoal: #16161b;   /* near-neutral charcoal — for a section that wants a slight, non-stark step off the navy ramp */
   --color-viet-card: #0c1626;       /* card / panel surface */
   --color-viet-mist: #E6E1D3;       /* Limestone Mist — ivory text */
   --color-viet-silver: #9aa6b8;     /* muted cool-grey secondary text */
@@ -75,11 +75,9 @@
   /* Tier 2 — positive financial signal (the jungle "money/growth" read). */
   --color-viet-green: #2E9E5B;      /* Jungle Green, lifted for legibility on dark */
 
-  /* Tier 3 — rare jewels (≤1 per section) + status. */
+  /* Tier 3 — rare jewels (≤1 per section). */
   --color-viet-gold: #F2C94C;       /* headline return figures only */
   --color-viet-pink: #E58AAE;       /* Lotus — the punctuation jewel */
-  --color-viet-red: #DA251D;        /* status only */
-  --color-viet-brown: #C98A3C;      /* warm sienna — reserved for a faint accent (the old warm band hue, tamed) */
 }
 
 :root {
