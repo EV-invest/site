@@ -17,6 +17,7 @@ import {
   FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 
 // Ссылки на сгенерированные высококачественные изображения
@@ -101,15 +102,7 @@ export default function Home() {
       }`}>{/* navy-led: gold chrome retired in favour of Ha Long Teal accent */}
         <div className="container flex justify-between items-center">
           <div className="flex items-center gap-3">
-            {/* SVG Logo - Воспроизведение структуры вашего логотипа */}
-            <svg className="w-10 h-10 text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 50 L50 35 L80 50" stroke="white" strokeWidth="2" strokeLinecap="round" />
-              <rect x="38" y="38" width="10" height="20" fill="white" />
-              <rect x="52" y="30" width="12" height="28" fill="white" />
-              <rect x="68" y="42" width="8" height="16" fill="white" />
-              <path d="M15 55 L85 55" stroke="white" strokeWidth="2" />
-              <text x="50" y="80" fill="white" fontSize="18" fontWeight="bold" textAnchor="middle" letterSpacing="2">EV</text>
-            </svg>
+            <Logo className="w-10 h-10 text-white" />
             <div className="flex flex-col">
               <span className="font-serif-display font-bold text-lg tracking-wider text-white">EV INVESTMENT</span>
               <span className="text-[9px] font-mono-tech tracking-[0.3em] text-viet-teal uppercase">Quy Nhon Fund</span>
@@ -190,7 +183,6 @@ export default function Home() {
 
             <div className="mt-8 flex flex-col items-center gap-1.5">
               <span className="text-[9px] font-mono-tech tracking-[0.3em] text-viet-mist/40 uppercase">Scroll to zoom in & discover</span>
-              <div className="w-1 h-12 bg-gradient-to-b from-viet-teal to-transparent rounded-full animate-bounce" />
             </div>
           </div>
         </div>
@@ -719,13 +711,7 @@ export default function Home() {
             
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-6">
-                <svg className="w-8 h-8 text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 50 L50 35 L80 50" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                  <rect x="38" y="38" width="10" height="20" fill="white" />
-                  <rect x="52" y="30" width="12" height="28" fill="white" />
-                  <rect x="68" y="42" width="8" height="16" fill="white" />
-                  <path d="M15 55 L85 55" stroke="white" strokeWidth="2" />
-                </svg>
+                <Logo className="w-8 h-8 text-white" />
                 <div className="flex flex-col">
                   <span className="font-serif-display font-bold text-base tracking-wider text-white">EV INVESTMENT</span>
                   <span className="text-[8px] font-mono-tech tracking-[0.3em] text-viet-teal uppercase">Quy Nhon Fund</span>
