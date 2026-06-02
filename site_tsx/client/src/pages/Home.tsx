@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 
-// Ссылки на сгенерированные высококачественные изображения
+// Links to the generated high-quality images
 const ASSETS = {
   quynhon_future: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/SPbgMPRFEXcrCSr7Bo27uM/quynhon_future-ExoshVjhhPWYbYR4Zf3xJn.webp",
   luxury_villa: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/SPbgMPRFEXcrCSr7Bo27uM/luxury_villa-64wseo7dGJUQNbg7HMSNPo.webp",
@@ -29,8 +29,25 @@ const ASSETS = {
   office_interior: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/FwrpPAwgLER3rBrQqC8HHt/office_interior-SxhsdYStJCspKeR4RjpDbW.webp",
   // team_member_1: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/FwrpPAwgLER3rBrQqC8HHt/team_member_1-hJnPwkoXB2TsmzqEqY9yWb.webp",
   team_member_1: "/assets/team/Elisey.png",
-  team_member_2: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/FwrpPAwgLER3rBrQqC8HHt/team_member_2-cdQ8SpsdHCexzaZSqvgtaE.webp"
+  // team_member_2: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/FwrpPAwgLER3rBrQqC8HHt/team_member_2-cdQ8SpsdHCexzaZSqvgtaE.webp"
+  team_member_2: "/assets/team/Valeriy.png"
 };
+
+// Named team members — name lives once and feeds both the heading and the image alt text.
+const TEAM = [
+  {
+    photo: ASSETS.team_member_1,
+    name: "Elisey TODO",
+    role: "Managing Partner, Co-founder",
+    bio: "15+ years managing sovereign funds across Vietnam and Singapore. Former Investment Director at VinaCapital."
+  },
+  {
+    photo: ASSETS.team_member_2,
+    name: "Valeriy Sakharov",
+    role: "Director of Research & Risk",
+    bio: "Specializes in risk assessment and financial modelling for coastal development. Previously at CBRE Vietnam."
+  }
+];
 
 export default function Home() {
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -604,45 +621,26 @@ export default function Home() {
           {/* Team cards — Stronghold-style photo grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-            {/* Member 1 */}
-            <div className="group space-y-4">
-              <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-viet-mist/10 bg-viet-card">
-                <img
-                  src={ASSETS.team_member_1}
-                  alt="Minh Nguyen"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-viet-black/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                  <p className="text-xs text-viet-mist/80 font-light leading-relaxed">
-                    15+ years managing sovereign funds across Vietnam and Singapore. Former Investment Director at VinaCapital.
-                  </p>
+            {TEAM.map((member) => (
+              <div key={member.name} className="group space-y-4">
+                <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-viet-mist/10 bg-viet-card">
+                  <img
+                    src={member.photo}
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-viet-black/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <p className="text-xs text-viet-mist/80 font-light leading-relaxed">
+                      {member.bio}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-serif-display font-bold text-white text-base">{member.name}</h4>
+                  <p className="text-xs text-viet-teal font-mono-tech mt-1">{member.role}</p>
                 </div>
               </div>
-              <div>
-                <h4 className="font-serif-display font-bold text-white text-base">Minh Nguyen</h4>
-                <p className="text-xs text-viet-teal font-mono-tech mt-1">Managing Partner, Co-founder</p>
-              </div>
-            </div>
-
-            {/* Member 2 */}
-            <div className="group space-y-4">
-              <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-viet-mist/10 bg-viet-card">
-                <img
-                  src={ASSETS.team_member_2}
-                  alt="Anh Pham"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-viet-black/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                  <p className="text-xs text-viet-mist/80 font-light leading-relaxed">
-                    Specializes in risk assessment and financial modelling for coastal development. Previously at CBRE Vietnam.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <h4 className="font-serif-display font-bold text-white text-base">Anh Pham</h4>
-                <p className="text-xs text-viet-teal font-mono-tech mt-1">Director of Research &amp; Risk</p>
-              </div>
-            </div>
+            ))}
 
             {/* Open position card */}
             <div className="group space-y-4">
