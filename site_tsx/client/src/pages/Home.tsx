@@ -27,7 +27,8 @@ const ASSETS = {
   abstract_investment: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/SPbgMPRFEXcrCSr7Bo27uM/abstract_investment-eYjGPMMXA3Hkv5fdUCnFfs.webp",
   // Ported from manus_site_good_team_page — the team layout we liked.
   office_interior: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/FwrpPAwgLER3rBrQqC8HHt/office_interior-SxhsdYStJCspKeR4RjpDbW.webp",
-  team_member_1: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/FwrpPAwgLER3rBrQqC8HHt/team_member_1-hJnPwkoXB2TsmzqEqY9yWb.webp",
+  // team_member_1: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/FwrpPAwgLER3rBrQqC8HHt/team_member_1-hJnPwkoXB2TsmzqEqY9yWb.webp",
+  team_member_1: "/assets/team/Elisey.png",
   team_member_2: "https://d2xsxph8kpxj0f.cloudfront.net/310519663075853325/FwrpPAwgLER3rBrQqC8HHt/team_member_2-cdQ8SpsdHCexzaZSqvgtaE.webp"
 };
 
