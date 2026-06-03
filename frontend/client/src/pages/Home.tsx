@@ -17,6 +17,7 @@ import {
   FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 
@@ -183,9 +184,9 @@ export default function Home() {
               Through Institutional Vision.
             </h1>
             
-            <p className="text-sm sm:text-base md:text-lg text-main-mist/70 font-light max-w-2xl mx-auto mb-12 leading-relaxed">
+            <Text className="sm:text-base md:text-lg max-w-2xl mx-auto mb-12">
               EV Investment bridges the gap between premium coastal real estate development and sophisticated investors. Experience high-yield real estate assets in Vietnam’s fastest-growing coastal hub.
-            </p>
+            </Text>
           </div>
 
           {/* Interactive Action / Zoom Indicator */}
@@ -201,7 +202,7 @@ export default function Home() {
             </Button>
 
             <div className="mt-8 flex flex-col items-center gap-1.5">
-              <span className="text-[9px] font-mono-tech tracking-[0.3em] text-main-mist/40 uppercase">Scroll to zoom in & discover</span>
+              <Text asChild variant="secondary"><span className="text-[9px] font-mono-tech tracking-[0.3em] uppercase">Scroll to zoom in & discover</span></Text>
             </div>
           </div>
         </div>
@@ -210,19 +211,19 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 w-full bg-main-black/80 border-t border-main-mist/10 py-6 backdrop-blur-sm z-20">
           <div className="container grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <p className="text-xs font-mono-tech text-main-mist/50 uppercase tracking-widest mb-1">Target IRR</p>
+              <Text variant="secondary" className="text-xs font-mono-tech uppercase tracking-widest mb-1">Target IRR</Text>
               <p className="text-2xl sm:text-3xl font-serif-display text-main-accent-t3 font-bold">22.4% +</p>
             </div>
             <div>
-              <p className="text-xs font-mono-tech text-main-mist/50 uppercase tracking-widest mb-1">AUM Under Advisory</p>
+              <Text variant="secondary" className="text-xs font-mono-tech uppercase tracking-widest mb-1">AUM Under Advisory</Text>
               <p className="text-2xl sm:text-3xl font-serif-display text-white font-bold">$145M</p>
             </div>
             <div>
-              <p className="text-xs font-mono-tech text-main-mist/50 uppercase tracking-widest mb-1">Coastal Coastline</p>
+              <Text variant="secondary" className="text-xs font-mono-tech uppercase tracking-widest mb-1">Coastal Coastline</Text>
               <p className="text-2xl sm:text-3xl font-serif-display text-main-accent-t1 font-bold">72 km</p>
             </div>
             <div>
-              <p className="text-xs font-mono-tech text-main-mist/50 uppercase tracking-widest mb-1">Institutional Grade</p>
+              <Text variant="secondary" className="text-xs font-mono-tech uppercase tracking-widest mb-1">Institutional Grade</Text>
               <p className="text-2xl sm:text-3xl font-serif-display text-main-accent-t4 font-bold">100%</p>{/* Lotus jewel #1 — the punchline stat */}
             </div>
           </div>
@@ -240,9 +241,9 @@ export default function Home() {
                 Premium Asset <span className="italic text-main-accent-t1">Portfolio</span>
               </h2>
             </div>
-            <p className="text-sm text-main-mist/60 font-light max-w-md mt-4 md:mt-0 leading-relaxed">
+            <Text className="max-w-md mt-4 md:mt-0">
               Curated, premium, high-yield developments across Quy Nhon city, focusing on high appreciation seaside villas and urban luxury residences.
-            </p>
+            </Text>
           </div>
 
           {/* Filter Tabs (Binance/DWF style) */}
@@ -279,20 +280,20 @@ export default function Home() {
                   <MapPin className="w-3.5 h-3.5" /> Nhon Ly Beach, Quy Nhon
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-serif-display text-white mb-4">The Horizon Premium Villas</h3>
-                <p className="text-sm text-main-mist/70 font-light max-w-xl mb-6">
+                <Text className="max-w-xl mb-6">
                   Exclusive ultra-luxury oceanfront villas with private pools, nestled between pristine limestone cliffs and crystal-clear turquoise waters.
-                </p>
+                </Text>
                 <div className="grid grid-cols-3 gap-4 border-t border-main-mist/10 pt-6 max-w-md">
                   <div>
-                    <span className="text-[10px] font-mono-tech text-main-mist/40 uppercase block mb-1">Target Yield</span>
+                    <Text asChild variant="secondary"><span className="text-[10px] font-mono-tech uppercase block mb-1">Target Yield</span></Text>
                     <span className="text-lg font-serif-display text-main-accent-t2 font-bold">12.5% p.a.</span>
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono-tech text-main-mist/40 uppercase block mb-1">Appreciation</span>
+                    <Text asChild variant="secondary"><span className="text-[10px] font-mono-tech uppercase block mb-1">Appreciation</span></Text>
                     <span className="text-lg font-serif-display text-main-accent-t3 font-bold">18% YoY</span>{/* rare gold highlight */}
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono-tech text-main-mist/40 uppercase block mb-1">Status</span>
+                    <Text asChild variant="secondary"><span className="text-[10px] font-mono-tech uppercase block mb-1">Status</span></Text>
                     <span className="text-lg font-serif-display text-white font-bold">Pre-Launch</span>
                   </div>
                 </div>
@@ -310,12 +311,12 @@ export default function Home() {
                   <MapPin className="w-3.5 h-3.5" /> Quy Nhon Center
                 </div>
                 <h3 className="text-xl sm:text-2xl font-serif-display text-white mb-4">Quy Nhon Bay Residences</h3>
-                <p className="text-xs text-main-mist/70 font-light mb-6">
+                <Text className="text-xs mb-6">
                   Premium high-rise apartments with panoramic views of the bay, integrating luxury amenities and smart-home technology.
-                </p>
+                </Text>
                 <div className="flex justify-between items-center border-t border-main-mist/10 pt-6">
                   <div>
-                    <span className="text-[9px] font-mono-tech text-main-mist/40 uppercase block mb-0.5">LTV Ratio</span>
+                    <Text asChild variant="secondary"><span className="text-[9px] font-mono-tech uppercase block mb-0.5">LTV Ratio</span></Text>
                     <span className="text-sm font-serif-display text-white font-bold">55% Max</span>
                   </div>
                   <Button
@@ -336,21 +337,21 @@ export default function Home() {
                   <TrendingUp className="w-3 h-3" /> Market Growth
                 </div>
                 <h3 className="text-xl font-serif-display text-white mb-4">Why Quy Nhon?</h3>
-                <p className="text-sm text-main-mist/70 font-light leading-relaxed mb-6">
+                <Text className="mb-6">
                   Positioned as the new gateway of Central Vietnam, Quy Nhon is undergoing a multi-billion dollar infrastructure upgrade, transforming into a global science and beach tourism destination.
-                </p>
+                </Text>
               </div>
               <ul className="space-y-3 border-t border-main-mist/10 pt-6 font-mono-tech text-xs">
                 <li className="flex justify-between">
-                  <span className="text-main-mist/40">Infrastructure Investment:</span>
+                  <Text asChild variant="secondary"><span>Infrastructure Investment:</span></Text>
                   <span className="text-white font-bold">$2.4 Billion</span>
                 </li>
                 <li className="flex justify-between">
-                  <span className="text-main-mist/40">Tourism Growth Rate:</span>
+                  <Text asChild variant="secondary"><span>Tourism Growth Rate:</span></Text>
                   <span className="text-main-accent-t2 font-bold">+28% YoY</span>
                 </li>
                 <li className="flex justify-between">
-                  <span className="text-main-mist/40">FDI Inflow (2025):</span>
+                  <Text asChild variant="secondary"><span>FDI Inflow (2025):</span></Text>
                   <span className="text-main-accent-t2 font-bold">$420M</span>
                 </li>
               </ul>
@@ -362,14 +363,14 @@ export default function Home() {
                 <div>
                   <span className="text-xs font-mono-tech text-main-accent-t1 tracking-widest uppercase block mb-3">Yield Terminal</span>
                   <h3 className="text-2xl font-serif-display text-white mb-4">Investment Calculator</h3>
-                  <p className="text-xs text-main-mist/70 font-light leading-relaxed mb-6">
+                  <Text className="text-xs mb-6">
                     Project your returns across different asset classes in Quy Nhon based on our current fund advisory models.
-                  </p>
+                  </Text>
                 </div>
 
                 <div className="space-y-4 font-mono-tech text-xs">
                   <div>
-                    <label className="text-main-mist/40 uppercase block mb-2">Principal Investment ($ USD)</label>
+                    <Text asChild variant="secondary"><label className="uppercase block mb-2">Principal Investment ($ USD)</label></Text>
                     <input 
                       type="range" 
                       min="50000" 
@@ -388,7 +389,7 @@ export default function Home() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-main-mist/40 uppercase block mb-2">Term (Years)</label>
+                      <Text asChild variant="secondary"><label className="uppercase block mb-2">Term (Years)</label></Text>
                       <select 
                         value={calculatorInputs.term}
                         onChange={(e) => setCalculatorInputs({...calculatorInputs, term: Number(e.target.value)})}
@@ -400,7 +401,7 @@ export default function Home() {
                       </select>
                     </div>
                     <div>
-                      <label className="text-main-mist/40 uppercase block mb-2">Asset Type</label>
+                      <Text asChild variant="secondary"><label className="uppercase block mb-2">Asset Type</label></Text>
                       <select 
                         value={calculatorInputs.type}
                         onChange={(e) => setCalculatorInputs({...calculatorInputs, type: e.target.value})}
@@ -418,25 +419,25 @@ export default function Home() {
               <div className="bg-main-black/40 border border-main-mist/10 p-6 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div>
-                    <span className="text-[10px] font-mono-tech text-main-mist/40 uppercase block mb-1">Estimated ROI</span>
+                    <Text asChild variant="secondary"><span className="text-[10px] font-mono-tech uppercase block mb-1">Estimated ROI</span></Text>
                     <span className="text-4xl font-serif-display text-main-accent-t3 font-bold">{calculated.roi}%</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4 border-t border-main-mist/10 pt-4">
                     <div>
-                      <span className="text-[9px] font-mono-tech text-main-mist/40 uppercase block mb-0.5">Total Payout</span>
+                      <Text asChild variant="secondary"><span className="text-[9px] font-mono-tech uppercase block mb-0.5">Total Payout</span></Text>
                       <span className="text-sm font-mono-tech text-white font-bold">${calculated.total}</span>
                     </div>
                     <div>
-                      <span className="text-[9px] font-mono-tech text-main-mist/40 uppercase block mb-0.5">Net Profit</span>
+                      <Text asChild variant="secondary"><span className="text-[9px] font-mono-tech uppercase block mb-0.5">Net Profit</span></Text>
                       <span className="text-sm font-mono-tech text-main-accent-t2 font-bold">${calculated.profit}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-6">
-                  <p className="text-[10px] text-main-mist/40 font-light mb-4 leading-relaxed">
+                  <Text variant="secondary" className="text-[10px] font-light mb-4 leading-relaxed">
                     *Projections are based on historical performance and regional growth targets. Actual results may vary.
-                  </p>
+                  </Text>
                   <Button 
                     className="w-full bg-main-accent-t1 text-main-black hover:bg-main-mist hover:text-main-brand rounded-none font-mono-tech text-xs tracking-wider uppercase py-5"
                     onClick={() => handlePlaceholderClick("Request Advisory Session")}
@@ -462,9 +463,9 @@ export default function Home() {
             <h2 className="text-3xl sm:text-5xl font-serif-display text-white font-light leading-tight">
               Bridgewater-Grade <span className="italic text-main-accent-t1">Research &amp; Insights</span>
             </h2>
-            <p className="text-sm text-main-mist/60 font-light mt-4 leading-relaxed">
+            <Text className="mt-4">
               We believe in deep macroeconomic analysis. Our research team produces exhaustive monthly reports on Vietnam’s economic landscape, urbanization trends, and Quy Nhon’s real estate cycles.
-            </p>
+            </Text>
           </div>
 
           {/* Research Carousel / Interactive List */}
@@ -514,12 +515,12 @@ export default function Home() {
                         : "Post-Pandemic Hospitality Yield Shifts"}
                     </h3>
                   </div>
-                  <div className="flex items-center gap-2 font-mono-tech text-xs text-main-mist/50 bg-main-mist/[0.04] px-3 py-1.5">
+                  <div className="flex items-center gap-2 font-mono-tech text-xs text-main-mist/40 bg-main-mist/[0.04] px-3 py-1.5">
                     <FileText className="w-4 h-4" /> PDF 4.2 MB
                   </div>
                 </div>
 
-                <div className="prose prose-sm text-main-mist/80 font-light max-w-none space-y-6 leading-relaxed">
+                <div className="prose prose-sm text-main-mist/70 font-light max-w-none space-y-6 leading-relaxed">
                   {activeResearch === 0 ? (
                     <>
                       <p className="font-serif-display italic text-lg text-main-mist/90">
@@ -567,7 +568,7 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-white">EV Research Department</p>
-                    <p className="text-[10px] font-mono-tech text-main-mist/50">Lead Author: Dr. Nguyen An, Chief Economist</p>
+                    <Text variant="secondary" className="text-[10px] font-mono-tech">Lead Author: Dr. Nguyen An, Chief Economist</Text>
                   </div>
                 </div>
                 <Button
@@ -595,9 +596,9 @@ export default function Home() {
               <h2 className="text-3xl sm:text-5xl font-serif-display text-white font-light">
                 Led by <span className="italic text-main-accent-t1">Institutional Pioneers</span>
               </h2>
-              <p className="text-sm text-main-mist/60 font-light leading-relaxed max-w-xl">
+              <Text className="max-w-xl">
                 The EV Investment team combines international experience in investment, risk management, and real estate development. Our goal is to deliver maximum transparency and returns for our partners.
-              </p>
+              </Text>
             </div>
             <div className="lg:col-span-6">
               {/* Premium fund-office image */}
@@ -613,7 +614,7 @@ export default function Home() {
                     <span className="text-[10px] font-mono-tech text-main-accent-t1 uppercase tracking-wider">Head Office</span>
                     <h4 className="text-sm font-bold text-white">EV Boardroom • Quy Nhon</h4>
                   </div>
-                  <span className="text-[10px] text-main-mist/40 font-mono-tech">Q1 2026</span>
+                  <Text asChild variant="secondary"><span className="text-[10px] font-mono-tech">Q1 2026</span></Text>
                 </div>
               </div>
             </div>
@@ -631,9 +632,9 @@ export default function Home() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-main-black/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <p className="text-xs text-main-mist/80 font-light leading-relaxed">
+                    <Text className="text-xs">
                       {member.bio}
-                    </p>
+                    </Text>
                   </div>
                 </div>
                 <div>
@@ -652,9 +653,9 @@ export default function Home() {
                   </div>
                   <div>
                     <h5 className="font-serif-display font-bold text-white text-sm">Join Us</h5>
-                    <p className="text-xs text-main-mist/50 mt-2 font-light">
+                    <Text variant="secondary" className="text-xs mt-2 font-light">
                       We are always looking for talented analysts and asset managers in Quy Nhon.
-                    </p>
+                    </Text>
                   </div>
                   <Button
                     onClick={() => handlePlaceholderClick("Careers")}
@@ -667,7 +668,7 @@ export default function Home() {
               </div>
               <div>
                 <h4 className="font-serif-display font-bold text-main-mist/40 text-base">Open Position</h4>
-                <p className="text-xs text-main-mist/40 font-mono-tech mt-1">Investment Analyst</p>
+                <Text variant="secondary" className="text-xs font-mono-tech mt-1">Investment Analyst</Text>
               </div>
             </div>
 
@@ -680,9 +681,9 @@ export default function Home() {
                   </div>
                   <div>
                     <h5 className="font-serif-display font-bold text-white text-sm">LP Partner Network</h5>
-                    <p className="text-xs text-main-mist/50 mt-2 font-light">
+                    <Text variant="secondary" className="text-xs mt-2 font-light">
                       Over 40 institutional investors across 12 countries trust us with their capital.
-                    </p>
+                    </Text>
                   </div>
                   <Button
                     onClick={() => handlePlaceholderClick("IR Contacts")}
@@ -695,7 +696,7 @@ export default function Home() {
               </div>
               <div>
                 <h4 className="font-serif-display font-bold text-main-mist/40 text-base">Investor Relations</h4>
-                <p className="text-xs text-main-mist/40 font-mono-tech mt-1">Investor Relations (IR)</p>
+                <Text variant="secondary" className="text-xs font-mono-tech mt-1">Investor Relations (IR)</Text>
               </div>
             </div>
 
@@ -717,9 +718,9 @@ export default function Home() {
                   <span className="text-[8px] font-mono-tech tracking-[0.3em] text-main-accent-t1 uppercase">Quy Nhon Fund</span>
                 </div>
               </div>
-              <p className="text-xs text-main-mist/50 font-light max-w-sm leading-relaxed mb-6">
+              <Text variant="secondary" className="text-xs font-light max-w-sm leading-relaxed mb-6">
                 EV Investment is a registered real estate advisory and investment management fund specializing in premium coastal developments in Quy Nhon, Binh Dinh province, Vietnam.
-              </p>
+              </Text>
               <div className="flex gap-4 text-xs font-mono-tech text-main-accent-t1">
                 <a href="#hero" className="hover:underline">Privacy Policy</a>
                 <span className="text-main-mist/20">|</span>
@@ -729,7 +730,7 @@ export default function Home() {
 
             <div>
               <h4 className="font-mono-tech text-xs text-white uppercase tracking-widest mb-6">Offices</h4>
-              <ul className="space-y-4 text-xs text-main-mist/60 font-light leading-relaxed">
+              <ul className="space-y-4 text-xs text-main-mist/70 font-light leading-relaxed">
                 <li>
                   <strong className="text-white block font-mono-tech text-[10px] uppercase tracking-wider mb-1">Quy Nhon Head Office</strong>
                   102 An Duong Vuong St, Nguyen Van Cu Ward, Quy Nhon City, Vietnam
@@ -743,9 +744,9 @@ export default function Home() {
 
             <div>
               <h4 className="font-mono-tech text-xs text-white uppercase tracking-widest mb-6">Newsletter</h4>
-              <p className="text-xs text-main-mist/60 font-light leading-relaxed mb-4">
+              <Text className="text-xs mb-4">
                 Subscribe to our Bridgewater-grade monthly coastal macro reports.
-              </p>
+              </Text>
               <div className="flex border border-main-mist/20">
                 <input 
                   type="email" 
