@@ -352,7 +352,7 @@ export default function Home() {
                 </li>
                 <li className="flex justify-between">
                   <Text asChild variant="secondary"><span>FDI Inflow (2025):</span></Text>
-                  <span className="text-main-accent-t2 font-bold">$420M</span>
+                  <span className="text-main-acc    ent-t2 font-bold">$420M</span>
                 </li>
               </ul>
             </div>

@@ -1,8 +1,0 @@
-error: root element of `tiered!` must declare `tier: PN`
- --> $DIR/ev_site_macros/tests/compile_fail/missing_root_tier.rs:5:3
-  |
-5 |         Block { }
-  |         ^^^^^
-
-error: aborting due to 1 previous error
-

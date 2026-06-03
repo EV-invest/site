@@ -25,24 +25,8 @@
         pname = manifest.name;
         stdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.stdenv;
 
-        wasm-bindgen-cli = pkgs.wasm-bindgen-cli.overrideAttrs (_: rec {
-          version = "0.2.121";
-          src = pkgs.fetchCrate {
-            pname = "wasm-bindgen-cli";
-            inherit version;
-            hash = "sha256-ZOMgFNOcGkO66Jz/Z83eoIu+DIzo3Z/vq6Z5g6BDY/w=";
-          };
-          cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
-            inherit src;
-            name = "wasm-bindgen-cli-${version}";
-            hash = "sha256-DPdCDPTAPBrbqLUqnCwQu1dePs9lGg85JCJOCIr9qjU=";
-          };
-        });
-
-        py = v_flakes.py { inherit pkgs; };
-        rs = v_flakes.rs { inherit pkgs rust; };
         github = v_flakes.github {
-          inherit pkgs pname rs py;
+          inherit pkgs pname; #rs py;
           enable = true;
           lastSupportedVersion = "nightly-2026-05-12";
           jobs.default = true;
@@ -55,7 +39,7 @@
           rootDir = ./.;
           badges = [ "msrv" "crates_io" "docs_rs" "loc" "ci" ];
         };
-        combined = v_flakes.utils.combine [ py rs github readme ];
+        combined = v_flakes.utils.combine [ github readme ];
 
         # ── dev orchestrator ────────────────────────────────────────────────
         # Self-contained wrapper so `nix run .#dev` starts the site without
@@ -94,33 +78,9 @@
           program = "${runFrontend}/bin/run-frontend";
         };
 
-        packages =
-          let
-            rustc = rust;
-            cargo = rust;
-            rustPlatform = pkgs.makeRustPlatform {
-              inherit rustc cargo stdenv;
-            };
-          in
-          {
-            default = rustPlatform.buildRustPackage {
-              inherit pname;
-              version = manifest.version;
-
-              buildInputs = with pkgs; [
-                openssl.dev
-              ];
-              nativeBuildInputs = with pkgs; [ pkg-config ];
-
-              cargoLock.lockFile = ./Cargo.lock;
-              src = pkgs.lib.cleanSource ./.;
-            };
-          };
-
         devShells.default =
           with pkgs;
           mkShell {
-            inherit stdenv;
             shellHook =
               pre-commit-check.shellHook
               + combined.shellHook
@@ -142,15 +102,8 @@
 
             packages = [
               corepack
-              dioxus-cli
-              mold
               nodejs
-              openssl
-              pkg-config
               playwright-driver.browsers
-              rust
-              tailwindcss_4
-              wasm-bindgen-cli
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 
             env.RUST_BACKTRACE = 1;

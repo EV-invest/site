@@ -1,8 +1,0 @@
-error: tier P0 must be strictly greater than enclosing tier P2
- --> $DIR/ev_site_macros/tests/compile_fail/lesser_than_parent.rs:7:18
-  |
-7 |             Child { tier: P0 }
-  |                           ^^
-
-error: aborting due to 1 previous error
-
