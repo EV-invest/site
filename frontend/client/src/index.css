@@ -37,47 +37,47 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ────────────────────────────────────────────────────────────────────
-     Navy-led institutional base + a tiered Vietnam-accent system.
+     Navy-led institutional base + a tiered accent system.
 
      The resting page is a quiet navy ramp with ivory text (trust first). On
      top of that sits a deliberate 3-tier accent hierarchy so the page reads
-     "jungle-vibrant" without becoming monotone teal:
+     "jungle-vibrant" without becoming monotone teal. Tokens are named by the
+     ROLE they play, not by hue — the hue is just the current value:
 
-       Tier 1 — Ha Long Teal: the connective workhorse (eyebrows, labels,
-                nav, secondary numbers). Recurring, calm.
-       Tier 2 — Jungle Green: positive financial signals only (yields,
-                growth %, profit, FDI). The "money/growth" read; the actual
-                jungle warmth, used meaningfully not decoratively.
+       main-accent-t1   (Tier 1, Ha Long Teal): the connective workhorse
+                (eyebrows, labels, nav, secondary numbers). Recurring, calm.
+       main-accent-t2   (Tier 2, Jungle Green): positive financial signals only
+                (yields, growth %, profit, FDI). The "money/growth" read; the
+                actual jungle warmth, used meaningfully not decoratively.
        Tier 3 — the rare jewels, ≤1 per section, reserved for "this matters":
-                · Rice Gold  — the headline return figures (IRR / ROI / appr.)
-                · Lotus Pink — the original's 3 punctuation moments
+                · main-accent-t3 (Rice Gold) — headline return figures (IRR/ROI/appr.)
+                · main-accent-t4 (Lotus Pink) — the original's 3 punctuation moments
 
      Flag Red (#DA251D) and the muted step (#16213a) live only in the shadcn
-     semantic layer (--destructive / --muted) below; no bespoke viet-* token.
+     semantic layer (--destructive / --muted) below; no bespoke main-* token.
 
-     `viet-black` is a deep NAVY-black. Adjacent sections are separated by a
+     `main-black` is a deep NAVY-black. Adjacent sections are separated by a
      thin border + a step in the navy ramp (black → surface), never a clash.
      ──────────────────────────────────────────────────────────────────── */
 
   /* Brand — deep oceanic blue from the EV Investment logo. */
-  --color-viet-navy: #001E4E;       /* logo brand */
+  --color-main-brand: #001E4E;       /* deep oceanic blue */
 
   /* Neutrals — navy-tinted dark ramp (the 90% of the page). */
-  --color-viet-black: #070d18;      /* bg_deep — base background */
-  --color-viet-surface: #081020;    /* section alt background */
-  --color-viet-card: #0c1626;       /* card / panel surface */
-  --color-viet-mist: #E6E1D3;       /* Limestone Mist — ivory text */
-  --color-viet-silver: #9aa6b8;     /* muted cool-grey secondary text */
+  --color-main-black: #070d18;      /* bg_deep — base background */
+  --color-main-surface: #081020;    /* section alt background */
+  --color-main-card: #0c1626;       /* card / panel surface */
+  --color-main-mist: #E6E1D3;       /* Limestone Mist — ivory text */
 
   /* Tier 1 — recurring workhorse accent. */
-  --color-viet-teal: #2A9D8F;       /* Ha Long Teal */
+  --color-main-accent-t1: #2A9D8F;     /* Ha Long Teal */
 
   /* Tier 2 — positive financial signal (the jungle "money/growth" read). */
-  --color-viet-green: #2E9E5B;      /* Jungle Green, lifted for legibility on dark */
+  --color-main-accent-t2: #2E9E5B;     /* Jungle Green, lifted for legibility on dark */
 
   /* Tier 3 — rare jewels (≤1 per section). */
-  --color-viet-gold: #F2C94C;       /* headline return figures only */
-  --color-viet-pink: #E58AAE;       /* Lotus — the punctuation jewel */
+  --color-main-accent-t3: #F2C94C;   /* Rice Gold — headline return figures only */
+  --color-main-accent-t4: #E58AAE;   /* Lotus Pink — the punctuation jewel */
 }
 
 :root {
@@ -110,7 +110,7 @@
     font-family: 'Space Grotesk', 'Inter', sans-serif;
   }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-viet-teal/30 selection:text-viet-mist;
+    @apply bg-background text-foreground antialiased selection:bg-main-accent-t1/30 selection:text-main-mist;
   }
   
   /* Custom serif headings for premium contrast */
@@ -163,7 +163,7 @@
    soft centre vignette. Quiet navy base, no colored chrome; the texture alone
    gives the section depth so it reads as its own zone without a stark clash. */
 .research-texture {
-  background-color: var(--color-viet-surface);
+  background-color: var(--color-main-surface);
   background-image:
     radial-gradient(circle at 50% 0%, rgba(42, 157, 143, 0.05), transparent 60%),
     radial-gradient(rgba(230, 225, 211, 0.05) 1px, transparent 1px);
@@ -176,7 +176,7 @@
    no obvious light source; the eye stays on the text. */
 .research-panel {
   position: relative;
-  background-color: var(--color-viet-black);
+  background-color: var(--color-main-black);
 }
 .research-panel::before {
   content: "";
