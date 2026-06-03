@@ -15,8 +15,8 @@ import { cn } from "@/lib/utils";
 type Scale = "main" | "alt";
 
 const HEADING_SIZE: Record<Scale, string> = {
-  main: "text-2xl",
-  alt: "text-xl",
+  main: "text-2xl sm:text-3xl",
+  alt: "text-xl sm:text-2xl",
 };
 
 const BODY_SIZE: Record<Scale, string> = {
@@ -39,7 +39,7 @@ function Heading({
         data-slot="heading"
         className={cn(
           HEADING_SIZE[scale],
-          "font-serif-display text-white",
+          "font-serif-display text-white mb-4",
           className,
         )}
         {...props}
