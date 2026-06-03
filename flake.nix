@@ -109,6 +109,7 @@
               nodejs
               openssl
               pkg-config
+              playwright-driver.browsers
               rust
               tailwindcss_4
               wasm-bindgen-cli
@@ -116,6 +117,14 @@
 
             env.RUST_BACKTRACE = 1;
             env.RUST_LIB_BACKTRACE = 0;
+
+            # Playwright: drive the nixpkgs-provided browsers instead of the
+            # npm-downloaded ones (those are dynamically linked against libs
+            # absent on NixOS). The npm @playwright/test version MUST match
+            # playwright-driver's (1.59.1) or the browser revisions won't line up.
+            env.PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
+            env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
+            env.PLAYWRIGHT_HOST_PLATFORM_OVERRIDE = "nixos";
           };
       }
     );
