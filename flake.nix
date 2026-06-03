@@ -21,12 +21,11 @@
           targets = [ "wasm32-unknown-unknown" ];
         });
         pre-commit-check = pre-commit-hooks.lib.${system}.run (v_flakes.files.preCommit { inherit pkgs; });
-        manifest = (pkgs.lib.importTOML ./ev_site/Cargo.toml).package;
-        pname = manifest.name;
-        stdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.stdenv;
+        pname = "ev_site";
 
+        rs = v_flakes.rs { inherit pkgs rust; };
         github = v_flakes.github {
-          inherit pkgs pname; #rs py;
+          inherit pkgs pname;
           enable = true;
           lastSupportedVersion = "nightly-2026-05-12";
           jobs.default = true;
@@ -39,7 +38,7 @@
           rootDir = ./.;
           badges = [ "msrv" "crates_io" "docs_rs" "loc" "ci" ];
         };
-        combined = v_flakes.utils.combine [ github readme ];
+        combined = v_flakes.utils.combine [ rs github readme ];
 
         # ── dev orchestrator ────────────────────────────────────────────────
         # Self-contained wrapper so `nix run .#dev` starts the site without
@@ -103,6 +102,10 @@
             packages = [
               corepack
               nodejs
+              openssl
+              pkg-config
+              rust
+              mold
               playwright-driver.browsers
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 
