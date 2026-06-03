@@ -17,7 +17,7 @@ import {
   FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import { Heading, Text } from "@/components/ui/text";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 
@@ -279,7 +279,7 @@ export default function Home() {
                 <div className="flex items-center gap-2 text-main-accent-t1 font-mono-tech text-xs mb-3">
                   <MapPin className="w-3.5 h-3.5" /> Nhon Ly Beach, Quy Nhon
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-serif-display text-white mb-4">The Horizon Premium Villas</h3>
+                <Heading scale="main" className="sm:text-3xl mb-4">The Horizon Premium Villas</Heading>
                 <Text className="max-w-xl mb-6">
                   Exclusive ultra-luxury oceanfront villas with private pools, nestled between pristine limestone cliffs and crystal-clear turquoise waters.
                 </Text>
@@ -310,8 +310,8 @@ export default function Home() {
                 <div className="flex items-center gap-2 text-main-accent-t1 font-mono-tech text-xs mb-3">
                   <MapPin className="w-3.5 h-3.5" /> Quy Nhon Center
                 </div>
-                <h3 className="text-xl sm:text-2xl font-serif-display text-white mb-4">Quy Nhon Bay Residences</h3>
-                <Text className="text-xs mb-6">
+                <Heading scale="alt" className="sm:text-2xl mb-4">Quy Nhon Bay Residences</Heading>
+                <Text className="mb-6">
                   Premium high-rise apartments with panoramic views of the bay, integrating luxury amenities and smart-home technology.
                 </Text>
                 <div className="flex justify-between items-center border-t border-main-mist/10 pt-6">
@@ -336,7 +336,7 @@ export default function Home() {
                 <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-main-accent-t1/10 text-main-accent-t1 border border-main-accent-t1/20 text-[9px] font-mono-tech uppercase tracking-wider mb-6">
                   <TrendingUp className="w-3 h-3" /> Market Growth
                 </div>
-                <h3 className="text-xl font-serif-display text-white mb-4">Why Quy Nhon?</h3>
+                <Heading scale="alt" className="mb-4">Why Quy Nhon?</Heading>
                 <Text className="mb-6">
                   Positioned as the new gateway of Central Vietnam, Quy Nhon is undergoing a multi-billion dollar infrastructure upgrade, transforming into a global science and beach tourism destination.
                 </Text>
@@ -362,8 +362,8 @@ export default function Home() {
               <div className="flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-mono-tech text-main-accent-t1 tracking-widest uppercase block mb-3">Yield Terminal</span>
-                  <h3 className="text-2xl font-serif-display text-white mb-4">Investment Calculator</h3>
-                  <Text className="text-xs mb-6">
+                  <Heading scale="main" className="mb-4">Investment Calculator</Heading>
+                  <Text className="mb-6">
                     Project your returns across different asset classes in Quy Nhon based on our current fund advisory models.
                   </Text>
                 </div>

@@ -55,8 +55,44 @@
           badges = [ "msrv" "crates_io" "docs_rs" "loc" "ci" ];
         };
         combined = v_flakes.utils.combine [ py rs github readme ];
+
+        # ── dev orchestrator ────────────────────────────────────────────────
+        # Self-contained wrapper so `nix run .#dev` starts the site without
+        # first entering the devShell. The rust crate is being deprecated, so
+        # "the site" is just ./frontend (vite + pnpm).
+        #
+        # IMPORTANT: resolve the repo at *runtime* via `git rev-parse`, not
+        # `toString ./.`. Baking the latter locks the wrapper to the read-only
+        # /nix/store snapshot, where pnpm can't write node_modules. Run from
+        # anywhere inside the repo.
+        #
+        # pnpm is provisioned through corepack (matching the devShell), pinned
+        # to the frontend's `packageManager` field. Shims live under a writable
+        # .direnv/corepack so the read-only node install is never touched.
+        runFrontend = pkgs.writeShellApplication {
+          name = "run-frontend";
+          runtimeInputs = with pkgs; [ nodejs corepack git ];
+          text = ''
+            repo="$(git rev-parse --show-toplevel)"
+            export COREPACK_HOME="$repo/.direnv/corepack"
+            mkdir -p "$COREPACK_HOME/bin"
+            corepack enable --install-directory "$COREPACK_HOME/bin" pnpm
+            export PATH="$COREPACK_HOME/bin:$PATH"
+
+            cd "$repo/frontend"
+            if [ ! -d node_modules ]; then
+              pnpm install
+            fi
+            exec pnpm dev
+          '';
+        };
       in
       {
+        apps.dev = {
+          type = "app";
+          program = "${runFrontend}/bin/run-frontend";
+        };
+
         packages =
           let
             rustc = rust;
@@ -90,12 +126,13 @@
               + ''
                 cp -f ${(v_flakes.files.treefmt) { inherit pkgs; }} ./.treefmt.toml
 
-                # Provision the exact pnpm pinned by each subproject's
-                # `packageManager` field (e.g. manus_site_*: pnpm@10.4.1) via
-                # corepack. nixpkgs' `pnpm` tracks a single version and would
-                # not match the pin, so we let corepack resolve it instead.
-                # Shims live under .direnv (gitignored, writable) so the
-                # read-only /nix/store node install is never touched.
+                # Provision the exact pnpm pinned by the frontend's
+                # `packageManager` field (pnpm@10.4.1) via corepack. nixpkgs'
+                # pnpm tracks a single version and would not match the pin, so
+                # we let corepack resolve it instead. Shims live under .direnv
+                # (gitignored, writable) so the read-only /nix/store node
+                # install is never touched. Run `pnpm install` in frontend/ to
+                # populate node_modules.
                 export COREPACK_HOME="$PWD/.direnv/corepack"
                 mkdir -p "$COREPACK_HOME/bin"
                 corepack enable --install-directory "$COREPACK_HOME/bin" pnpm
