@@ -1,0 +1,35 @@
+# Audio formats
+*.mp3 -filter
+*.flac -filter
+*.wav -filter
+*.ogg -filter
+*.m4a -filter
+*.aac -filter
+*.opus -filter
+*.wma -filter
+
+# Image formats
+*.jpg -filter
+*.jpeg -filter
+*.png -filter
+*.gif -filter
+*.bmp -filter
+*.tiff -filter
+*.webp -filter
+*.svg -filter
+
+# Documents
+*.pdf -filter
+*.excalidraw -filter
+
+# Data
+*.json -filter
+*.csv -filter
+*.parquet -filter
+*.pkl -filter
+*.npy -filter
+*.npz -filter
+*.db -filter
+*.sqlite -filter
+*.sqlite3 -filter
+*.onnx -filter

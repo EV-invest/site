@@ -46,6 +46,7 @@
           enable = true;
           lastSupportedVersion = "nightly-2026-05-12";
           jobs.default = true;
+          lfs = false;
         };
         readme = v_flakes.readme-fw {
           inherit pkgs pname;
