@@ -61,13 +61,13 @@
      ──────────────────────────────────────────────────────────────────── */
 
   /* Brand — deep oceanic blue from the EV Investment logo. */
-  --color-main-brand: #001E4E;       /* deep oceanic blue */
+  --color-main-brand: #001E4E;
 
   /* Neutrals — navy-tinted dark ramp (the 90% of the page). */
   --color-main-black: #070d18;      /* bg_deep — base background */
   --color-main-surface: #081020;    /* section alt background */
   --color-main-card: #0c1626;       /* card / panel surface */
-  --color-main-mist: #E6E1D3;       /* Limestone Mist — ivory text */
+  --color-main-mist: #E6E1D3; 
 
   /* Tier 1 — recurring workhorse accent. */
   --color-main-accent-t1: #2A9D8F;     /* Ha Long Teal */
@@ -102,6 +102,30 @@
   --input: #1b2742;
   --ring: #2A9D8F;                  /* teal focus ring */
   --radius: 0.5rem;                 /* softened from 0.25 to match good_team's calmer cards */
+}
+.light {
+  /*TODO: .*/
+  /*/* Dark, navy-led. Brand navy is primary; teal is the accent. */*/
+  /*--background: #070d18;            /* navy-black */*/
+  /*--foreground: #E6E1D3;            /* Limestone Mist */*/
+  /*--card: #0c1626;                  /* navy card surface */*/
+  /*--card-foreground: #E6E1D3;*/
+  /*--popover: #0c1626;*/
+  /*--popover-foreground: #E6E1D3;*/
+  /*--primary: #001E4E;               /* logo navy — the brand IS the primary */*/
+  /*--primary-foreground: #E6E1D3;*/
+  /*--secondary: #081020;*/
+  /*--secondary-foreground: #E6E1D3;*/
+  /*--muted: #16213a;*/
+  /*--muted-foreground: #9aa6b8;      /* cool silver */*/
+  /*--accent: #2A9D8F;                /* Ha Long Teal — the single accent */*/
+  /*--accent-foreground: #070d18;*/
+  /*--destructive: #DA251D;           /* Flag Red — status only */*/
+  /*--destructive-foreground: #E6E1D3;*/
+  /*--border: #1b2742;                /* silver-navy hairline */*/
+  /*--input: #1b2742;*/
+  /*--ring: #2A9D8F;                  /* teal focus ring */*/
+  /*--radius: 0.5rem;                 /* softened from 0.25 to match good_team's calmer cards */*/
 }
 
 @layer base {
