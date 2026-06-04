@@ -3,6 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*can't collapse this down into the defs, cause we need a dark/light toggle*/
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -20,21 +21,21 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+  /*--color-accent: var(--accent);*/
+  /*--color-accent-foreground: var(--accent-foreground);*/
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  /*--color-sidebar: var(--sidebar);*/
+  /*--color-sidebar-foreground: var(--sidebar-foreground);*/
+  /*--color-sidebar-primary: var(--sidebar-primary);*/
+  /*--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);*/
+  /*--color-sidebar-accent: var(--sidebar-accent);*/
+  /*--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);*/
+  /*--color-sidebar-border: var(--sidebar-border);*/
+  /*--color-sidebar-ring: var(--sidebar-ring);*/
 
   /* ────────────────────────────────────────────────────────────────────
      Navy-led institutional base + a tiered accent system.
@@ -88,29 +89,30 @@
      color-mix so the flat token equals what the markup actually renders. */
 
   --background: #070d18;            /* bg-main-black — page/section base (used) */
-  --foreground: #ffffff;            /* text-white — the real default text (31×);
+  --foreground: white;            /* text-white — the real default text (31×);
                                        bare text-main-mist is only container inherit */
   --card: #0c1626;                  /* bg-main-card — card/panel surface (used) */
-  --card-foreground: #ffffff;       /* text-white inside cards */
+  --card-foreground: white;       /* text-white inside cards */
   --popover: #0c1626;               /* no popovers in markup; mirror card */
-  --popover-foreground: #ffffff;
+  --popover-foreground: white;
   --primary: #001E4E;               /* main-brand — text-main-brand on hero CTA */
-  --primary-foreground: #E6E1D3;    /* light text on navy */
+  --primary-foreground: var(--color-main-mist);    /* light text on navy */
   --secondary: #081020;             /* main-surface — section-alt base */
-  --secondary-foreground: #ffffff;
+  --secondary-foreground: white;
   --muted: #16213a;                 /* not used in markup; kept for primitives */
-  --muted-foreground: color-mix(in srgb, #E6E1D3 40%, transparent); /* text-main-mist/40 — actual quiet text */
-  --accent: #2A9D8F;                /* main-accent-t1 — bg-main-accent-t1 fills (used) */
-  --accent-foreground: #070d18;     /* text-main-black on teal CTAs (used) */
+  --muted-foreground: color-mix(in srgb, var(--color-main-mist) 40%, transparent); /* text-main-mist/40 — actual quiet text */
+  /* Doesn't seem to make sense. Firstly, if it's accent, we don't write anything on it. Secondly, */
+  /*--accent: var(--color-main-accent-t1);*/
+  /*--accent-foreground: #070d18;*/
   --destructive: #DA251D;           /* Flag Red — not used in markup; status only */
-  --destructive-foreground: #E6E1D3;
-  --border: color-mix(in srgb, #E6E1D3 10%, transparent); /* border-main-mist/10 — the real hairline (27×) */
-  --input: color-mix(in srgb, #E6E1D3 20%, transparent);  /* border-main-mist/20 — actual input border */
-  --ring: #2A9D8F;                  /* outline-main-accent-t1 focus (used) */
+  --destructive-foreground: var(--color-main-mist);
+  --border: color-mix(in srgb, var(--color-main-mist) 10%, transparent); /* border-main-mist/10 — the real hairline (27×) */
+  --input: color-mix(in srgb, var(--color-main-mist) 20%, transparent);  /* border-main-mist/20 — actual input border */
+  --ring: var(--color-main-accent-t1);                  /* outline-main-accent-t1 focus (used) */
   --radius: 0.5rem;                 /* softened from 0.25 to match good_team's calmer cards */
 }
 
-/*TODO: \*/
+/*TODO: */
 .light {
 }
 

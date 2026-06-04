@@ -79,8 +79,11 @@ export function ResearchA() {
                 </div>
               </div>
 
-              <Text asChild className="prose prose-sm max-w-none space-y-6">
-                <div>
+              {/* Not <Text>: it would force a body size on this copy. This section
+                  is part of the writeup, where the headers don't need to fight the
+                  background for attention, so they sit smaller relative to their body
+                  than the Text scale assumes. We keep the prose sizing local instead. */}
+              <div className="prose prose-sm text-main-mist/70 font-light max-w-none space-y-6 leading-relaxed">
                 {activeResearch === 0 ? (
                   <>
                     <p className="font-serif-display italic text-lg text-main-mist/90">
@@ -118,8 +121,7 @@ export function ResearchA() {
                     </p>
                   </>
                 )}
-                </div>
-              </Text>
+              </div>
             </div>
 
             <div className="mt-12 pt-6 border-t border-main-mist/10 flex flex-col sm:flex-row justify-between items-center gap-4">

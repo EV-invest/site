@@ -32,18 +32,19 @@ export function FooterA() {
 
           <div>
             <h4 className="font-mono-tech text-xs text-white uppercase tracking-widest mb-6">Offices</h4>
-            <Text asChild className="space-y-4 text-xs">
-              <ul>
-                <li>
-                  <strong className="text-white block font-mono-tech text-[10px] uppercase tracking-wider mb-1">Quy Nhon Head Office</strong>
-                  102 An Duong Vuong St, Nguyen Van Cu Ward, Quy Nhon City, Vietnam
-                </li>
-                <li>
-                  <strong className="text-white block font-mono-tech text-[10px] uppercase tracking-wider mb-1">Ho Chi Minh Representative</strong>
-                  Deutsches Haus, 33 Le Duan Blvd, District 1, Ho Chi Minh City, Vietnam
-                </li>
-              </ul>
-            </Text>
+            {/* Not <Text>: variant="info" injects the scale's body size (text-sm),
+                whose line-height fights leading-relaxed and tightens these address
+                lines. Footer copy is fixed at text-xs, so keep the sizing local. */}
+            <ul className="space-y-4 text-xs text-main-mist/70 font-light leading-relaxed">
+              <li>
+                <strong className="text-white block font-mono-tech text-[10px] uppercase tracking-wider mb-1">Quy Nhon Head Office</strong>
+                102 An Duong Vuong St, Nguyen Van Cu Ward, Quy Nhon City, Vietnam
+              </li>
+              <li>
+                <strong className="text-white block font-mono-tech text-[10px] uppercase tracking-wider mb-1">Ho Chi Minh Representative</strong>
+                Deutsches Haus, 33 Le Duan Blvd, District 1, Ho Chi Minh City, Vietnam
+              </li>
+            </ul>
           </div>
 
           <div>
