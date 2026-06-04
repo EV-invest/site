@@ -1,16 +1,10 @@
 import { derive } from "@traits-ts/core";
 import { Text } from "@/components/ui/text";
 import { Logo } from "@/components/Logo";
-import { toast } from "sonner";
+import { notifyPlaceholder } from "@/lib/utils";
 import { Section } from "./section";
 
 export function FooterA() {
-  const handlePlaceholderClick = (featureName: string) => {
-    toast.info(`${featureName} — Концепт-интерфейс`, {
-      description: "Данный элемент является частью интерактивного дизайн-макета.",
-      duration: 3000
-    });
-  };
 
   // 6. FOOTER (Minimalist, structured)
   return (
@@ -63,7 +57,7 @@ export function FooterA() {
               />
               <button
                 className="bg-main-accent-t1 text-main-black px-4 font-mono-tech text-xs uppercase font-bold hover:bg-main-mist transition-colors"
-                onClick={() => handlePlaceholderClick("Newsletter Subscription")}
+                onClick={() => notifyPlaceholder("Newsletter Subscription")}
               >
                 Join
               </button>

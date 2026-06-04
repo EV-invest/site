@@ -19,8 +19,8 @@
 *.svg -filter
 
 # Documents
-*.pdf -filter
-*.excalidraw -filter
+*.pdf -filter merge=ours
+*.excalidraw -filter merge=ours
 
 # Data
 *.json -filter
@@ -33,3 +33,8 @@
 *.sqlite -filter
 *.sqlite3 -filter
 *.onnx -filter
+
+# Generated/locked files (keep current branch's version on conflict)
+Cargo.lock merge=ours
+flake.lock merge=ours
+.pre-commit-config.yaml merge=ours

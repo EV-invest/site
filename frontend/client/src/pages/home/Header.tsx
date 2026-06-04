@@ -2,7 +2,7 @@ import { derive } from "@traits-ts/core";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
-import { toast } from "sonner";
+import { notifyPlaceholder } from "@/lib/utils";
 import { Section } from "./section";
 
 export function HeaderA() {
@@ -14,20 +14,13 @@ export function HeaderA() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handlePlaceholderClick = (featureName: string) => {
-    toast.info(`${featureName} — Концепт-интерфейс`, {
-      description: "Данный элемент является частью интерактивного дизайн-макета.",
-      duration: 3000
-    });
-  };
-
   // 1. HEADER (Minimalist, floating)
   return (
     <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 border-b ${
       hasScrolled
         ? "bg-main-black/90 backdrop-blur-md border-main-mist/10 py-4"
         : "bg-transparent border-transparent py-6"
-    }`}>{/* navy-led: gold chrome retired in favour of Ha Long Teal accent */}
+    }`}>{}
       <div className="container flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Logo className="w-10 h-10 text-white" />
@@ -49,7 +42,7 @@ export function HeaderA() {
           <Button
             variant="outline"
             className="hidden sm:inline-flex font-mono-tech text-xs tracking-wider border-main-accent-t1 text-main-accent-t1 hover:bg-main-accent-t1 hover:text-main-black transition-all duration-300 bg-transparent"
-            onClick={() => handlePlaceholderClick("Investor Portal Login")}
+            onClick={() => notifyPlaceholder("Investor Portal Login")}
           >
             Investor Portal
           </Button>

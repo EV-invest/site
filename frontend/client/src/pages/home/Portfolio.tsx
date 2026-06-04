@@ -3,7 +3,7 @@ import { useState } from "react";
 import { TrendingUp, MapPin, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading, Text } from "@/components/ui/text";
-import { toast } from "sonner";
+import { notifyPlaceholder } from "@/lib/utils";
 import { Section } from "./section";
 import { ASSETS } from "./assets";
 
@@ -14,13 +14,6 @@ export function PortfolioA() {
     term: 5,
     type: "residential"
   });
-
-  const handlePlaceholderClick = (featureName: string) => {
-    toast.info(`${featureName} — Концепт-интерфейс`, {
-      description: "Данный элемент является частью интерактивного дизайн-макета.",
-      duration: 3000
-    });
-  };
 
   // Вычисление показателей для интерактивного калькулятора (Binance/Fintech Style)
   const calculateROI = () => {
@@ -131,7 +124,7 @@ export function PortfolioA() {
                 <Button
                   variant="ghost"
                   className="p-0 text-main-accent-t1 hover:text-white hover:bg-transparent font-mono-tech text-xs tracking-wider"
-                  onClick={() => handlePlaceholderClick("View Deal Sheet")}
+                  onClick={() => notifyPlaceholder("View Deal Sheet")}
                 >
                   Deal Sheet <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
                 </Button>
@@ -249,7 +242,7 @@ export function PortfolioA() {
                 </Text>
                 <Button
                   className="w-full bg-main-accent-t1 text-main-black hover:bg-main-mist hover:text-main-brand rounded-none font-mono-tech text-xs tracking-wider uppercase py-5"
-                  onClick={() => handlePlaceholderClick("Request Advisory Session")}
+                  onClick={() => notifyPlaceholder("Request Advisory Session")}
                 >
                   Request advisory
                 </Button>

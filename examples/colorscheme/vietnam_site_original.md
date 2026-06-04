@@ -1,7 +1,7 @@
 # `vietnam_site/` — original colorscheme snapshot
 
 Captured verbatim from `vietnam_site/client/src/index.css` (the reinstated
-original manus site) on 2026-05-30, before any navy-led rework. This is the
+original site) on 2026-05-30, before any navy-led rework. This is the
 reference for "the vibrant-yet-cultured Vietnam feel" we're trying to recover:
 a neutral charcoal base, warm ivory text, **Rice Gold as the lead brand color**,
 and the rest of the Vietnam palette used as careful, sparse accents.

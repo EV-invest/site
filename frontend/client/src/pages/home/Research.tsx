@@ -4,18 +4,11 @@ import { ChevronRight, ArrowUpRight, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { Logo } from "@/components/Logo";
-import { toast } from "sonner";
+import { notifyPlaceholder } from "@/lib/utils";
 import { Section } from "./section";
 
 export function ResearchA() {
   const [activeResearch, setActiveResearch] = useState(0);
-
-  const handlePlaceholderClick = (featureName: string) => {
-    toast.info(`${featureName} — Концепт-интерфейс`, {
-      description: "Данный элемент является частью интерактивного дизайн-макета.",
-      duration: 3000
-    });
-  };
 
   // 4. RESEARCH SECTION — quiet navy base (same family as the page) with a
   //    faint dot-grid texture so it reads as its own "document / library" zone
@@ -139,7 +132,7 @@ export function ResearchA() {
               </div>
               <Button
                 className="bg-main-accent-t1 text-main-black hover:bg-main-mist hover:text-main-brand transition-all duration-300 rounded-none font-mono-tech text-xs tracking-wider uppercase py-5 px-6"
-                onClick={() => handlePlaceholderClick("Download Full Report")}
+                onClick={() => notifyPlaceholder("Download Full Report")}
               >
                 Download Full Report <ArrowUpRight className="w-4 h-4 ml-2" />
               </Button>

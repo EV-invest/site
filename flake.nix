@@ -24,11 +24,19 @@
         pname = "ev_site";
 
         rs = v_flakes.rs { inherit pkgs rust; };
+        js = v_flakes.js {
+          inherit pkgs;
+          # Run `pnpm test:visual` (playwright) in the pre-commit hook.
+          preCommit.visual = true;
+        };
         github = v_flakes.github {
-          inherit pkgs pname;
+          inherit pkgs pname rs js;
           enable = true;
           lastSupportedVersion = "nightly-2026-05-12";
-          jobs.default = true;
+          jobs = {
+            warnings.augment = [ "tokei" "code-duplication" ];
+            other.augment = [ "loc-badge" ];
+          };
           lfs = false;
         };
         readme = v_flakes.readme-fw {
@@ -38,13 +46,9 @@
           rootDir = ./.;
           badges = [ "msrv" "crates_io" "docs_rs" "loc" "ci" ];
         };
-        combined = v_flakes.utils.combine [ rs github readme ];
+        combined = v_flakes.utils.combine { inherit rust; modules = [ rs github readme ]; };
 
         # ── dev orchestrator ────────────────────────────────────────────────
-        # Self-contained wrapper so `nix run .#dev` starts the site without
-        # first entering the devShell. The rust crate is being deprecated, so
-        # "the site" is just ./frontend (vite + pnpm).
-        #
         # IMPORTANT: resolve the repo at *runtime* via `git rev-parse`, not
         # `toString ./.`. Baking the latter locks the wrapper to the read-only
         # /nix/store snapshot, where pnpm can't write node_modules. Run from
@@ -58,6 +62,7 @@
           runtimeInputs = with pkgs; [ nodejs corepack git ];
           text = ''
             repo="$(git rev-parse --show-toplevel)"
+            export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
             export COREPACK_HOME="$repo/.direnv/corepack"
             mkdir -p "$COREPACK_HOME/bin"
             corepack enable --install-directory "$COREPACK_HOME/bin" pnpm
@@ -93,6 +98,7 @@
                 # (gitignored, writable) so the read-only /nix/store node
                 # install is never touched. Run `pnpm install` in frontend/ to
                 # populate node_modules.
+                export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
                 export COREPACK_HOME="$PWD/.direnv/corepack"
                 mkdir -p "$COREPACK_HOME/bin"
                 corepack enable --install-directory "$COREPACK_HOME/bin" pnpm

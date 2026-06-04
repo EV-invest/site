@@ -1,13 +1,13 @@
-import { derive } from "@traits-ts/core";
-import { lazy } from "react";
 import { Users, Globe } from "lucide-react";
 import { Text } from "@/components/ui/text";
 import { notifyPlaceholder } from "@/lib/utils";
-import { Section } from "./section";
 import { ASSETS } from "./assets";
 import { TEAM, Card, PlaceholderCard } from "./team-shared";
 
-export function TeamA() {
+// Variant B of the Team section. Its own module so the Section contract's
+// lazy(() => import("./TeamB")) emits a separate chunk — B's code never ships
+// to default-A visitors, only fetched when dev cycles to it (Alt+l/Alt+h).
+export default function TeamB() {
   return (
     <section id="team" className="py-24 relative border-t border-main-mist/10 bg-main-black">
       <div className="container">
@@ -20,7 +20,7 @@ export function TeamA() {
               Led by <span className="italic text-main-accent-t1">Institutional Pioneers</span>
             </h2>
             <Text className="max-w-xl">
-              The EV Investment team combines international experience in investment, risk management, and real estate development. TODO
+              The EV Investment team combines international experience in investment, risk management, and real estate development. Our goal is to deliver maximum transparency and returns for our partners.
             </Text>
           </div>
           <div className="lg:col-span-6">
@@ -92,13 +92,4 @@ export function TeamA() {
       </div>
     </section>
   );
-}
-
-// B is the dev-only alternate: its own chunk, fetched on demand when cycled to.
-const TeamB = lazy(() => import("./TeamB"));
-
-export class Team extends derive(Section) {
-  get name() { return "team"; }
-  a() { return TeamA; }
-  b() { return TeamB; }
 }
