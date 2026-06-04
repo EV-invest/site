@@ -17,5 +17,7 @@ pub trait BlogRepository: Send + Sync {
 
 	async fn find_by_id(&self, id: Uuid) -> Result<Option<Blog>, DomainError>;
 
-	async fn list(&self) -> Result<Vec<Blog>, DomainError>;
+	/// Page through blogs. `limit`/`offset` are passed straight to the store;
+	/// callers are expected to supply sane, bounded values.
+	async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Blog>, DomainError>;
 }

@@ -21,9 +21,9 @@ impl From<DomainError> for ApiError {
 impl IntoResponse for ApiError {
 	fn into_response(self) -> Response {
 		let (status, message) = match self.0 {
-			DomainError::NotFound => (StatusCode::NOT_FOUND, "not found".to_string()),
+			DomainError::NotFound { entity, id } => (StatusCode::NOT_FOUND, format!("{entity} not found: {id}")),
 			DomainError::Conflict(msg) => (StatusCode::CONFLICT, msg),
-			DomainError::Validation(msg) => (StatusCode::UNPROCESSABLE_ENTITY, msg),
+			DomainError::Validation(msg) => (StatusCode::BAD_REQUEST, msg),
 			DomainError::Repository(err) => {
 				// Internal details are logged, never leaked to the client.
 				tracing::error!(error = %err, "internal repository error");
