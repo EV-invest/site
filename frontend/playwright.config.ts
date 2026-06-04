@@ -12,13 +12,15 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
-  // Locally: a minimal reporter (tests/visual-reporter.ts) that on failure
-  // prints only the expected/actual/diff image paths — no step trace or
-  // code-frame, since a visual failure is an image mismatch, not a code bug.
-  // The diff PNG is the magenta pixel-diff. `playwright show-report` won't
-  // apply here; open the diff path directly, or run with --reporter=html for
-  // the side-by-side slider UI.
-  reporter: process.env.CI ? "github" : "./tests/visual-reporter.ts",
+  // Locally, two reporters compose: a minimal one (tests/visual-reporter.ts)
+  // that on failure prints only the expected/actual/diff image paths — no step
+  // trace or code-frame, since a visual failure is an image mismatch, not a
+  // code bug — plus the HTML reporter, which auto-opens on failure with the
+  // side-by-side Expected/Actual/Diff slider (magenta pixel-diff). Reopen the
+  // last one with `playwright show-report`.
+  reporter: process.env.CI
+    ? "github"
+    : [["./tests/visual-reporter.ts"], ["html", { open: "on-failure" }]],
 
   // A pixel diff above this fraction fails the test. Small allowance absorbs
   // sub-pixel font rasterisation jitter without masking real layout changes.
