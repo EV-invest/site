@@ -24,7 +24,7 @@ const SECTIONS = [
 const PIN_TO_TOP = new Set<string>(["header", "hero"]);
 
 for (const { name, selector } of SECTIONS) {
-  test(`section ${name} matches snapshot`, async ({ page }) => {
+  test(`- mismatch on: ${name}`, async ({ page }) => {
     await page.goto("/");
 
     // Web fonts shift glyph metrics; wait until they're applied.
