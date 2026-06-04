@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c01e0e5b4a89fd051395f61d514d70f338a3b74ec0e5d767fdedd42bd31e2f24
-size 292
+{
+  "name": "ev-site",
+  "private": true,
+  "description": "Root delegator — the app lives in frontend/ (Next.js).",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "check": "npm --prefix frontend run check",
+    "lint": "npm --prefix frontend run lint",
+    "format": "npm --prefix frontend run format",
+    "test:visual": "npm --prefix frontend run test:visual"
+  }
+}

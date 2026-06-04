@@ -1,0 +1,216 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Font stacks wired to next/font CSS variables (set on <html>). */
+  --font-sans: var(--font-grotesk), "Inter", sans-serif;
+  --font-serif: var(--font-playfair), "Merriweather", serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ────────────────────────────────────────────────────────────────────
+     Navy-led institutional base + a tiered accent system.
+
+     The resting page is a quiet navy ramp with ivory text (trust first). On
+     top of that sits a deliberate 3-tier accent hierarchy so the page reads
+     "jungle-vibrant" without becoming monotone teal. Tokens are named by the
+     ROLE they play, not by hue — the hue is just the current value:
+
+       main-accent-t1   (Tier 1, Ha Long Teal): the connective workhorse
+                (eyebrows, labels, nav, secondary numbers). Recurring, calm.
+       main-accent-t2   (Tier 2, Jungle Green): positive financial signals only
+                (yields, growth %, profit, FDI). The "money/growth" read; the
+                actual jungle warmth, used meaningfully not decoratively.
+       Tier 3 — the rare jewels, ≤1 per section, reserved for "this matters":
+                · main-accent-t3 (Rice Gold) — headline return figures (IRR/ROI/appr.)
+                · main-accent-t4 (Lotus Pink) — the original's 3 punctuation moments
+
+     Flag Red (#DA251D) and the muted step (#16213a) live only in the shadcn
+     semantic layer (--destructive / --muted) below; no bespoke main-* token.
+
+     `main-black` is a deep NAVY-black. Adjacent sections are separated by a
+     thin border + a step in the navy ramp (black → surface), never a clash.
+     ──────────────────────────────────────────────────────────────────── */
+
+  /* Brand — deep oceanic blue from the EV Investment logo. */
+  --color-main-brand: #001e4e; /* deep oceanic blue */
+
+  /* Neutrals — navy-tinted dark ramp (the 90% of the page). */
+  --color-main-black: #070d18; /* bg_deep — base background */
+  --color-main-surface: #081020; /* section alt background */
+  --color-main-card: #0c1626; /* card / panel surface */
+  --color-main-mist: #e6e1d3; /* Limestone Mist — ivory text */
+
+  /* Tier 1 — recurring workhorse accent. */
+  --color-main-accent-t1: #2a9d8f; /* Ha Long Teal */
+
+  /* Tier 2 — positive financial signal (the jungle "money/growth" read). */
+  --color-main-accent-t2: #2e9e5b; /* Jungle Green, lifted for legibility on dark */
+
+  /* Tier 3 — rare jewels (≤1 per section). */
+  --color-main-accent-t3: #f2c94c; /* Rice Gold — headline return figures only */
+  --color-main-accent-t4: #e58aae; /* Lotus Pink — the punctuation jewel */
+}
+
+:root {
+  /* Dark, navy-led. Brand navy is primary; teal is the accent. */
+  --background: #070d18; /* navy-black */
+  --foreground: #e6e1d3; /* Limestone Mist */
+  --card: #0c1626; /* navy card surface */
+  --card-foreground: #e6e1d3;
+  --popover: #0c1626;
+  --popover-foreground: #e6e1d3;
+  --primary: #001e4e; /* logo navy — the brand IS the primary */
+  --primary-foreground: #e6e1d3;
+  --secondary: #081020;
+  --secondary-foreground: #e6e1d3;
+  --muted: #16213a;
+  --muted-foreground: #9aa6b8; /* cool silver */
+  --accent: #2a9d8f; /* Ha Long Teal — the single accent */
+  --accent-foreground: #070d18;
+  --destructive: #da251d; /* Flag Red — status only */
+  --destructive-foreground: #e6e1d3;
+  --border: #1b2742; /* silver-navy hairline */
+  --input: #1b2742;
+  --ring: #2a9d8f; /* teal focus ring */
+  --radius: 0.5rem; /* softened from 0.25 to match good_team's calmer cards */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    font-family: var(--font-sans);
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-main-accent-t1/30 selection:text-main-mist;
+  }
+
+  /* Custom serif headings for premium contrast */
+  h1,
+  h2,
+  h3,
+  .font-serif-display {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  .font-mono-tech {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+      max-width: 1440px;
+    }
+  }
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #070d18;
+}
+::-webkit-scrollbar-thumb {
+  background: #1b2742;
+  border-radius: 3px;
+}
+/* Research-zone texture — a faint dot-grid (the "parked-domain" feel) over a
+   soft centre vignette. Quiet navy base, no colored chrome; the texture alone
+   gives the section depth so it reads as its own zone without a stark clash. */
+.research-texture {
+  background-color: var(--color-main-surface);
+  background-image:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(42, 157, 143, 0.05),
+      transparent 60%
+    ),
+    radial-gradient(rgba(230, 225, 211, 0.05) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    22px 22px;
+  background-position:
+    center top,
+    center;
+}
+
+/* Research reading panel — near-black field with a faint, cool, cloudy mottle
+   so the surface has some life without drawing attention to itself. No warmth,
+   no obvious light source; the eye stays on the text. */
+.research-panel {
+  position: relative;
+  background-color: var(--color-main-black);
+}
+.research-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      75% 60% at 30% 25%,
+      rgba(154, 166, 184, 0.045),
+      transparent 70%
+    ),
+    radial-gradient(60% 80% at 80% 90%, rgba(7, 13, 24, 0.6), transparent 70%);
+}
+.research-panel > * {
+  position: relative;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a9d8f;
+}

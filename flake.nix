@@ -26,8 +26,10 @@
         rs = v_flakes.rs { inherit pkgs rust; };
         js = v_flakes.js {
           inherit pkgs;
-          # Run `pnpm test:visual` (playwright) in the pre-commit hook.
-          preCommit.visual = true;
+          # v_flakes.js provisions pnpm; this project uses npm, so its built-in
+          # `pnpm test:visual` pre-commit hook is disabled. Run the playwright
+          # suite via `npm run test:visual` (or in CI) instead.
+          preCommit.visual = false;
         };
         github = v_flakes.github {
           inherit pkgs pname rs js;
@@ -51,28 +53,18 @@
         # ── dev orchestrator ────────────────────────────────────────────────
         # IMPORTANT: resolve the repo at *runtime* via `git rev-parse`, not
         # `toString ./.`. Baking the latter locks the wrapper to the read-only
-        # /nix/store snapshot, where pnpm can't write node_modules. Run from
-        # anywhere inside the repo.
-        #
-        # pnpm is provisioned through corepack (matching the devShell), pinned
-        # to the frontend's `packageManager` field. Shims live under a writable
-        # .direnv/corepack so the read-only node install is never touched.
+        # /nix/store snapshot, where npm can't write node_modules. Run from
+        # anywhere inside the repo. npm ships with the nixpkgs `nodejs`.
         runFrontend = pkgs.writeShellApplication {
           name = "run-frontend";
-          runtimeInputs = with pkgs; [ nodejs corepack git ];
+          runtimeInputs = with pkgs; [ nodejs git ];
           text = ''
             repo="$(git rev-parse --show-toplevel)"
-            export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-            export COREPACK_HOME="$repo/.direnv/corepack"
-            mkdir -p "$COREPACK_HOME/bin"
-            corepack enable --install-directory "$COREPACK_HOME/bin" pnpm
-            export PATH="$COREPACK_HOME/bin:$PATH"
-
             cd "$repo/frontend"
             if [ ! -d node_modules ]; then
-              pnpm install
+              npm install
             fi
-            exec pnpm dev
+            exec npm run dev
           '';
         };
       in
@@ -91,22 +83,11 @@
               + ''
                 cp -f ${(v_flakes.files.treefmt) { inherit pkgs; }} ./.treefmt.toml
 
-                # Provision the exact pnpm pinned by the frontend's
-                # `packageManager` field (pnpm@10.4.1) via corepack. nixpkgs'
-                # pnpm tracks a single version and would not match the pin, so
-                # we let corepack resolve it instead. Shims live under .direnv
-                # (gitignored, writable) so the read-only /nix/store node
-                # install is never touched. Run `pnpm install` in frontend/ to
-                # populate node_modules.
-                export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-                export COREPACK_HOME="$PWD/.direnv/corepack"
-                mkdir -p "$COREPACK_HOME/bin"
-                corepack enable --install-directory "$COREPACK_HOME/bin" pnpm
-                export PATH="$COREPACK_HOME/bin:$PATH"
+                # npm ships with the nixpkgs `nodejs`. Run `npm install` in
+                # frontend/ to populate node_modules (its own package-lock.json).
               '';
 
             packages = [
-              corepack
               nodejs
               openssl
               pkg-config
