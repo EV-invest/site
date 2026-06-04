@@ -1,0 +1,24 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2024"
+description = "Backend API for the EV Investment fund site"
+license = "BlueOak-1.0.0"
+publish = false
+
+[dependencies]
+anyhow = "1.0.102"
+async-trait = "0.1.89"
+axum = "0.8.9"
+chrono = { version = "0.4.45", features = ["serde"] }
+dotenvy = "0.15.7"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+sqlx = { version = "0.9.0", features = ["runtime-tokio", "tls-rustls", "postgres", "uuid", "chrono", "migrate"] }
+thiserror = "2.0.18"
+tokio = { version = "1.52.3", features = ["full"] }
+tower = "0.5.3"
+tower-http = { version = "0.6.11", features = ["trace", "cors"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "fmt"] }
+uuid = { version = "1.23.2", features = ["v4", "serde"] }
