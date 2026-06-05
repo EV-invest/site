@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
 use crate::domain::{
@@ -9,10 +10,13 @@ use crate::domain::{
 
 /// Inbound payload for `POST /blogs`. Carries raw strings off the wire; parsing
 /// into validated value objects happens in the `TryFrom` below — at the boundary.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct CreateBlogRequest {
+	#[schema(example = "Hello, world")]
 	pub title: String,
+	#[schema(example = "hello-world")]
 	pub slug: String,
+	#[schema(example = "My first post.")]
 	pub body: String,
 	#[serde(default)]
 	pub published: bool,
@@ -32,11 +36,14 @@ impl TryFrom<CreateBlogRequest> for NewBlog {
 }
 
 /// Query parameters for `GET /blogs`, with sane defaults (limit 20, offset 0).
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, IntoParams)]
+#[into_params(parameter_in = Query)]
 pub struct ListBlogsQuery {
 	#[serde(default = "default_limit")]
+	#[param(default = 20, minimum = 1, maximum = 100)]
 	pub limit: i64,
 	#[serde(default)]
+	#[param(default = 0, minimum = 0)]
 	pub offset: i64,
 }
 
@@ -45,7 +52,7 @@ fn default_limit() -> i64 {
 }
 
 /// Outbound representation of a [`Blog`] on the wire.
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct BlogResponse {
 	pub id: Uuid,
 	pub title: String,

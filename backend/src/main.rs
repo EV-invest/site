@@ -2,23 +2,13 @@
 //!
 //! Wiring lives here and only here: load config, build the driven adapters,
 //! inject them into the use cases, mount the driving (HTTP) adapter, and serve.
-//!
-//! Dependency direction (hexagonal):
-//!   api ─▶ application ─▶ domain ◀─ infrastructure
-//! Everything points inward at `domain`; nothing in `domain` points out.
-
-mod api;
-mod application;
-mod config;
-mod domain;
-mod infrastructure;
+//! The layered modules themselves live in the library crate (`lib.rs`).
 
 use std::sync::Arc;
 
 use anyhow::Context;
-
-use crate::{
-	api::state::AppState,
+use backend::{
+	api::{self, state::AppState},
 	application::blog_service::BlogService,
 	config::AppConfig,
 	infrastructure::{db, persistence::postgres_blog_repository::PostgresBlogRepository},
