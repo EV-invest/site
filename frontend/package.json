@@ -9,12 +9,14 @@
     "start": "next start",
     "lint": "next lint",
     "check": "tsc --noEmit",
+    "gen:api": "openapi-ts",
     "lint:css": "stylelint \"application/styles/**/*.css\"",
     "format": "prettier --write .",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots"
   },
   "dependencies": {
+    "@hey-api/client-fetch": "^0.13.1",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -69,6 +71,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
+    "@hey-api/openapi-ts": "^0.98.1",
     "@playwright/test": "1.59.1",
     "@tailwindcss/postcss": "^4.1.14",
     "@tailwindcss/typography": "^0.5.15",
