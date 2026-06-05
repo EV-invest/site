@@ -3,8 +3,8 @@
 import type { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 import ErrorBoundary from "@/shared/ui/error-boundary";
-import { Toaster } from "@/shared/ui/sonner";
-import { TooltipProvider } from "@/shared/ui/tooltip";
+import { Toaster } from "@/shared/ui/bricks/sonner";
+import { TooltipProvider } from "@/shared/ui/bricks/tooltip";
 
 // Global client providers. The site is intentionally dark-only, so the theme is
 // forced rather than switchable (next-themes still owns the `class` on <html>).

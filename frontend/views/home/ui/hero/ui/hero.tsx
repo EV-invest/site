@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/bricks/button";
 import { Text } from "@/shared/ui/text";
 import { ASSETS } from "@/shared/config/assets";
 
 export function HeroA() {
   const [zoomLevel, setZoomLevel] = useState(1);
-  const heroRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
 
   // Обработка интерактивного зума (Stronghold Fund Metaphor)
   useEffect(() => {

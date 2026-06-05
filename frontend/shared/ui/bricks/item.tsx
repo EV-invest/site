@@ -3,7 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/shared/lib/utils";
-import { Separator } from "@/shared/ui/separator";
+import { Separator } from "@/shared/ui/bricks/separator";
 
 function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (

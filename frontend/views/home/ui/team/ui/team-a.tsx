@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Users, Globe } from "lucide-react";
 import { Text } from "@/shared/ui/text";
+import { Reveal } from "@/shared/ui/reveal";
 import { notifyPlaceholder } from "@/shared/lib/utils";
 import { ASSETS } from "@/shared/config/assets";
 import { TEAM } from "@/entities/team";
@@ -16,7 +17,7 @@ export function TeamA() {
     >
       <div className="container">
         {/* Intro + boardroom image, split layout */}
-        <div className="grid lg:grid-cols-12 gap-12 items-center mb-16">
+        <Reveal className="grid lg:grid-cols-12 gap-12 items-center mb-16">
           <div className="lg:col-span-6 space-y-4">
             <span className="text-xs font-mono-tech text-main-accent-t1 tracking-[0.3em] uppercase block">
               Management &amp; Expertise
@@ -57,10 +58,10 @@ export function TeamA() {
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Team cards — Stronghold-style photo grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <Reveal delay={0.05} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {TEAM.map(member => (
             <Card
               key={member.name}
@@ -106,7 +107,7 @@ export function TeamA() {
             heading="Investor Relations"
             sub="Investor Relations (IR)"
           />
-        </div>
+        </Reveal>
       </div>
     </section>
   );

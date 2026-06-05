@@ -10,9 +10,9 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   /* Font stacks wired to next/font CSS variables (set on <html>). */
-  --font-sans: var(--font-grotesk), "Inter", sans-serif;
+  --font-sans: var(--font-inter), "Inter", sans-serif;
   --font-serif: var(--font-playfair), "Merriweather", serif;
-  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+  --font-mono: var(--font-inter), "Inter", sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -127,8 +127,14 @@
     letter-spacing: -0.02em;
   }
 
+  /* The "technical" label/figure voice. Now Inter (was Space Mono): the
+     uppercase tracking on each usage carries the label texture, while
+     tabular-nums restores the fixed-width digits Space Mono gave for free —
+     so stats, the ROI calculator, and dates stay column-aligned and don't
+     jitter as NumberFlow animates. */
   .font-mono-tech {
     font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
   }
 }
 

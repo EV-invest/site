@@ -1,4 +1,4 @@
-import { useDialogComposition } from "@/shared/ui/dialog";
+import { useDialogComposition } from "@/shared/ui/bricks/dialog";
 import { useComposition } from "@/shared/hooks/use-composition";
 import { cn } from "@/shared/lib/utils";
 import * as React from "react";

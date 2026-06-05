@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { type LucideIcon } from "lucide-react";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/bricks/button";
 import { Text } from "@/shared/ui/text";
 
 // A grid cell: a 3:4 framed visual on top, a name/sub label below. The frame's

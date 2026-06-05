@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 // the same "this is a concept" toast — kept here so each section calls it
 // rather than re-declaring the copy.
 export function notifyPlaceholder(featureName: string) {
-  toast.info(`${featureName} — Концепт-интерфейс`, {
+  toast.info(`${featureName}: Концепт-интерфейс`, {
     description: "Данный элемент является частью интерактивного дизайн-макета.",
     duration: 3000,
   });

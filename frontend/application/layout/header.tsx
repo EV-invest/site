@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/shared/ui/bricks/button";
 import { Logo } from "@/shared/ui/logo";
 import { notifyPlaceholder } from "@/shared/lib/utils";
 
-export function HeaderA() {
+export function Header() {
   const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {

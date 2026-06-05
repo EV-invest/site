@@ -1,22 +1,22 @@
 "use client";
 
-import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
-import { Separator } from "@/shared/ui/separator";
+import { Button } from "@/shared/ui/bricks/button";
+import { Input } from "@/shared/ui/bricks/input";
+import { Separator } from "@/shared/ui/bricks/separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/shared/ui/sheet";
-import { Skeleton } from "@/shared/ui/skeleton";
+} from "@/shared/ui/bricks/sheet";
+import { Skeleton } from "@/shared/ui/bricks/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/shared/ui/tooltip";
+} from "@/shared/ui/bricks/tooltip";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { cn } from "@/shared/lib/utils";
 import { Slot } from "@radix-ui/react-slot";

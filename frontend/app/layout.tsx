@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import Script from "next/script";
-import { fontGrotesk, fontPlayfair, fontMono } from "@/application/fonts";
+import { fontInter, fontPlayfair } from "@/application/styles/fonts";
 import { Providers } from "@/application/providers";
+import { Header, Footer } from "@/application/layout";
 import "@/application/styles/globals.css";
 
 export { metadata, viewport } from "@/application/metadata";
@@ -13,11 +14,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`dark ${fontGrotesk.variable} ${fontPlayfair.variable} ${fontMono.variable}`}
+      className={`dark ${fontInter.variable} ${fontPlayfair.variable}`}
       suppressHydrationWarning
     >
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+          <Footer />
+        </Providers>
         {analyticsEndpoint && analyticsWebsiteId && (
           <Script
             defer

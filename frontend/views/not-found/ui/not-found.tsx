@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AlertCircle, Home } from "lucide-react";
-import { Button } from "@/shared/ui/button";
-import { Card, CardContent } from "@/shared/ui/card";
+import { Button } from "@/shared/ui/bricks/button";
+import { Card, CardContent } from "@/shared/ui/bricks/card";
 
 export function NotFoundView() {
   return (

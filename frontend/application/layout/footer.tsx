@@ -4,7 +4,7 @@ import { Text } from "@/shared/ui/text";
 import { Logo } from "@/shared/ui/logo";
 import { notifyPlaceholder } from "@/shared/lib/utils";
 
-export function FooterA() {
+export function Footer() {
   // 6. FOOTER (Minimalist, structured)
   return (
     <footer className="bg-main-black border-t border-main-mist/10 py-16">

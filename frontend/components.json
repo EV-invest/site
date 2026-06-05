@@ -5,15 +5,15 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "src/application/styles/globals.css",
+    "css": "application/styles/globals.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
   "aliases": {
-    "components": "@/shared/ui",
+    "components": "@/shared/ui/bricks",
     "utils": "@/shared/lib/utils",
-    "ui": "@/shared/ui",
+    "ui": "@/shared/ui/bricks",
     "lib": "@/shared/lib",
     "hooks": "@/shared/hooks"
   },
