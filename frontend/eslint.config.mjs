@@ -10,7 +10,9 @@ const compat = new FlatCompat({ baseDirectory: __dirname });
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    ignores: [".next/**", "node_modules/**", "dist/**"],
+    // shared/api/generated is an auto-generated artifact (npm run gen:api);
+    // it's already prettier-formatted by codegen, so keep it out of lint churn.
+    ignores: [".next/**", "node_modules/**", "dist/**", "shared/api/generated/**"],
   },
   {
     rules: {
