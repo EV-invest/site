@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8be0e54515838be398164884e96319b52bcfcbd52b2e63171d51df4131cfcb03
-size 388
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "application/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@/shared/ui/bricks",
+    "utils": "@/shared/lib/utils",
+    "ui": "@/shared/ui/bricks",
+    "lib": "@/shared/lib",
+    "hooks": "@/shared/hooks"
+  },
+  "iconLibrary": "lucide"
+}
