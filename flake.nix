@@ -67,11 +67,56 @@
             exec npm run dev
           '';
         };
+
+        # ── local Postgres ──────────────────────────────────────────────────
+        # Project-local dev database. Cluster data + unix sockets live under
+        # .pg/ at the repo root (gitignored), resolved at runtime like the
+        # frontend wrapper. First run initdb's a trust-auth cluster and creates
+        # the `ev_backend` database; subsequent runs just start the server.
+        # Listens on 127.0.0.1:5432 — matches backend/.env.example.
+        runPostgres = pkgs.writeShellApplication {
+          name = "run-postgres";
+          runtimeInputs = with pkgs; [ postgresql git coreutils gnugrep ];
+          text = ''
+            repo="$(git rev-parse --show-toplevel)"
+            export PGDATA="$repo/.pg/data"
+            sockets="$repo/.pg/sockets"
+            port="''${PGPORT:-5432}"
+            db="''${PGDATABASE:-ev_backend}"
+
+            mkdir -p "$sockets"
+            if [ ! -s "$PGDATA/PG_VERSION" ]; then
+              echo "initialising postgres cluster in $PGDATA"
+              initdb --username=postgres --auth=trust --pgdata="$PGDATA" >/dev/null
+            fi
+
+            # Create the app database once the server accepts connections; the
+            # server itself stays in the foreground below.
+            (
+              until pg_isready --host="$sockets" --port="$port" --quiet; do sleep 0.2; done
+              if ! psql --host="$sockets" --port="$port" --username=postgres --dbname=postgres \
+                     --tuples-only --no-align \
+                     --command "SELECT 1 FROM pg_database WHERE datname='$db'" | grep -q 1; then
+                createdb --host="$sockets" --port="$port" --username=postgres "$db"
+                echo "created database '$db'"
+              fi
+              echo "postgres ready on 127.0.0.1:$port (db '$db', user 'postgres', trust auth)"
+            ) &
+
+            exec postgres -D "$PGDATA" -k "$sockets" -h 127.0.0.1 -p "$port"
+          '';
+        };
       in
       {
         apps.dev = {
           type = "app";
           program = "${runFrontend}/bin/run-frontend";
+        };
+
+        # `nix run .#db` → boots local Postgres (see runPostgres above).
+        apps.db = {
+          type = "app";
+          program = "${runPostgres}/bin/run-postgres";
         };
 
         devShells.default =
@@ -93,6 +138,7 @@
               pkg-config
               rust
               mold
+              postgresql
               playwright-driver.browsers
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 

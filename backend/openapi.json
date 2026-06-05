@@ -1,0 +1,222 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "EV blogs API",
+    "description": "Source of truth for blog posts",
+    "license": {
+      "name": "BlueOak-1.0.0",
+      "identifier": "BlueOak-1.0.0"
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/blogs": {
+      "get": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "`GET /blogs?limit=&offset=` — list blog posts. Bounds are clamped so a\nmistaken or hostile query can't issue a negative or oversized LIMIT/OFFSET.",
+        "operationId": "list_blogs",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": 0,
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page of blogs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlogResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "`POST /blogs` — create a blog post. The DTO is parsed into validated value\nobjects here; a validation error surfaces at this boundary as 400.",
+        "operationId": "create_blog",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlogRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Blog created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "409": {
+            "description": "A blog with that slug already exists"
+          }
+        }
+      }
+    },
+    "/api/v1/blogs/{id}": {
+      "get": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "`GET /blogs/{id}` — fetch a single blog post.",
+        "operationId": "get_blog",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Blog id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The blog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog not found"
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Liveness probe — `GET /health`.",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Service is alive"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BlogResponse": {
+        "type": "object",
+        "description": "Outbound representation of a [`Blog`] on the wire.",
+        "required": [
+          "id",
+          "title",
+          "slug",
+          "body",
+          "published",
+          "created_at"
+        ],
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateBlogRequest": {
+        "type": "object",
+        "description": "Inbound payload for `POST /blogs`. Carries raw strings off the wire; parsing\ninto validated value objects happens in the `TryFrom` below — at the boundary.",
+        "required": [
+          "title",
+          "slug",
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "string",
+            "example": "My first post."
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "slug": {
+            "type": "string",
+            "example": "hello-world"
+          },
+          "title": {
+            "type": "string",
+            "example": "Hello, world"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "blogs",
+      "description": "Blog posts"
+    },
+    {
+      "name": "health",
+      "description": "Liveness"
+    }
+  ]
+}
