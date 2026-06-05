@@ -5,6 +5,7 @@ edition = "2024"
 description = "Backend API for the EV Investment fund site"
 license = "BlueOak-1.0.0"
 publish = false
+default-run = "backend"
 
 [dependencies]
 anyhow = "1.0.102"
