@@ -3,9 +3,10 @@ import { type LucideIcon } from "lucide-react";
 import { Button } from "@/shared/ui/bricks/button";
 import { Text } from "@/shared/ui/text";
 
-// A grid cell: a 3:4 framed visual on top, a name/sub label below. The frame's
-// contents vary per card (a photo, an icon prompt); the shell — aspect, border,
-// hover group, and the heading/sub label block — is constant across all cards.
+/**
+ * Grid cell shell — 3:4 framed visual on top, name/label below.
+ * Frame contents (photo, icon) vary per card; the shell is constant.
+ */
 export function Card({
   children,
   heading,
@@ -23,9 +24,7 @@ export function Card({
         {children}
       </div>
       <div>
-        <h4
-          className={`font-serif-display font-bold text-base ${headingClassName}`}
-        >
+        <h4 className={`font-serif-display font-bold text-base ${headingClassName}`}>
           {heading}
         </h4>
         {sub}
@@ -34,9 +33,12 @@ export function Card({
   );
 }
 
-// The two non-person cards (open role, LP network) share one layout: a centred
-// icon-disc + title + blurb + outline CTA, under a muted "Open Position"-style
-// label. Only the icon, its accent colour, and the copy differ.
+/**
+ * Non-person card — centred icon-disc, title, blurb, outline CTA button.
+ * Used for open-role and LP-network slots. Only the icon, accent color, and
+ * copy differ between instances. `onCtaClick` is supplied by the
+ * {@link TeamPlaceholders} client island.
+ */
 export function PlaceholderCard({
   icon: Icon,
   iconClassName,
@@ -74,9 +76,7 @@ export function PlaceholderCard({
             <Icon className="w-6 h-6" />
           </div>
           <div>
-            <h5 className="font-serif-display font-bold text-white text-sm">
-              {title}
-            </h5>
+            <h5 className="font-serif-display font-bold text-white text-sm">{title}</h5>
             <Text variant="secondary" className="text-xs mt-2 font-light">
               {body}
             </Text>

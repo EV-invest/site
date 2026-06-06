@@ -1,24 +1,22 @@
-"use client";
-
 import Image from "next/image";
-import { Users, Globe } from "lucide-react";
 import { Text } from "@/shared/ui/text";
-import { notifyPlaceholder } from "@/shared/lib/utils";
 import { ASSETS } from "@/shared/config/assets";
 import { TEAM } from "@/entities/team";
-import { Card, PlaceholderCard } from "./team-shared";
+import { Card } from "../shared/cards";
+import { TeamPlaceholders } from "../shared/placeholders";
 
-// Variant B of the Team section. Its own module so the Section contract's
-// lazy(() => import("./ui/team-b")) emits a separate chunk — B's code never ships
-// to default-A visitors, only fetched when dev cycles to it (Alt+l/Alt+h).
-export default function TeamB() {
+/**
+ * Variant B — same content as A without the {@link Reveal} scroll animation
+ * (the A/B differentiator). Server Component; the only client island is
+ * {@link TeamPlaceholders} (CTA clicks).
+ */
+export function TeamB() {
   return (
     <section
       id="team"
       className="py-24 relative border-t border-main-mist/10 bg-main-black"
     >
       <div className="container">
-        {/* Intro + boardroom image, split layout */}
         <div className="grid lg:grid-cols-12 gap-12 items-center mb-16">
           <div className="lg:col-span-6 space-y-4">
             <span className="text-xs font-mono-tech text-main-accent-t1 tracking-[0.3em] uppercase block">
@@ -26,9 +24,7 @@ export default function TeamB() {
             </span>
             <h2 className="text-3xl sm:text-5xl font-serif-display text-white font-light">
               Led by{" "}
-              <span className="italic text-main-accent-t1">
-                Institutional Pioneers
-              </span>
+              <span className="italic text-main-accent-t1">Institutional Pioneers</span>
             </h2>
             <Text className="max-w-xl">
               The EV Investment team combines international experience in
@@ -51,9 +47,7 @@ export default function TeamB() {
                   <span className="text-[10px] font-mono-tech text-main-accent-t1 uppercase tracking-wider">
                     Head Office
                   </span>
-                  <h4 className="text-sm font-bold text-white">
-                    EV Boardroom • Quy Nhon
-                  </h4>
+                  <h4 className="text-sm font-bold text-white">EV Boardroom • Quy Nhon</h4>
                 </div>
                 <Text asChild variant="secondary">
                   <span className="text-[10px] font-mono-tech">Q1 2026</span>
@@ -63,7 +57,6 @@ export default function TeamB() {
           </div>
         </div>
 
-        {/* Team cards — Stronghold-style photo grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {TEAM.map(member => (
             <Card
@@ -88,28 +81,7 @@ export default function TeamB() {
               </div>
             </Card>
           ))}
-
-          <PlaceholderCard
-            icon={Users}
-            iconClassName="text-main-accent-t1"
-            title="Join Us"
-            body="We are always looking for talented analysts and asset managers in Quy Nhon."
-            cta="Careers"
-            onCtaClick={() => notifyPlaceholder("Careers")}
-            heading="Open Position"
-            sub="Investment Analyst"
-          />
-
-          <PlaceholderCard
-            icon={Globe}
-            iconClassName="text-main-accent-t3"
-            title="LP Partner Network"
-            body="Over 40 institutional investors across 12 countries trust us with their capital."
-            cta="IR Contacts"
-            onCtaClick={() => notifyPlaceholder("IR Contacts")}
-            heading="Investor Relations"
-            sub="Investor Relations (IR)"
-          />
+          <TeamPlaceholders />
         </div>
       </div>
     </section>
