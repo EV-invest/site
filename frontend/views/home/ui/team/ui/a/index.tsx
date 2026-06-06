@@ -1,14 +1,16 @@
-"use client";
-
 import Image from "next/image";
-import { Users, Globe } from "lucide-react";
 import { Text } from "@/shared/ui/text";
 import { Reveal } from "@/shared/ui/reveal";
-import { notifyPlaceholder } from "@/shared/lib/utils";
 import { ASSETS } from "@/shared/config/assets";
 import { TEAM } from "@/entities/team";
-import { Card, PlaceholderCard } from "./team-shared";
+import { Card } from "../shared/cards";
+import { TeamPlaceholders } from "../shared/placeholders";
 
+/**
+ * Variant A — with {@link Reveal} scroll-reveal animation on both blocks.
+ * Server Component; the only client islands are {@link Reveal} (motion) and
+ * {@link TeamPlaceholders} (CTA clicks).
+ */
 export function TeamA() {
   return (
     <section
@@ -16,7 +18,6 @@ export function TeamA() {
       className="py-24 relative border-t border-main-mist/10 bg-main-black"
     >
       <div className="container">
-        {/* Intro + boardroom image, split layout */}
         <Reveal className="grid lg:grid-cols-12 gap-12 items-center mb-16">
           <div className="lg:col-span-6 space-y-4">
             <span className="text-xs font-mono-tech text-main-accent-t1 tracking-[0.3em] uppercase block">
@@ -24,9 +25,7 @@ export function TeamA() {
             </span>
             <h2 className="text-3xl sm:text-5xl font-serif-display text-white font-light">
               Led by{" "}
-              <span className="italic text-main-accent-t1">
-                Institutional Pioneers
-              </span>
+              <span className="italic text-main-accent-t1">Institutional Pioneers</span>
             </h2>
             <Text className="max-w-xl">
               The EV Investment team combines international experience in
@@ -48,9 +47,7 @@ export function TeamA() {
                   <span className="text-[10px] font-mono-tech text-main-accent-t1 uppercase tracking-wider">
                     Head Office
                   </span>
-                  <h4 className="text-sm font-bold text-white">
-                    EV Boardroom • Quy Nhon
-                  </h4>
+                  <h4 className="text-sm font-bold text-white">EV Boardroom • Quy Nhon</h4>
                 </div>
                 <Text asChild variant="secondary">
                   <span className="text-[10px] font-mono-tech">Q1 2026</span>
@@ -60,7 +57,6 @@ export function TeamA() {
           </div>
         </Reveal>
 
-        {/* Team cards — Stronghold-style photo grid */}
         <Reveal delay={0.05} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {TEAM.map(member => (
             <Card
@@ -85,28 +81,7 @@ export function TeamA() {
               </div>
             </Card>
           ))}
-
-          <PlaceholderCard
-            icon={Users}
-            iconClassName="text-main-accent-t1"
-            title="Join Us"
-            body="We are always looking for talented analysts and asset managers in Quy Nhon."
-            cta="Careers"
-            onCtaClick={() => notifyPlaceholder("Careers")}
-            heading="Open Position"
-            sub="Investment Analyst"
-          />
-
-          <PlaceholderCard
-            icon={Globe}
-            iconClassName="text-main-accent-t3"
-            title="LP Partner Network"
-            body="Over 40 institutional investors across 12 countries trust us with their capital."
-            cta="IR Contacts"
-            onCtaClick={() => notifyPlaceholder("IR Contacts")}
-            heading="Investor Relations"
-            sub="Investor Relations (IR)"
-          />
+          <TeamPlaceholders />
         </Reveal>
       </div>
     </section>
