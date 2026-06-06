@@ -26,9 +26,6 @@
         rs = v_flakes.rs { inherit pkgs rust; };
         js = v_flakes.js {
           inherit pkgs;
-          # v_flakes.js provisions pnpm; this project uses npm, so its built-in
-          # `pnpm test:visual` pre-commit hook is disabled. Run the playwright
-          # suite via `npm run test:visual` (or in CI) instead.
           preCommit.visual = false;
         };
         github = v_flakes.github {
@@ -68,8 +65,9 @@
           text = ''
             repo="$(git rev-parse --show-toplevel)"
             cd "$repo/frontend"
-            if [ ! -d node_modules ]; then
-              npm install
+            if [ ! -x node_modules/.bin/next ] \
+               || [ package-lock.json -nt node_modules/.package-lock.json ]; then
+              npm ci
             fi
             exec npm run dev
           '';

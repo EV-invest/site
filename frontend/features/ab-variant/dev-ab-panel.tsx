@@ -7,15 +7,7 @@ import {
   cookieName,
   type ExperimentKey,
 } from "@/shared/config/experiments";
-
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
-
-function readCookie(name: string): string | undefined {
-  return document.cookie
-    .split("; ")
-    .find(c => c.startsWith(`${name}=`))
-    ?.split("=")[1];
-}
+import { readCookie, writeVariant } from "./cycle-variant";
 
 /**
  * Development-only overlay for overriding experiment variants.
@@ -48,7 +40,7 @@ export function DevAbPanel() {
   if (process.env.NODE_ENV !== "development") return null;
 
   const setVariant = (key: ExperimentKey, value: string) => {
-    document.cookie = `${cookieName(key)}=${value};path=/;max-age=${COOKIE_MAX_AGE};samesite=lax`;
+    writeVariant(key, value);
     setActive(prev => ({ ...prev, [key]: value }));
     router.refresh();
   };

@@ -1,4 +1,5 @@
 import React from "react";
+//TODO: pull from https://github.com/ev-invest/assets
 
 // The EV Investment lockup (crown mark + "INVEST" wordmark + "EV" monogram),
 // inlined from assets/logo/logo.svg. Inlined rather than referenced via <img>

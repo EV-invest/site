@@ -1,7 +1,9 @@
 "use client";
 
-import { createContext, useContext, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { capture } from "@/features/analytics";
+import { nextVariant, writeVariant } from "./cycle-variant";
 import type { ExperimentKey } from "@/shared/config/experiments";
 
 type ExperimentCtx = { experiment: ExperimentKey; variant: string };
@@ -43,10 +45,66 @@ export function ExperimentTracker({
     capture(`${experiment}_exposed`, { variant });
   }, [experiment, variant]);
 
-  return (
+  const provided = (
     <ExperimentContext.Provider value={{ experiment, variant }}>
       {children}
     </ExperimentContext.Provider>
+  );
+
+  // Production renders the bare section; the dev-only hover + h/l cycling
+  // wrapper adds nothing to the shipped bundle.
+  if (process.env.NODE_ENV !== "development") return provided;
+  return (
+    <DevVariantCycle experiment={experiment} variant={variant}>
+      {provided}
+    </DevVariantCycle>
+  );
+}
+
+/**
+ * Dev-only: hover a section, then `l` / `h` cycles its A/B variant by rewriting
+ * the `ab_<key>` cookie and calling `router.refresh()` — the same path the dev
+ * panel uses, just driven by vim keys and scoped to the hovered section.
+ * Cycling wraps around and only visits variants that actually exist.
+ *
+ * Restores the pre-Next.js hover-and-cycle UX on the cookie architecture.
+ */
+function DevVariantCycle({
+  experiment,
+  variant,
+  children,
+}: {
+  experiment: ExperimentKey;
+  variant: string;
+  children: ReactNode;
+}) {
+  const router = useRouter();
+  const [focused, setFocused] = useState(false);
+
+  useEffect(() => {
+    if (!focused) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      // Bare h/l — but never steal keystrokes while typing into a field.
+      const el = e.target as HTMLElement | null;
+      if (el?.isContentEditable || el?.closest("input, textarea, select")) return;
+      const step = e.key === "l" ? 1 : e.key === "h" ? -1 : 0;
+      if (step === 0) return;
+      e.preventDefault();
+      writeVariant(experiment, nextVariant(experiment, variant, step));
+      router.refresh();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [focused, experiment, variant, router]);
+
+  return (
+    <div
+      onMouseEnter={() => setFocused(true)}
+      onMouseLeave={() => setFocused(false)}
+      className={focused ? "outline-dashed outline-1 outline-main-accent-t1/40" : undefined}
+    >
+      {children}
+    </div>
   );
 }
 
