@@ -35,9 +35,12 @@
           inherit pkgs pname rs js;
           enable = true;
           lastSupportedVersion = "nightly-2026-05-12";
-          gitignore.extend = ''
+          gitignore.extra = ''
             ## Local Postgres
             .pg/
+            ## LLMs
+            AGENTS.md
+            CLAUDE.md
           '';
           jobs = {
             warnings.augment = [ "tokei" "code-duplication" ];

@@ -83,3 +83,9 @@ venv/
 **/.turbo/
 **/.cache/
 .direnv/corepack/
+## Local Postgres
+.pg/
+## LLMs
+AGENTS.md
+CLAUDE.md
+
