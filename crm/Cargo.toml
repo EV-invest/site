@@ -1,0 +1,13 @@
+[package]
+name = "crm"
+version = "0.1.0"
+edition = "2024"
+publish = false
+default-run = "crm"
+
+[dependencies]
+dioxus.workspace = true
+domain.workspace = true
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom.workspace = true
