@@ -4,5 +4,8 @@ name = "crm"
 [web.app]
 title = "EV Fund CRM"
 
+[web.resource.dev]
+style = []
+
 [web.resource]
 style = []

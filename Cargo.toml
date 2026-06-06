@@ -9,3 +9,6 @@ dioxus = { version = "0.7", features = ["web", "router"] }
 getrandom = { version = "0.3", features = ["wasm_js"] }
 serde = { version = "1", features = ["derive"] }
 domain = { path = "domain" }
+
+[workspace.lints.rust]
+unused_features = "allow"

@@ -64,7 +64,7 @@
           runtimeInputs = with pkgs; [ nodejs git ];
           text = ''
             repo="$(git rev-parse --show-toplevel)"
-            cd "$repo/frontend"
+            cd "$repo/landing"
             if [ ! -x node_modules/.bin/next ] \
                || [ package-lock.json -nt node_modules/.package-lock.json ]; then
               npm ci
@@ -133,8 +133,9 @@
               + ''
                 cp -f ${(v_flakes.files.treefmt) { inherit pkgs; }} ./.treefmt.toml
 
-                # npm ships with the nixpkgs `nodejs`. Run `npm install` in
-                # frontend/ to populate node_modules (its own package-lock.json).
+                # rust-lld (wasm32 linker) embeds the wrong rpath on macOS — it looks for
+                # libLLVM.dylib in bin/../lib/ but Nix puts it one level up in lib/.
+                export DYLD_LIBRARY_PATH="${rust}/lib''${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
               '';
 
             packages = [
