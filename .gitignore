@@ -24,9 +24,6 @@ result
 .direnv/
 .devenv/
 
-## Local Postgres (nix run .#db)
-.pg/
-
 ## Vim
 *.sw[po]
 
@@ -45,8 +42,7 @@ result
 env/
 venv/
 .env.*
-!/*.env.example
-!**/.env.example
+!**/*.env.example
 ./*/.env
 ./*/.env.*
 

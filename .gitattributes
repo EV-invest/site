@@ -19,8 +19,8 @@
 *.svg -filter
 
 # Documents
-*.pdf -filter merge=ours
-*.excalidraw -filter merge=ours
+*.pdf filter=lfs diff=lfs merge=ours -text
+*.excalidraw filter=lfs diff=lfs merge=ours -text
 
 # Data
 *.json -filter
