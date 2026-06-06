@@ -22,6 +22,3 @@ cd frontend
 npm run test:visual           # compare against committed baselines
 npm run test:visual:update    # regenerate baselines after an intentional UI change
 ```
-
-> The Rust crate (`ev_site`, `dx serve -p ev_site`) is being deprecated in favour
-> of `frontend/`.

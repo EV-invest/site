@@ -56,10 +56,6 @@ is the source of truth and the Figma side is conformed to it, never the reverse.
 > requires a Figma Organization/Enterprise plan and the file is on Pro. Tokens and
 > variant-sets work regardless.
 
-> The Rust crate (`ev_site`, `dx serve -p ev_site`) is being deprecated in favour
-> of `frontend/`.
-
-
 
 <br>
 
