@@ -1,30 +1,25 @@
 use dioxus::prelude::*;
 
-use crate::Route;
+use crate::application::router::Route;
+use crate::shared::ui::{Button, ButtonVariant};
 
 #[component]
 pub fn NotFound(route: Vec<String>) -> Element {
-	let _ = route;
-	let nav = navigator();
-	rsx! {
-		div {
-			style: "min-height: 100vh; display: flex; align-items: center; \
-			        justify-content: center; background: var(--bg);",
-			div {
-				style: "text-align: center; padding: 2rem;",
-				h1 { style: "font-size: 4rem; font-weight: 800;", "404" }
-				p {
-					style: "font-size: 1.125rem; color: var(--text-muted); margin-bottom: 1.5rem;",
-					"Page not found."
-				}
-				button {
-					style: "padding: 0.625rem 1.25rem; background: var(--brand); color: #fff; \
-					        border: none; border-radius: var(--radius); cursor: pointer; \
-					        font-size: 0.9375rem; font-weight: 500;",
-					onclick: move |_| { nav.push(Route::Dashboard {}); },
-					"Go to Dashboard"
-				}
-			}
-		}
-	}
+    let _ = route;
+    let nav = navigator();
+    rsx! {
+        div {
+            class: "min-h-screen flex items-center justify-center bg-background",
+            div { class: "text-center px-8 space-y-4",
+                p { class: "text-8xl font-bold text-muted-foreground/30", "404" }
+                h1 { class: "text-2xl font-semibold text-foreground", "Page not found" }
+                p { class: "text-muted-foreground text-sm", "The page you're looking for doesn't exist." }
+                Button {
+                    variant: ButtonVariant::Default,
+                    onclick: move |_| { nav.push(Route::Dashboard {}); },
+                    "Go to Dashboard"
+                }
+            }
+        }
+    }
 }
