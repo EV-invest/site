@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
-use crate::domain::{
+use domain::{
 	error::DomainError,
 	model::blog::{Blog, NewBlog, Slug, Title},
 };

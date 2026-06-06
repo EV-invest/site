@@ -3,10 +3,10 @@ use chrono::{DateTime, Utc};
 use sqlx::{FromRow, postgres::PgPool};
 use uuid::Uuid;
 
-use crate::domain::{
+use crate::domain::port::blog_repository::BlogRepository;
+use domain::{
 	error::DomainError,
 	model::blog::{Blog, NewBlog, Slug, Title},
-	port::blog_repository::BlogRepository,
 };
 
 /// Postgres-backed adapter implementing the [`BlogRepository`] port.

@@ -5,13 +5,12 @@ use axum::{
 };
 use uuid::Uuid;
 
-use crate::{
-	api::{
-		dto::blog::{BlogResponse, CreateBlogRequest, ListBlogsQuery},
-		error::ApiError,
-		state::AppState,
-	},
-	domain::model::blog::NewBlog,
+use domain::model::blog::NewBlog;
+
+use crate::api::{
+	dto::blog::{BlogResponse, CreateBlogRequest, ListBlogsQuery},
+	error::ApiError,
+	state::AppState,
 };
 
 /// `POST /blogs` — create a blog post. The DTO is parsed into validated value

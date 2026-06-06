@@ -5,7 +5,9 @@ use axum::{
 };
 use serde_json::json;
 
-use crate::{domain::error::DomainError, error_reporter};
+use domain::error::DomainError;
+
+use crate::error_reporter;
 
 /// HTTP-facing error. Wraps [`DomainError`] and maps it to a status code plus a
 /// JSON body at the transport boundary. Handlers return `Result<_, ApiError>`

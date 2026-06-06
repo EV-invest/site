@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use uuid::Uuid;
 
-use crate::domain::{
+use crate::domain::port::blog_repository::BlogRepository;
+use domain::{
 	error::DomainError,
 	model::blog::{Blog, NewBlog},
-	port::blog_repository::BlogRepository,
 };
 
 /// Use cases operating on [`Blog`]s. Depends only on the [`BlogRepository`]
@@ -45,7 +45,7 @@ mod tests {
 	use chrono::Utc;
 
 	use super::*;
-	use crate::domain::model::blog::{Slug, Title};
+	use domain::model::blog::{Slug, Title};
 
 	/// In-memory fake of the repository port, to exercise the service without
 	/// touching Postgres.
