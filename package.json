@@ -1,15 +1,15 @@
 {
   "name": "ev-site",
   "private": true,
-  "description": "Root delegator — the app lives in frontend/ (Next.js).",
+  "description": "Root delegator — the landing site lives in landing/ (Next.js).",
   "scripts": {
-    "dev": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend run build",
-    "start": "npm --prefix frontend run start",
-    "check": "npm --prefix frontend run check",
-    "gen:api": "npm --prefix frontend run gen:api",
-    "lint": "npm --prefix frontend run lint",
-    "format": "npm --prefix frontend run format",
-    "test:visual": "npm --prefix frontend run test:visual"
+    "dev": "npm --prefix landing run dev",
+    "build": "npm --prefix landing run build",
+    "start": "npm --prefix landing run start",
+    "check": "npm --prefix landing run check",
+    "gen:api": "npm --prefix landing run gen:api",
+    "lint": "npm --prefix landing run lint",
+    "format": "npm --prefix landing run format",
+    "test:visual": "npm --prefix landing run test:visual"
   }
 }
