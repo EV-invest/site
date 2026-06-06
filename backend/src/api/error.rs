@@ -5,7 +5,7 @@ use axum::{
 };
 use serde_json::json;
 
-use crate::domain::error::DomainError;
+use crate::{domain::error::DomainError, error_reporter};
 
 /// HTTP-facing error. Wraps [`DomainError`] and maps it to a status code plus a
 /// JSON body at the transport boundary. Handlers return `Result<_, ApiError>`
@@ -20,12 +20,13 @@ impl From<DomainError> for ApiError {
 
 impl IntoResponse for ApiError {
 	fn into_response(self) -> Response {
-		let (status, message) = match self.0 {
+		let (status, message) = match &self.0 {
 			DomainError::NotFound { entity, id } => (StatusCode::NOT_FOUND, format!("{entity} not found: {id}")),
-			DomainError::Conflict(msg) => (StatusCode::CONFLICT, msg),
-			DomainError::Validation(msg) => (StatusCode::BAD_REQUEST, msg),
+			DomainError::Conflict(msg) => (StatusCode::CONFLICT, msg.clone()),
+			DomainError::Validation(msg) => (StatusCode::BAD_REQUEST, msg.clone()),
 			DomainError::Repository(err) => {
-				// Internal details are logged, never leaked to the client.
+				// Internal details are logged and reported, never leaked to the client.
+				error_reporter::report(&self.0);
 				tracing::error!(error = %err, "internal repository error");
 				(StatusCode::INTERNAL_SERVER_ERROR, "internal server error".to_string())
 			}
