@@ -1,7 +1,7 @@
 {
   "name": "ev-site",
   "private": true,
-  "description": "Root delegator — the landing site lives in landing/ (Next.js).",
+  "description": "Root delegator — landing (Next.js) in landing/, CRM (Dioxus) in crm/.",
   "scripts": {
     "dev": "npm --prefix landing run dev",
     "build": "npm --prefix landing run build",
@@ -10,6 +10,11 @@
     "gen:api": "npm --prefix landing run gen:api",
     "lint": "npm --prefix landing run lint",
     "format": "npm --prefix landing run format",
-    "test:visual": "npm --prefix landing run test:visual"
+    "test:visual": "npm --prefix landing run test:visual",
+    "crm:css": "npx --yes @tailwindcss/cli@^4 -i crm/input.css -o crm/assets/tailwind.css",
+    "crm:css:watch": "npx --yes @tailwindcss/cli@^4 -i crm/input.css -o crm/assets/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.3.0"
   }
 }

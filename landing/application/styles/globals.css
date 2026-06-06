@@ -1,125 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "../../../public/tokens.css";
 
 @custom-variant dark (&:is(.dark *));
-
-/*can't collapse this down into the defs, cause we need a dark/light toggle*/
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-
-  /* Font stacks wired to next/font CSS variables (set on <html>). */
-  --font-sans: var(--font-inter), "Inter", sans-serif;
-  --font-serif: var(--font-playfair), "Merriweather", serif;
-  --font-mono: var(--font-inter), "Inter", sans-serif;
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  /*--color-accent: var(--accent);*/
-  /*--color-accent-foreground: var(--accent-foreground);*/
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  /*--color-sidebar: var(--sidebar);*/
-  /*--color-sidebar-foreground: var(--sidebar-foreground);*/
-  /*--color-sidebar-primary: var(--sidebar-primary);*/
-  /*--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);*/
-  /*--color-sidebar-accent: var(--sidebar-accent);*/
-  /*--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);*/
-  /*--color-sidebar-border: var(--sidebar-border);*/
-  /*--color-sidebar-ring: var(--sidebar-ring);*/
-
-  /* ────────────────────────────────────────────────────────────────────
-     Navy-led institutional base + a tiered accent system.
-
-     The resting page is a quiet navy ramp with ivory text (trust first). On
-     top of that sits a deliberate 3-tier accent hierarchy so the page reads
-     "jungle-vibrant" without becoming monotone teal. Tokens are named by the
-     ROLE they play, not by hue — the hue is just the current value:
-
-       main-accent-t1   (Tier 1, Ha Long Teal): the connective workhorse
-                (eyebrows, labels, nav, secondary numbers). Recurring, calm.
-       main-accent-t2   (Tier 2, Jungle Green): positive financial signals only
-                (yields, growth %, profit, FDI). The "money/growth" read; the
-                actual jungle warmth, used meaningfully not decoratively.
-       Tier 3 — the rare jewels, ≤1 per section, reserved for "this matters":
-                · main-accent-t3 (Rice Gold) — headline return figures (IRR/ROI/appr.)
-                · main-accent-t4 (Lotus Pink) — the original's 3 punctuation moments
-
-     Flag Red (#DA251D) and the muted step (#16213a) live only in the shadcn
-     semantic layer (--destructive / --muted) below; no bespoke main-* token.
-
-     `main-black` is a deep NAVY-black. Adjacent sections are separated by a
-     thin border + a step in the navy ramp (black → surface), never a clash.
-     ──────────────────────────────────────────────────────────────────── */
-
-  /* Brand — deep oceanic blue from the EV Investment logo. */
-  --color-main-brand: #001e4e; /* deep oceanic blue */
-
-  /* Neutrals — navy-tinted dark ramp (the 90% of the page). */
-  --color-main-black: #070d18; /* bg_deep — base background */
-  --color-main-surface: #081020; /* section alt background */
-  --color-main-card: #0c1626; /* card / panel surface */
-  --color-main-mist: #e6e1d3; /* Limestone Mist — ivory text */
-
-  /* Tier 1 — recurring workhorse accent. */
-  --color-main-accent-t1: #2a9d8f; /* Ha Long Teal */
-
-  /* Tier 2 — positive financial signal (the jungle "money/growth" read). */
-  --color-main-accent-t2: #2e9e5b; /* Jungle Green, lifted for legibility on dark */
-
-  /* Tier 3 — rare jewels (≤1 per section). */
-  --color-main-accent-t3: #f2c94c; /* Rice Gold — headline return figures only */
-  --color-main-accent-t4: #e58aae; /* Lotus Pink — the punctuation jewel */
-}
-
-/*NOTE: shadcn also defines 8 sidebar tokens, which we're not defining here, as I currently think it's sufficient to just adjust Chroma value of main background to get theirs, and then use exact same colors for everything else (or also shift them by same amount).*/
-
-:root {
-  /* Values derived from ACTUAL usage in pages/home, not aspiration. Where the
-     real class is a mist-at-alpha (e.g. border-main-mist/10), it's encoded as
-     color-mix so the flat token equals what the markup actually renders. */
-
-  --background: #070d18;            /* bg-main-black — page/section base (used) */
-  --foreground: white;            /* text-white — the real default text (31×);
-                                       bare text-main-mist is only container inherit */
-  --card: #0c1626;                  /* bg-main-card — card/panel surface (used) */
-  --card-foreground: white;       /* text-white inside cards */
-  --popover: #0c1626;               /* no popovers in markup; mirror card */
-  --popover-foreground: white;
-  --primary: #001E4E;               /* main-brand — text-main-brand on hero CTA */
-  --primary-foreground: var(--color-main-mist);    /* light text on navy */
-  --secondary: #081020;             /* main-surface — section-alt base */
-  --secondary-foreground: white;
-  --muted: #16213a;                 /* not used in markup; kept for primitives */
-  --muted-foreground: color-mix(in srgb, var(--color-main-mist) 40%, transparent); /* text-main-mist/40 — actual quiet text */
-  /* Doesn't seem to make sense. Firstly, if it's accent, we don't write anything on it. Secondly, */
-  /*--accent: var(--color-main-accent-t1);*/
-  /*--accent-foreground: #070d18;*/
-  --destructive: #DA251D;           /* Flag Red — not used in markup; status only */
-  --destructive-foreground: var(--color-main-mist);
-  --border: color-mix(in srgb, var(--color-main-mist) 10%, transparent); /* border-main-mist/10 — the real hairline (27×) */
-  --input: color-mix(in srgb, var(--color-main-mist) 20%, transparent);  /* border-main-mist/20 — actual input border */
-  --ring: var(--color-main-accent-t1);                  /* outline-main-accent-t1 focus (used) */
-  --radius: 0.5rem;                 /* softened from 0.25 to match good_team's calmer cards */
-}
-
-/*TODO: */
-.light {
-}
 
 @layer base {
   * {
@@ -130,7 +13,6 @@
     @apply bg-background text-foreground antialiased selection:bg-main-accent-t1/30 selection:text-main-mist;
   }
 
-  /* Custom serif headings for premium contrast */
   h1,
   h2,
   h3,
@@ -139,11 +21,8 @@
     letter-spacing: -0.02em;
   }
 
-  /* The "technical" label/figure voice. Now Inter (was Space Mono): the
-     uppercase tracking on each usage carries the label texture, while
-     tabular-nums restores the fixed-width digits Space Mono gave for free —
-     so stats, the ROI calculator, and dates stay column-aligned and don't
-     jitter as NumberFlow animates. */
+  /* Uppercase tracking + tabular nums; Inter carries the label texture
+     that Space Mono used to provide, while keeping column-aligned digits. */
   .font-mono-tech {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
@@ -185,9 +64,11 @@
   background: #1b2742;
   border-radius: 3px;
 }
-/* Research-zone texture — a faint dot-grid (the "parked-domain" feel) over a
-   soft centre vignette. Quiet navy base, no colored chrome; the texture alone
-   gives the section depth so it reads as its own zone without a stark clash. */
+::-webkit-scrollbar-thumb:hover {
+  background: #2a9d8f;
+}
+
+/* Research-zone texture — faint dot-grid over a soft centre vignette. */
 .research-texture {
   background-color: var(--color-main-surface);
   background-image:
@@ -205,9 +86,7 @@
     center;
 }
 
-/* Research reading panel — near-black field with a faint, cool, cloudy mottle
-   so the surface has some life without drawing attention to itself. No warmth,
-   no obvious light source; the eye stays on the text. */
+/* Research reading panel — near-black field with a faint cool mottle. */
 .research-panel {
   position: relative;
   background-color: var(--color-main-black);
@@ -227,8 +106,4 @@
 }
 .research-panel > * {
   position: relative;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #2a9d8f;
 }
