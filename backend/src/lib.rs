@@ -1,3 +1,4 @@
+#![feature(default_field_values)]
 //! Backend library crate.
 //!
 //! Exposes the layered modules so both the server binary (`main.rs`) and the

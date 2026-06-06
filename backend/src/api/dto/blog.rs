@@ -47,10 +47,6 @@ pub struct ListBlogsQuery {
 	pub offset: i64,
 }
 
-fn default_limit() -> i64 {
-	20
-}
-
 /// Outbound representation of a [`Blog`] on the wire.
 #[derive(Debug, Serialize, ToSchema)]
 pub struct BlogResponse {
@@ -61,6 +57,10 @@ pub struct BlogResponse {
 	pub published: bool,
 	pub created_at: DateTime<Utc>,
 }
+fn default_limit() -> i64 {
+	20
+}
+
 
 impl From<Blog> for BlogResponse {
 	fn from(blog: Blog) -> Self {

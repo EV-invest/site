@@ -1,11 +1,6 @@
 use thiserror::Error;
 use uuid::Uuid;
 
-/// Errors arising from the domain / application core.
-///
-/// Driving adapters translate these into their own representation at the
-/// boundary (the HTTP layer maps them to status codes — see
-/// `crate::api::error::ApiError`).
 #[derive(Debug, Error)]
 pub enum DomainError {
 	#[error("{entity} not found: {id}")]

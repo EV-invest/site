@@ -1,8 +1,9 @@
 //! Domain core: entities, value objects, ports, and errors.
 //!
-//! This layer is pure — it has no knowledge of HTTP, SQL, or any concrete
-//! framework. Outer layers depend inward on it; it depends on nothing of theirs.
+//! Models and errors live in the `domain` crate (workspace) so the CRM
+//! frontend can share the same types without codegen. Re-exported here so
+//! all existing `use crate::domain::...` paths in this crate stay unchanged.
 
-pub mod error;
-pub mod model;
+pub use ::domain::error;
+pub use ::domain::model;
 pub mod port;
