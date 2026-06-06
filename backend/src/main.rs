@@ -14,13 +14,32 @@ use backend::{
 	infrastructure::{db, persistence::postgres_blog_repository::PostgresBlogRepository},
 };
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
+// Sentry must be initialised before the async runtime starts — no #[tokio::main].
+fn main() -> anyhow::Result<()> {
 	dotenvy::dotenv().ok();
-	init_tracing();
 
 	let config = AppConfig::from_env().context("failed to load configuration")?;
 
+	// Guard must stay alive for the duration of main — dropping it flushes events.
+	let _sentry_guard = config.sentry_dsn.as_deref().map(|dsn| {
+		sentry::init((dsn, sentry::ClientOptions {
+			release: sentry::release_name!(),
+			environment: Some(config.app_env.clone().into()),
+			traces_sample_rate: if config.app_env == "production" { 0.1 } else { 1.0 },
+			..Default::default()
+		}))
+	});
+
+	init_tracing();
+
+	tokio::runtime::Builder::new_multi_thread()
+		.enable_all()
+		.build()
+		.context("failed to build tokio runtime")?
+		.block_on(run(config))
+}
+
+async fn run(config: AppConfig) -> anyhow::Result<()> {
 	let pool = db::connect(&config.database_url).await.context("failed to connect to the database")?;
 	db::migrate(&pool).await.context("failed to run migrations")?;
 
@@ -44,5 +63,9 @@ fn init_tracing() {
 	use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 	let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info,backend=debug"));
-	tracing_subscriber::registry().with(filter).with(fmt::layer()).init();
+	tracing_subscriber::registry()
+		.with(filter)
+		.with(fmt::layer())
+		.with(sentry::integrations::tracing::layer())
+		.init();
 }

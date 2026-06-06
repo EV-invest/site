@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import Script from "next/script";
 import { fontInter, fontPlayfair } from "@/application/styles/fonts";
 import { Providers } from "@/application/providers";
+import { ErrorMonitoringProvider } from "@/features/error-monitoring";
 import { Header, Footer } from "@/application/layout";
 import { PostHogProvider } from "@/features/analytics";
 import { DevAbPanel } from "@/features/ab-variant";
@@ -25,6 +26,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       suppressHydrationWarning
     >
       <body>
+        <ErrorMonitoringProvider />
         <Providers>
           <PostHogProvider>
             <Header />
