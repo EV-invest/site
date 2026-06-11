@@ -3,9 +3,8 @@ use axum::{
 	http::StatusCode,
 	response::{IntoResponse, Response},
 };
-use serde_json::json;
-
 use domain::error::DomainError;
+use serde_json::json;
 
 use crate::error_reporter;
 

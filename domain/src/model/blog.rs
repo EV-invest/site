@@ -6,7 +6,7 @@ use crate::error::DomainError;
 
 const TITLE_MAX_LEN: usize = 200;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(transparent)]
 pub struct Title(String);
 
@@ -31,7 +31,7 @@ impl Title {
 	}
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(transparent)]
 pub struct Slug(String);
 
@@ -59,7 +59,7 @@ impl Slug {
 	}
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Blog {
 	pub id: Uuid,
 	pub title: Title,
@@ -69,7 +69,7 @@ pub struct Blog {
 	pub created_at: Timestamp,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct NewBlog {
 	pub title: Title,
 	pub slug: Slug,

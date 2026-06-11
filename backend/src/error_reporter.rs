@@ -10,5 +10,5 @@
 /// domain errors — not found, validation, conflict — are client mistakes and
 /// must not be reported here.
 pub fn report(err: &dyn std::error::Error) {
-    sentry::capture_error(err);
+	sentry::capture_error(err);
 }

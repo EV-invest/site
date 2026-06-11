@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 use crate::cn;
 
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, Default, PartialEq)]
 pub enum ButtonVariant {
 	#[default]
 	Default,
@@ -13,7 +13,7 @@ pub enum ButtonVariant {
 	Link,
 }
 
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, Default, PartialEq)]
 pub enum ButtonSize {
 	#[default]
 	Default,

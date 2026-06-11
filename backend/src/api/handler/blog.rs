@@ -3,9 +3,8 @@ use axum::{
 	extract::{Path, Query, State},
 	http::StatusCode,
 };
-use uuid::Uuid;
-
 use domain::model::blog::NewBlog;
+use uuid::Uuid;
 
 use crate::api::{
 	dto::blog::{BlogResponse, CreateBlogRequest, ListBlogsQuery},

@@ -15,7 +15,7 @@ pub fn App() -> Element {
 	}
 }
 
-#[derive(Clone, PartialEq, Routable, Debug)]
+#[derive(Clone, Debug, PartialEq, Routable)]
 #[rustfmt::skip]
 pub enum Route {
     #[layout(Layout)]
