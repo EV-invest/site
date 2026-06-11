@@ -1,6 +1,6 @@
 /*
  * Shared design tokens — single source of truth for both landing (Next.js)
- * and crm (Dioxus). Import this file from any Tailwind v4 entrypoint.
+ * and pc (Dioxus). Import this file from any Tailwind v4 entrypoint.
  *
  * Structure:
  *   @theme inline {}  — wires values into Tailwind utilities (processed by
@@ -39,7 +39,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* sidebar utilities (CRM) */
+  /* sidebar utilities (PC) */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -91,7 +91,7 @@
   --ring: #2a9d8f;
   --radius: 0.5rem;
 
-  /* ── sidebar (CRM nav) ───────────────────────────────────────── */
+  /* ── sidebar (PC nav) ───────────────────────────────────────── */
   --sidebar: #0c1626;
   --sidebar-foreground: white;
   --sidebar-primary: #001e4e;

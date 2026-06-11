@@ -1,12 +1,11 @@
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use utoipa::{IntoParams, ToSchema};
-use uuid::Uuid;
-
 use domain::{
 	error::DomainError,
 	model::blog::{Blog, NewBlog, Slug, Title},
 };
+use jiff::Timestamp;
+use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
+use uuid::Uuid;
 
 /// Inbound payload for `POST /blogs`. Carries raw strings off the wire; parsing
 /// into validated value objects happens in the `TryFrom` below — at the boundary.
@@ -55,12 +54,12 @@ pub struct BlogResponse {
 	pub slug: String,
 	pub body: String,
 	pub published: bool,
-	pub created_at: DateTime<Utc>,
+	#[schema(value_type = String, format = DateTime)]
+	pub created_at: Timestamp,
 }
 fn default_limit() -> i64 {
 	20
 }
-
 
 impl From<Blog> for BlogResponse {
 	fn from(blog: Blog) -> Self {

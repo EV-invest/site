@@ -4,106 +4,76 @@
 [<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs&style=flat-square" height="20">](https://docs.rs/ev_site)
 ![Lines Of Code](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/valeratrades/b48e6f02c61942200e7d1e3eeabf9bcb/raw/ev_site-loc.json)
 <br>
-[<img alt="ci errors" src="https://img.shields.io/github/actions/workflow/status/valeratrades/ev_site/errors.yml?branch=master&style=for-the-badge&style=flat-square&label=errors&labelColor=420d09" height="20">](https://github.com/valeratrades/ev_site/actions?query=branch%3Amaster)
-[<img alt="ci warnings" src="https://img.shields.io/github/actions/workflow/status/valeratrades/ev_site/warnings.yml?branch=master&style=for-the-badge&style=flat-square&label=warnings&labelColor=d16002" height="20">](https://github.com/valeratrades/ev_site/actions?query=branch%3Amaster)
+[<img alt="ci errors" src="https://img.shields.io/github/actions/workflow/status/valeratrades/ev_site/errors.yml?branch=master&style=for-the-badge&style=flat-square&label=errors&labelColor=420d09" height="20">](https://github.com/valeratrades/ev_site/actions?query=branch%3Amaster) <!--NB: Won't find it if repo is private-->
+[<img alt="ci warnings" src="https://img.shields.io/github/actions/workflow/status/valeratrades/ev_site/warnings.yml?branch=master&style=for-the-badge&style=flat-square&label=warnings&labelColor=d16002" height="20">](https://github.com/valeratrades/ev_site/actions?query=branch%3Amaster) <!--NB: Won't find it if repo is private-->
 
-Site of **EV Investment** fund.
+site of `EV Investment` fund
 
-## Stack
+## Usage
+The site lives in [`frontend/`](./docs/.readme_assets/frontend) — Next.js (App Router) + React + npm,
+laid out with Feature-Sliced Design. It serves on `:3000`.
 
-| Layer | Tech | Path | Port |
-|-------|------|------|------|
-| Landing | Next.js 16 · App Router · FSD · Tailwind | `landing/` | :3000 |
-| CRM | Dioxus 0.7 · WASM · FSD · Tailwind | `crm/` | :3001 |
-| API | Rust · Axum · Hexagonal architecture | `backend/` | :8080 |
-| Domain | Shared Rust types · no I/O | `domain/` | — |
-| DB | PostgreSQL (local, managed by Nix) | `.pg/` | :5432 |
-
----
-
-## Dev
-
-### Prerequisites
-
-- **Nix** with flakes enabled
-- **direnv** — run once from the repo root:
-
+### Dev
+One command brings it up without first entering the dev shell — it resolves the
+repo root at runtime, `npm install`s on first run, then `npm run dev`:
 ```sh
-direnv allow
+nix run .#dev   # → http://localhost:3000
+```
+Or, from inside the dev shell (auto-activated by `.envrc` + direnv):
+```sh
+cd frontend && npm install && npm run dev
 ```
 
-This activates the devshell on every subsequent `cd` into the repo (Rust nightly, Node, `DYLD_LIBRARY_PATH` for the wasm32 linker on macOS).
-
-- **Backend env** — copy and adjust once:
-
+### Visual-regression tests
+Per-section Playwright screenshot tests live in [`frontend/tests/`](./docs/.readme_assets/frontend/tests)
+— one baseline per addressable section (`#hero`, `#portfolio`, `#calculator`,
+`#research`, `#team`, plus header/footer). Browsers come from nixpkgs (pinned to
+the `@playwright/test` revision via the flake), so screenshots are reproducible.
 ```sh
-cp backend/.env.example backend/.env
+cd frontend
+npm run test:visual           # compare against committed baselines
+npm run test:visual:update    # regenerate baselines after an intentional UI change
 ```
 
-- **Landing deps** — install once:
+### Design system (Figma)
+The visual language is mirrored in a Figma file
+([`Landing`](https://www.figma.com/design/e0V2P1cQpEFRuXTeNtEMh6/Landing)), kept
+**code-first**: [`frontend/application/styles/globals.css`](./frontend/application/styles/globals.css)
+is the source of truth and the Figma side is conformed to it, never the reverse.
 
-```sh
-npm --prefix landing install
-```
+- **Tokens → Figma Variables.** Three collections mirror the CSS tokens 1:1, each with
+  `var(--token)` code syntax so Dev Mode round-trips cleanly:
+  - `ev/color` — brand primitives (`main-*`) + neutrals,
+  - `ev/semantic` — shadcn roles (`background`, `foreground`, `primary`, `border`, …)
+    aliased onto the primitives,
+  - `ev/radius` — the `--radius` scale.
+- **Components.** The shadcn `bricks` are rebuilt as Figma variant-sets bound to those
+  Variables (Button, Badge, Input/Field, Checkbox, Switch, Card, Select, Tabs, Accordion,
+  Tooltip), on a dark surface matching the app's navy theme. Fonts: Inter (sans) +
+  Playfair (display).
 
-### Running all services
+> Code Connect (the design↔code component mapping) is intentionally **not** wired up: it
+> requires a Figma Organization/Enterprise plan and the file is on Pro. Tokens and
+> variant-sets work regardless.
 
-Four terminals from the repo root:
-
-```sh
-# 1 — PostgreSQL  (cluster in .pg/, created on first run)
-nix run .#db
-
-# 2 — Backend API
-cargo run -p backend
-
-# 3 — Landing
-npm run dev
-
-# 4 — CRM  (Tailwind watcher + Dioxus dev server)
-npm run crm:css:watch &
-dx serve --package crm --port 3001
-```
-
-### URLs
-
-| Service | URL |
-|---------|-----|
-| Landing | http://localhost:3000 |
-| Backend / Swagger UI | http://localhost:8080 · http://localhost:8080/swagger-ui |
-| CRM | http://localhost:3001 |
-
----
-
-## Design tokens
-
-`public/tokens.css` is the **single source of truth** for the design system — both apps import it:
-
-- **Landing** — consumed via `landing/application/styles/globals.css`, processed by Next.js + Tailwind v4.
-- **CRM** — built separately: `npm run crm:css` → `crm/assets/tailwind.css` (committed; re-run when tokens change).
-
-The Figma file ([`Main`](https://www.figma.com/design/e0V2P1cQpEFRuXTeNtEMh6/Main?node-id=10-2)) is **code-first**: `public/tokens.css` is authoritative, Figma conforms to it.
-
----
-
-## Checks
-
-```sh
-cargo clippy --workspace -- -D warnings
-cargo test --workspace
-npm run lint && npm run typecheck     # delegates to landing/
-```
-
----
 
 <br>
 
 <sup>
-This repository follows <a href="https://github.com/valeratrades/.github/tree/master/best_practices">my best practices</a>. For architecture, see <a href="./docs/ARCHITECTURE.md">ARCHITECTURE.md</a>.
+	This repository follows <a href="https://github.com/valeratrades/.github/tree/master/best_practices">my best practices</a> and <a href="https://github.com/tigerbeetle/tigerbeetle/blob/main/docs/TIGER_STYLE.md">Tiger Style</a> (except "proper capitalization for acronyms": (VsrState, not VSRState) and formatting). For project's architecture, see <a href="./docs/ARCHITECTURE.md">ARCHITECTURE.md</a>.
 </sup>
 
 #### License
 
 <sup>
-Licensed under <a href="LICENSE">Blue Oak 1.0.0</a>
+	Licensed under <a href="LICENSE">Blue Oak 1.0.0</a>
 </sup>
+
+<br>
+
+<sub>
+	Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in this crate by you, as defined in the Apache-2.0 license, shall
+be licensed as above, without any additional terms or conditions.
+</sub>
+

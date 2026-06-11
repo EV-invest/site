@@ -1,11 +1,8 @@
 #[cfg(not(target_arch = "wasm32"))]
 fn main() {
-	let port: u16 = std::env::var("PORT")
-		.ok()
-		.and_then(|s| s.parse().ok())
-		.unwrap_or(8081);
+	let port: u16 = std::env::var("PORT").ok().and_then(|s| s.parse().ok()).unwrap_or(8081);
 	let status = std::process::Command::new("dx")
-		.args(["serve", "--package", "crm", "--port", &port.to_string()])
+		.args(["serve", "--package", "pc", "--port", &port.to_string()])
 		.status()
 		.expect("dx serve failed — is `dx` installed? (`cargo install dioxus-cli`)");
 	std::process::exit(status.code().unwrap_or(1));
@@ -13,5 +10,5 @@ fn main() {
 
 #[cfg(target_arch = "wasm32")]
 fn main() {
-	dioxus::launch(crm::App);
+	dioxus::launch(pc::App);
 }

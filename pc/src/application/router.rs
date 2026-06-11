@@ -1,16 +1,18 @@
 use dioxus::prelude::*;
 
-use crate::application::layout::Layout;
-use crate::views::{Clients, Dashboard, Investments, NotFound};
+use crate::{
+	application::layout::Layout,
+	views::{Clients, Dashboard, Investments, NotFound},
+};
 
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css", CssAssetOptions::new());
 
 #[component]
 pub fn App() -> Element {
-    rsx! {
-        document::Stylesheet { href: TAILWIND_CSS }
-        Router::<Route> {}
-    }
+	rsx! {
+		document::Stylesheet { href: TAILWIND_CSS }
+		Router::<Route> {}
+	}
 }
 
 #[derive(Clone, PartialEq, Routable, Debug)]

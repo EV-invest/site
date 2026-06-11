@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use uuid::Uuid;
-
-use crate::domain::port::blog_repository::BlogRepository;
 use domain::{
 	error::DomainError,
 	model::blog::{Blog, NewBlog},
 };
+use uuid::Uuid;
+
+use crate::domain::port::blog_repository::BlogRepository;
 
 /// Use cases operating on [`Blog`]s. Depends only on the [`BlogRepository`]
 /// port, so it is agnostic to the concrete adapter and trivially testable.
@@ -38,14 +38,13 @@ impl BlogService {
 
 #[cfg(test)]
 mod tests {
-	use std::sync::Arc;
-	use std::sync::Mutex;
+	use std::sync::{Arc, Mutex};
 
 	use async_trait::async_trait;
-	use chrono::Utc;
+	use domain::model::blog::{Slug, Title};
+	use jiff::Timestamp;
 
 	use super::*;
-	use domain::model::blog::{Slug, Title};
 
 	/// In-memory fake of the repository port, to exercise the service without
 	/// touching Postgres.
@@ -63,7 +62,7 @@ mod tests {
 				slug: new_blog.slug,
 				body: new_blog.body,
 				published: new_blog.published,
-				created_at: Utc::now(),
+				created_at: Timestamp::now(),
 			};
 			self.blogs.lock().unwrap().push(blog.clone());
 			Ok(blog)

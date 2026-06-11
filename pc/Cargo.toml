@@ -1,9 +1,9 @@
 [package]
-name = "crm"
+name = "pc"
 version = "0.1.0"
 edition = "2024"
 publish = false
-default-run = "crm"
+default-run = "pc"
 
 [dependencies]
 dioxus.workspace = true

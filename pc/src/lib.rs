@@ -5,5 +5,4 @@ pub mod features;
 pub mod shared;
 pub mod views;
 
-pub use application::router::App;
-pub use application::router::Route;
+pub use application::router::{App, Route};

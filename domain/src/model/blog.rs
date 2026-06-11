@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use jiff::Timestamp;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -66,7 +66,7 @@ pub struct Blog {
 	pub slug: Slug,
 	pub body: String,
 	pub published: bool,
-	pub created_at: DateTime<Utc>,
+	pub created_at: Timestamp,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

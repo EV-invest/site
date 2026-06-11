@@ -1,13 +1,14 @@
 use async_trait::async_trait;
-use chrono::{DateTime, Utc};
-use sqlx::{FromRow, postgres::PgPool};
-use uuid::Uuid;
-
-use crate::domain::port::blog_repository::BlogRepository;
 use domain::{
 	error::DomainError,
 	model::blog::{Blog, NewBlog, Slug, Title},
 };
+use jiff::Timestamp;
+use sqlx::{FromRow, postgres::PgPool};
+use time::OffsetDateTime;
+use uuid::Uuid;
+
+use crate::domain::port::blog_repository::BlogRepository;
 
 /// Postgres-backed adapter implementing the [`BlogRepository`] port.
 pub struct PostgresBlogRepository {
@@ -29,7 +30,7 @@ struct BlogRow {
 	slug: String,
 	body: String,
 	published: bool,
-	created_at: DateTime<Utc>,
+	created_at: OffsetDateTime,
 }
 
 impl TryFrom<BlogRow> for Blog {
@@ -45,7 +46,7 @@ impl TryFrom<BlogRow> for Blog {
 			slug: Slug::parse(row.slug).map_err(corrupt_row)?,
 			body: row.body,
 			published: row.published,
-			created_at: row.created_at,
+			created_at: Timestamp::new(row.created_at.unix_timestamp(), row.created_at.nanosecond() as i32).map_err(|e| DomainError::Repository(format!("invalid timestamp: {e}")))?,
 		})
 	}
 }
