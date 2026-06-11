@@ -1,19 +1,16 @@
-use chrono::{DateTime, Utc};
+use jiff::Timestamp;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::domain::error::DomainError;
+use crate::error::DomainError;
 
-/// Maximum number of characters allowed in a [`Title`].
 const TITLE_MAX_LEN: usize = 200;
 
-/// A validated blog title: trimmed, non-empty, at most [`TITLE_MAX_LEN`] chars.
-/// Constructing one is proof the invariant holds.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct Title(String);
 
 impl Title {
-	/// The only constructor. Enforces the invariant, so a `Title` cannot exist
-	/// in an invalid state.
 	pub fn parse(raw: String) -> Result<Self, DomainError> {
 		let trimmed = raw.trim();
 		if trimmed.is_empty() {
@@ -34,9 +31,8 @@ impl Title {
 	}
 }
 
-/// A validated URL slug: lowercase ASCII letters, digits and hyphens only, with
-/// no leading or trailing hyphen.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct Slug(String);
 
 impl Slug {
@@ -45,7 +41,6 @@ impl Slug {
 		if trimmed.is_empty() {
 			return Err(DomainError::Validation("slug must not be empty".into()));
 		}
-		// Hand-rolled char scan — deliberately no regex dependency for this.
 		if !trimmed.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-') {
 			return Err(DomainError::Validation("slug may contain only lowercase letters, digits and hyphens".into()));
 		}
@@ -64,21 +59,17 @@ impl Slug {
 	}
 }
 
-/// A blog post — a core domain entity. Only ever exists in a valid state: its
-/// [`Title`] and [`Slug`] cannot be built without passing validation.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Blog {
 	pub id: Uuid,
 	pub title: Title,
 	pub slug: Slug,
 	pub body: String,
 	pub published: bool,
-	pub created_at: DateTime<Utc>,
+	pub created_at: Timestamp,
 }
 
-/// Data required to create a [`Blog`]. Stores already-parsed value objects, so
-/// an invalid `NewBlog` is unrepresentable.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NewBlog {
 	pub title: Title,
 	pub slug: Slug,

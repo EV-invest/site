@@ -1,8 +1,5 @@
-//! Domain core: entities, value objects, ports, and errors.
-//!
-//! This layer is pure — it has no knowledge of HTTP, SQL, or any concrete
-//! framework. Outer layers depend inward on it; it depends on nothing of theirs.
+//! Backend-local ports through which the application core reaches
+//! infrastructure adapters. Domain types (models, errors) live in the
+//! `domain` workspace crate and are imported directly from there.
 
-pub mod error;
-pub mod model;
 pub mod port;

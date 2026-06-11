@@ -7,54 +7,47 @@
 [<img alt="ci errors" src="https://img.shields.io/github/actions/workflow/status/valeratrades/ev_site/errors.yml?branch=master&style=for-the-badge&style=flat-square&label=errors&labelColor=420d09" height="20">](https://github.com/valeratrades/ev_site/actions?query=branch%3Amaster) <!--NB: Won't find it if repo is private-->
 [<img alt="ci warnings" src="https://img.shields.io/github/actions/workflow/status/valeratrades/ev_site/warnings.yml?branch=master&style=for-the-badge&style=flat-square&label=warnings&labelColor=d16002" height="20">](https://github.com/valeratrades/ev_site/actions?query=branch%3Amaster) <!--NB: Won't find it if repo is private-->
 
-site of `EV Investment` fund
+site of `EV Investment` fund — a monorepo of three apps over a shared Rust
+`domain` crate and a single design-token file.
 
 ## Usage
-The site lives in [`frontend/`](./docs/.readme_assets/frontend) — Next.js (App Router) + React + npm,
-laid out with Feature-Sliced Design. It serves on `:3000`.
+### Layout
 
-### Dev
-One command brings it up without first entering the dev shell — it resolves the
-repo root at runtime, `npm install`s on first run, then `npm run dev`:
-```sh
-nix run .#dev   # → http://localhost:3000
-```
-Or, from inside the dev shell (auto-activated by `.envrc` + direnv):
-```sh
-cd frontend && npm install && npm run dev
-```
+| Path | What | Stack | Details |
+| ---- | ---- | ----- | ------- |
+| [`landing/`](./landing) | public marketing site | Next.js 16 · FSD · Tailwind · TS | [README](./landing/README.md) |
+| [`backend/`](./backend) | HTTP API | Rust · Axum · sqlx (Postgres) | [README](./backend/README.md) |
+| [`pc/`](./pc) | internal app (web/WASM) | Rust · Dioxus 0.7 · FSD | [README](./pc/README.md) |
+| [`domain/`](./domain) | shared domain types (pure, no I/O) | Rust | — |
+| [`public/tokens.css`](./public/tokens.css) | design tokens | CSS (Tailwind v4) | — |
 
-### Visual-regression tests
-Per-section Playwright screenshot tests live in [`frontend/tests/`](./docs/.readme_assets/frontend/tests)
-— one baseline per addressable section (`#hero`, `#portfolio`, `#calculator`,
-`#research`, `#team`, plus header/footer). Browsers come from nixpkgs (pinned to
-the `@playwright/test` revision via the flake), so screenshots are reproducible.
-```sh
-cd frontend
-npm run test:visual           # compare against committed baselines
-npm run test:visual:update    # regenerate baselines after an intentional UI change
-```
+`domain` is the shared source of truth for types — `backend` and `pc` depend on it,
+never on each other. `public/tokens.css` is the shared design source of truth for
+`landing` and `pc` (each wires Tailwind its own way — see their READMEs).
 
-### Design system (Figma)
-The visual language is mirrored in a Figma file
-([`Landing`](https://www.figma.com/design/e0V2P1cQpEFRuXTeNtEMh6/Landing)), kept
-**code-first**: [`frontend/application/styles/globals.css`](./frontend/application/styles/globals.css)
-is the source of truth and the Figma side is conformed to it, never the reverse.
+### Run
 
-- **Tokens → Figma Variables.** Three collections mirror the CSS tokens 1:1, each with
-  `var(--token)` code syntax so Dev Mode round-trips cleanly:
-  - `ev/color` — brand primitives (`main-*`) + neutrals,
-  - `ev/semantic` — shadcn roles (`background`, `foreground`, `primary`, `border`, …)
-    aliased onto the primitives,
-  - `ev/radius` — the `--radius` scale.
-- **Components.** The shadcn `bricks` are rebuilt as Figma variant-sets bound to those
-  Variables (Button, Badge, Input/Field, Checkbox, Switch, Card, Select, Tabs, Accordion,
-  Tooltip), on a dark surface matching the app's navy theme. Fonts: Inter (sans) +
-  Playfair (display).
+Every app is a flake app. `nix run` resolves the repo root at runtime, so there's
+no need to enter the dev shell first.
 
-> Code Connect (the design↔code component mapping) is intentionally **not** wired up: it
-> requires a Figma Organization/Enterprise plan and the file is on Pro. Tokens and
-> variant-sets work regardless.
+| Command | Brings up | Port |
+| ------- | --------- | ---- |
+| `nix run .#dev` | everything: Postgres → backend → landing → pc | — |
+| `nix run .#db` | local Postgres (cluster under `.pg/`, trust auth) | 5432 |
+
+For individual app commands, see each folder's README.
+
+`.#dev` starts Postgres first and waits for it before launching the backend (which
+migrates on boot); one Ctrl-C tears the whole stack down. Per-app build, test, and
+layout details live in each folder's README — see the table above.
+
+A dev shell with the full toolchain (Rust nightly + `wasm32`, Node, Postgres,
+Playwright browsers) is auto-activated by `.envrc` + direnv, or via `nix develop`.
+
+> **Production** (`.#prod`) is intentionally not wired up yet — the Docker-vs-Nix
+> packaging decision is still open.
+
+<!-- Per-app details live in each folder's README (landing/, backend/, pc/) — not duplicated here. -->
 
 
 <br>

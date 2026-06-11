@@ -10,10 +10,10 @@ src/
 ├── main.rs            composition root — wires adapters into use cases and serves
 ├── config.rs          AppConfig from environment
 ├── domain/            core (pure: no HTTP, no SQL)
-│   ├── model/         entities & value objects (User, NewUser)
-│   ├── port/          traits the core depends on (UserRepository) — the "ports"
+│   ├── model/         entities & value objects (Blog, NewBlog)
+│   ├── port/          traits the core depends on (BlogRepository) — the "ports"
 │   └── error.rs       DomainError
-├── application/       use cases over the ports (UserService)
+├── application/       use cases over the ports (BlogService)
 ├── infrastructure/    driven adapters implementing the ports
 │   ├── db.rs          PgPool + migrations
 │   └── persistence/   PostgresBlogRepository (sqlx)
@@ -28,11 +28,17 @@ src/
 Dependency direction: `api ─▶ application ─▶ domain ◀─ infrastructure`.
 Everything points inward at `domain`; the core depends on nothing outward.
 
-## Develop
+## Run only backend
 
 ```sh
-cp .env.example .env        # set DATABASE_URL
-cargo run                   # migrations run on startup
+nix run .#backend           # → http://localhost:8080
+```
+Needs a reachable Postgres — `nix run .#db` (or `.#dev`, which boots one first).
+The app migrates on startup; defaults match [`.env.example`](./.env.example), so a
+`.env` is optional. Inside the dev shell you can `cargo run` directly.
+
+```sh
+cargo check && cargo clippy -- -D warnings && cargo test
 ```
 
 ### Endpoints (under `/api/v1`)

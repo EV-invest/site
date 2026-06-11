@@ -54,22 +54,70 @@
         };
         combined = v_flakes.utils.combine { inherit rust; modules = [ rs github readme ]; };
 
-        # ── dev orchestrator ────────────────────────────────────────────────
+        # ── per-app dev wrappers ────────────────────────────────────────────
         # IMPORTANT: resolve the repo at *runtime* via `git rev-parse`, not
         # `toString ./.`. Baking the latter locks the wrapper to the read-only
         # /nix/store snapshot, where npm can't write node_modules. Run from
         # anywhere inside the repo. npm ships with the nixpkgs `nodejs`.
-        runFrontend = pkgs.writeShellApplication {
-          name = "run-frontend";
+
+        # Linker shim shared by every wrapper that compiles Rust on macOS.
+        # See the devShell shellHook for the full rationale — rust-lld embeds the
+        # wrong libLLVM rpath, and only the FALLBACK var fixes it without forcing
+        # Nix's clang onto rustc's older libLLVM during host proc-macro links.
+        dyldFallback = ''export DYLD_FALLBACK_LIBRARY_PATH="${rust}/lib''${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}"'';
+
+        # landing (Next.js)
+        runLanding = pkgs.writeShellApplication {
+          name = "run-landing";
           runtimeInputs = with pkgs; [ nodejs git ];
           text = ''
             repo="$(git rev-parse --show-toplevel)"
-            cd "$repo/frontend"
+            cd "$repo/landing"
             if [ ! -x node_modules/.bin/next ] \
                || [ package-lock.json -nt node_modules/.package-lock.json ]; then
               npm ci
             fi
             exec npm run dev
+          '';
+        };
+
+        # backend (Axum). Migrations run automatically on startup, so a reachable
+        # Postgres is the only prerequisite (`.#db`, or `.#dev` which boots one
+        # first). Defaults mirror backend/.env.example; any value already in the
+        # environment (or a sourced .env) wins via `:-`.
+        runBackend = pkgs.writeShellApplication {
+          name = "run-backend";
+          runtimeInputs = with pkgs; [ rust pkg-config openssl git ];
+          text = ''
+            ${dyldFallback}
+            repo="$(git rev-parse --show-toplevel)"
+            cd "$repo"
+            export DATABASE_URL="''${DATABASE_URL:-postgres://postgres@localhost:5432/ev_backend}"
+            export BIND_ADDR="''${BIND_ADDR:-0.0.0.0:8080}"
+            export RUST_LOG="''${RUST_LOG:-info,backend=debug}"
+            exec cargo run -p backend
+          '';
+        };
+
+        # pc (Dioxus / WASM). Build Tailwind once, keep it rebuilding in the
+        # background (the `@source` scan in pc/input.css picks up class names from
+        # RSX), then serve. dx defaults to :8080 like the backend, so pin pc to
+        # :3001 to avoid a clash under `.#dev`.
+        runPc = pkgs.writeShellApplication {
+          name = "run-pc";
+          runtimeInputs = with pkgs; [ rust dioxus-cli nodejs git ];
+          text = ''
+            ${dyldFallback}
+            repo="$(git rev-parse --show-toplevel)"
+            cd "$repo"
+            npm run pc:css
+            npm run pc:css:watch & css=$!
+            trap 'kill "$css" 2>/dev/null || true' EXIT INT TERM
+            # `--interactive false`: dx's default full-screen TUI assumes it owns
+            # the terminal and gets corrupted (stuck "0%", N/A) when it shares
+            # stdout with the css watcher or the other `.#dev` processes. Plain
+            # streaming logs are the right fit for a backgrounded dev process.
+            exec dx serve --package pc --port "''${PC_PORT:-3001}" --interactive false
           '';
         };
 
@@ -94,6 +142,9 @@
               echo "initialising postgres cluster in $PGDATA"
               initdb --username=postgres --auth=trust --pgdata="$PGDATA" >/dev/null
             fi
+            # Postgres refuses to start unless PGDATA is 0700/0750. A stray umask
+            # or a dir created by `mkdir` rather than initdb leaves it 0755 — clamp it.
+            chmod 0700 "$PGDATA"
 
             # Create the app database once the server accepts connections; the
             # server itself stays in the foreground below.
@@ -111,17 +162,54 @@
             exec postgres -D "$PGDATA" -k "$sockets" -h 127.0.0.1 -p "$port"
           '';
         };
+
+        # ── full dev orchestrator ───────────────────────────────────────────
+        # `nix run .#dev` → Postgres + backend + landing + pc, all together.
+        # Postgres starts first; backend only launches once the server accepts
+        # TCP connections (it migrates on boot and would otherwise crash). A
+        # single trap tears the whole tree down on Ctrl-C / exit.
+        runDev = pkgs.writeShellApplication {
+          name = "run-dev";
+          runtimeInputs = with pkgs; [ postgresql git coreutils ];
+          text = ''
+            pids=()
+            cleanup() {
+              echo; echo "shutting down dev stack…"
+              [ ''${#pids[@]} -gt 0 ] && kill "''${pids[@]}" 2>/dev/null || true
+              wait 2>/dev/null || true
+            }
+            trap cleanup EXIT INT TERM
+
+            echo "▶ postgres"
+            ${runPostgres}/bin/run-postgres & pids+=($!)
+
+            echo "  waiting for postgres on 127.0.0.1:''${PGPORT:-5432}…"
+            until pg_isready --host=127.0.0.1 --port="''${PGPORT:-5432}" --quiet; do sleep 0.3; done
+
+            echo "▶ backend  (:8080)"
+            ${runBackend}/bin/run-backend & pids+=($!)
+            echo "▶ landing  (:3000)"
+            ${runLanding}/bin/run-landing & pids+=($!)
+            echo "▶ pc       (:3001)"
+            ${runPc}/bin/run-pc & pids+=($!)
+
+            wait
+          '';
+        };
       in
       {
-        apps.dev = {
-          type = "app";
-          program = "${runFrontend}/bin/run-frontend";
-        };
-
-        # `nix run .#db` → boots local Postgres (see runPostgres above).
-        apps.db = {
-          type = "app";
-          program = "${runPostgres}/bin/run-postgres";
+        # `nix run .#dev`     → everything (postgres + backend + landing + pc)
+        # `nix run .#landing` → Next.js dev server only
+        # `nix run .#backend` → Axum API only (needs a DB: `.#db` or `.#dev`)
+        # `nix run .#pc`      → Dioxus app + Tailwind watch only
+        # `nix run .#db`      → local Postgres only
+        # (`.#prod` deliberately omitted — docker-vs-nix still undecided.)
+        apps = {
+          dev = { type = "app"; program = "${runDev}/bin/run-dev"; };
+          landing = { type = "app"; program = "${runLanding}/bin/run-landing"; };
+          backend = { type = "app"; program = "${runBackend}/bin/run-backend"; };
+          pc = { type = "app"; program = "${runPc}/bin/run-pc"; };
+          db = { type = "app"; program = "${runPostgres}/bin/run-postgres"; };
         };
 
         devShells.default =
@@ -133,8 +221,13 @@
               + ''
                 cp -f ${(v_flakes.files.treefmt) { inherit pkgs; }} ./.treefmt.toml
 
-                # npm ships with the nixpkgs `nodejs`. Run `npm install` in
-                # frontend/ to populate node_modules (its own package-lock.json).
+                # rust-lld (wasm32 linker) embeds the wrong rpath on macOS — it looks for
+                # libLLVM.dylib in bin/../lib/ but Nix puts it one level up in lib/.
+                # Use the FALLBACK var: plain DYLD_LIBRARY_PATH is searched before a binary's
+                # own rpath and forces Nix's clang onto rustc's older libLLVM when linking
+                # host proc-macros (missing LLVM-21 symbols → abort). The fallback only kicks
+                # in when normal resolution fails — exactly rust-lld's case, never clang's.
+                export DYLD_FALLBACK_LIBRARY_PATH="${rust}/lib''${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}"
               '';
 
             packages = [

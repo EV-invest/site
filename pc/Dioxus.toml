@@ -1,0 +1,11 @@
+[application]
+name = "pc"
+
+[web.app]
+title = "EV Fund PC"
+
+[web.resource.dev]
+style = []
+
+[web.resource]
+style = []

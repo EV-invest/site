@@ -1,0 +1,16 @@
+[package]
+name = "domain"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+jiff = { version = "0.2", features = ["serde"] }
+thiserror = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+
+serde.workspace = true
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+uuid = { version = "1", features = ["js"] }
+getrandom.workspace = true
