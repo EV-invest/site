@@ -20,7 +20,24 @@
           extensions = [ "rust-src" "rust-analyzer" "rust-docs" "rustc-codegen-cranelift-preview" ];
           targets = [ "wasm32-unknown-unknown" ];
         });
-        pre-commit-check = pre-commit-hooks.lib.${system}.run (v_flakes.files.preCommit { inherit pkgs; });
+        # v_flakes.files.preCommit is a plain git-hooks.nix config — extend it
+        # with project hooks by merging into `hooks` before handing it to run.
+        pre-commit-check = pre-commit-hooks.lib.${system}.run (
+          let base = v_flakes.files.preCommit { inherit pkgs; };
+          in base // {
+            hooks = base.hooks // {
+              gen-api = {
+                enable = true;
+                # Regenerates landing/shared/api/generated from the committed
+                # backend/openapi.json, then re-stages (same contract as the
+                # treefmt hook above it in v_flakes).
+                entry = "bash -c 'npm run gen:api && git add -u' --";
+                pass_filenames = false;
+                require_serial = true;
+              };
+            };
+          }
+        );
         pname = "ev_site";
 
         rs = v_flakes.rs { inherit pkgs rust; };

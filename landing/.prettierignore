@@ -5,6 +5,3 @@ node_modules
 .git
 *.min.js
 *.min.css
-
-# Auto-generated API client (npm run gen:api)
-shared/api/generated
