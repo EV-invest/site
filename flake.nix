@@ -135,7 +135,11 @@
 
                 # rust-lld (wasm32 linker) embeds the wrong rpath on macOS — it looks for
                 # libLLVM.dylib in bin/../lib/ but Nix puts it one level up in lib/.
-                export DYLD_LIBRARY_PATH="${rust}/lib''${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
+                # Use the FALLBACK var: plain DYLD_LIBRARY_PATH is searched before a binary's
+                # own rpath and forces Nix's clang onto rustc's older libLLVM when linking
+                # host proc-macros (missing LLVM-21 symbols → abort). The fallback only kicks
+                # in when normal resolution fails — exactly rust-lld's case, never clang's.
+                export DYLD_FALLBACK_LIBRARY_PATH="${rust}/lib''${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}"
               '';
 
             packages = [
