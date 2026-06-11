@@ -35,6 +35,6 @@
 *.onnx -filter
 
 # Generated/locked files (keep current branch's version on conflict)
-Cargo.lock merge=ours
-flake.lock merge=ours
-.pre-commit-config.yaml merge=ours
+Cargo.lock -filter merge=ours
+flake.lock -filter merge=ours
+.pre-commit-config.yaml -filter merge=ours
