@@ -8,6 +8,7 @@ default-run = "pc"
 [dependencies]
 dioxus.workspace = true
 domain.workspace = true
+tailwind_fuse.workspace = true
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom.workspace = true

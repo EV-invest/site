@@ -1,5 +1,7 @@
 use dioxus::prelude::*;
 
+use crate::cn;
+
 #[derive(Clone, PartialEq, Default)]
 pub enum BadgeVariant {
 	#[default]
@@ -23,7 +25,7 @@ pub fn Badge(#[props(default)] variant: BadgeVariant, #[props(default)] class: S
 		BadgeVariant::Success => "border-transparent bg-main-accent-t2/20 text-main-accent-t2",
 	};
 
-	let cls = format!("{base} {variant_cls} {class}");
+	let cls = cn!(base, variant_cls, class);
 
 	rsx! {
 		span { class: cls, {children} }

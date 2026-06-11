@@ -1,5 +1,7 @@
 use dioxus::prelude::*;
 
+use crate::cn;
+
 #[component]
 pub fn Input(
 	#[props(default)] class: String,
@@ -15,7 +17,7 @@ pub fn Input(
                 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 \
                 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]";
 
-	let cls = format!("{base} {class}");
+	let cls = cn!(base, class);
 	let input_type = if r#type.is_empty() { "text".to_string() } else { r#type };
 
 	rsx! {

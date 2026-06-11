@@ -8,6 +8,7 @@ resolver = "3"
 dioxus = { version = "0.7", features = ["web", "router"] }
 getrandom = { version = "0.3", features = ["wasm_js"] }
 serde = { version = "1", features = ["derive"] }
+tailwind_fuse = "0.3"
 domain = { path = "domain" }
 
 [workspace.lints.rust]

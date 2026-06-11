@@ -1,5 +1,7 @@
 use dioxus::prelude::*;
 
+use crate::cn;
+
 #[derive(Clone, PartialEq, Default)]
 pub enum ButtonVariant {
 	#[default]
@@ -50,7 +52,7 @@ pub fn Button(
 		ButtonSize::Icon => "size-9",
 	};
 
-	let cls = format!("{base} {variant_cls} {size_cls} {class}");
+	let cls = cn!(base, variant_cls, size_cls, class);
 
 	rsx! {
 		button {
