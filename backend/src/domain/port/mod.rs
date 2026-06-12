@@ -2,3 +2,4 @@
 //! outside world. Driven adapters in `crate::infrastructure` implement them.
 
 pub mod blog_repository;
+pub mod ledger;

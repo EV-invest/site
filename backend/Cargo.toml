@@ -11,6 +11,7 @@ default-run = "backend"
 anyhow.workspace = true
 async-trait.workspace = true
 axum.workspace = true
+tigerbeetle = { path = ".tb-client" }
 domain.workspace = true
 dotenvy.workspace = true
 jiff = { workspace = true, features = ["serde"] }
