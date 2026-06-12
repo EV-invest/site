@@ -85,7 +85,9 @@ venv/
 .direnv/corepack/
 ## Local Postgres
 .pg/
+## Local TigerBeetle
+.tb/
 ## LLMs
 AGENTS.md
 CLAUDE.md
-
+.claude/

@@ -81,20 +81,52 @@
           '';
         };
 
+        # ── TigerBeetle Rust client assets ──────────────────────────────────
+        # Builds the native C client library + header so the official
+        # tigerbeetle Rust crate can link against them. The output is the
+        # src/clients/rust/ directory with compiled assets in place, ready
+        # to be used as a Cargo path dependency.
+        tigerbeetleClient = pkgs.stdenv.mkDerivation {
+          name = "tigerbeetle-client";
+          src = pkgs.fetchzip {
+            url = "https://github.com/tigerbeetle/tigerbeetle/archive/refs/tags/0.17.6.tar.gz";
+            hash = "sha256-b519nsDbas+XOw3ulAnzpk2KwtJkeOC3e13urM2tUSM=";
+          };
+          nativeBuildInputs = [ pkgs.zig ];
+          buildPhase = ''
+            zig build clients:rust -Drelease
+          '';
+          installPhase = ''
+            mkdir -p $out
+            cp -r src/clients/rust/* $out/
+          '';
+        };
+
         # backend (Axum). Migrations run automatically on startup, so a reachable
         # Postgres is the only prerequisite (`.#db`, or `.#dev` which boots one
         # first). Defaults mirror backend/.env.example; any value already in the
         # environment (or a sourced .env) wins via `:-`.
         runBackend = pkgs.writeShellApplication {
           name = "run-backend";
-          runtimeInputs = with pkgs; [ rust pkg-config openssl git ];
+          runtimeInputs = with pkgs; [ rust pkg-config openssl git tigerbeetle zig ];
           text = ''
             ${dyldFallback}
             repo="$(git rev-parse --show-toplevel)"
             cd "$repo"
+
+            # Symlink the TigerBeetle Rust client (with pre-built native assets)
+            # so the path dependency in backend/Cargo.toml resolves.
+            tb_client_dir="$repo/backend/.tb-client"
+            if [ ! -L "$tb_client_dir" ] || [ "$(readlink "$tb_client_dir")" != "${tigerbeetleClient}" ]; then
+              rm -f "$tb_client_dir"
+              ln -s "${tigerbeetleClient}" "$tb_client_dir"
+            fi
+
             export DATABASE_URL="''${DATABASE_URL:-postgres://postgres@localhost:5432/ev_backend}"
             export BIND_ADDR="''${BIND_ADDR:-0.0.0.0:8080}"
             export RUST_LOG="''${RUST_LOG:-info,backend=debug}"
+            export TIGERBEETLE_ADDRESS="''${TIGERBEETLE_ADDRESS:-127.0.0.1:3001}"
+            export TIGERBEETLE_CLUSTER_ID="''${TIGERBEETLE_CLUSTER_ID:-0}"
             exec cargo run -p backend
           '';
         };
@@ -163,11 +195,37 @@
           '';
         };
 
+        # ── local TigerBeetle ────────────────────────────────────────────────
+        # Project-local TigerBeetle for the financial ledger. Data lives under
+        # .tb/ at the repo root (gitignored), resolved at runtime. First run
+        # formats a single-replica cluster; subsequent runs just start the server.
+        # Listens on 127.0.0.1:3001 — matches backend/.env.example.
+        runTigerbeetle = pkgs.writeShellApplication {
+          name = "run-tigerbeetle";
+          runtimeInputs = with pkgs; [ tigerbeetle git ];
+          text = ''
+            repo="$(git rev-parse --show-toplevel)"
+            export TB_DATA="$repo/.tb/data"
+            port="''${TBPORT:-3001}"
+            cluster_id="''${TBCLUSTER:-0}"
+            data_file="$TB_DATA/''${cluster_id}_0.tigerbeetle"
+
+            mkdir -p "$TB_DATA"
+            if [ ! -f "$data_file" ]; then
+              echo "formatting TigerBeetle data file (cluster=''${cluster_id}, replica=0, replica-count=1)"
+              tigerbeetle format --cluster="$cluster_id" --replica=0 --replica-count=1 "$data_file"
+            fi
+
+            echo "TigerBeetle ready on 127.0.0.1:$port (cluster ''${cluster_id})"
+            exec tigerbeetle start --addresses="127.0.0.1:$port" "$data_file"
+          '';
+        };
+
         # ── full dev orchestrator ───────────────────────────────────────────
-        # `nix run .#dev` → Postgres + backend + landing + pc, all together.
-        # Postgres starts first; backend only launches once the server accepts
-        # TCP connections (it migrates on boot and would otherwise crash). A
-        # single trap tears the whole tree down on Ctrl-C / exit.
+        # `nix run .#dev` → Postgres + TigerBeetle + backend + landing + pc,
+        # all together. Postgres starts first, then TigerBeetle; backend only
+        # launches once both accept connections. A single trap tears the whole
+        # tree down on Ctrl-C / exit.
         runDev = pkgs.writeShellApplication {
           name = "run-dev";
           runtimeInputs = with pkgs; [ postgresql git coreutils ];
@@ -186,6 +244,9 @@
             echo "  waiting for postgres on 127.0.0.1:''${PGPORT:-5432}…"
             until pg_isready --host=127.0.0.1 --port="''${PGPORT:-5432}" --quiet; do sleep 0.3; done
 
+            echo "▶ tigerbeetle"
+            ${runTigerbeetle}/bin/run-tigerbeetle & pids+=($!)
+
             echo "▶ backend  (:8080)"
             ${runBackend}/bin/run-backend & pids+=($!)
             echo "▶ landing  (:3000)"
@@ -198,11 +259,12 @@
         };
       in
       {
-        # `nix run .#dev`     → everything (postgres + backend + landing + pc)
+        # `nix run .#dev`     → everything (postgres + tigerbeetle + backend + landing + pc)
         # `nix run .#landing` → Next.js dev server only
         # `nix run .#backend` → Axum API only (needs a DB: `.#db` or `.#dev`)
         # `nix run .#pc`      → Dioxus app + Tailwind watch only
         # `nix run .#db`      → local Postgres only
+        # `nix run .#tb`      → local TigerBeetle only
         # (`.#prod` deliberately omitted — docker-vs-nix still undecided.)
         apps = {
           dev = { type = "app"; program = "${runDev}/bin/run-dev"; };
@@ -210,6 +272,7 @@
           backend = { type = "app"; program = "${runBackend}/bin/run-backend"; };
           pc = { type = "app"; program = "${runPc}/bin/run-pc"; };
           db = { type = "app"; program = "${runPostgres}/bin/run-postgres"; };
+          tb = { type = "app"; program = "${runTigerbeetle}/bin/run-tigerbeetle"; };
         };
 
         devShells.default =
@@ -237,6 +300,8 @@
               rust
               mold
               postgresql
+              tigerbeetle
+              zig
               playwright-driver.browsers
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 

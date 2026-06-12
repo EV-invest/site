@@ -2,3 +2,6 @@
 .env
 .env.*
 !.env.example
+
+# TigerBeetle Client
+.tb-client/
