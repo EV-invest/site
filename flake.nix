@@ -52,9 +52,12 @@
           gitignore.extra = ''
             ## Local Postgres
             .pg/
+            ## Local TigerBeetle
+            .tb/
             ## LLMs
             AGENTS.md
             CLAUDE.md
+            .claude/
           '';
           jobs = {
             warnings.augment = [ "tokei" "code-duplication" ];
