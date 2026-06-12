@@ -32,15 +32,17 @@ no need to enter the dev shell first.
 
 | Command | Brings up | Port |
 | ------- | --------- | ---- |
-| `nix run .#dev` | everything: Postgres → backend → landing → pc | — |
+| `nix run .#dev` | everything: Postgres → TigerBeetle → backend → landing → pc | — |
 | `nix run .#landing` | landing only | 3000 |
-| `nix run .#backend` | backend only (needs a DB — `.#db` or `.#dev`) | 8080 |
+| `nix run .#backend` | backend only (needs Postgres + TB — `.#db` `.#tb` or `.#dev`) | 8080 |
 | `nix run .#pc` | pc only (Tailwind watch + `dx serve`) | 3001 |
 | `nix run .#db` | local Postgres (cluster under `.pg/`, trust auth) | 5432 |
+| `nix run .#tb` | local TigerBeetle (data under `.tb/`, single replica) | 3001 |
 
-`.#dev` starts Postgres first and waits for it before launching the backend (which
-migrates on boot); one Ctrl-C tears the whole stack down. Per-app build, test, and
-layout details live in each folder's README — see the table above.
+`.#dev` starts Postgres and TigerBeetle first and waits for them before launching
+the backend (which migrates on boot); one Ctrl-C tears the whole stack down.
+Per-app build, test, and layout details live in each folder's README — see the
+table above.
 
 A dev shell with the full toolchain (Rust nightly + `wasm32`, Node, Postgres,
 Playwright browsers) is auto-activated by `.envrc` + direnv, or via `nix develop`.

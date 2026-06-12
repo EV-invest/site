@@ -1,10 +1,9 @@
 use thiserror::Error;
-use uuid::Uuid;
 
 #[derive(Debug, Error)]
 pub enum DomainError {
 	#[error("{entity} not found: {id}")]
-	NotFound { entity: &'static str, id: Uuid },
+	NotFound { entity: &'static str, id: String },
 	#[error("conflict: {0}")]
 	Conflict(String),
 	#[error("validation failed: {0}")]

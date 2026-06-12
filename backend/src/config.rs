@@ -10,6 +10,10 @@ pub struct AppConfig {
 	pub bind_addr: SocketAddr,
 	pub sentry_dsn: Option<String>,
 	pub app_env: String,
+	/// TigerBeetle replica address (e.g. `"127.0.0.1:3001"` or `"3000"`).
+	pub tigerbeetle_address: String,
+	/// TigerBeetle cluster id. `0` for single-node dev.
+	pub tigerbeetle_cluster_id: u128,
 }
 
 impl AppConfig {
@@ -21,11 +25,18 @@ impl AppConfig {
 			.context("BIND_ADDR must be a valid socket address, e.g. 0.0.0.0:8080")?;
 		let sentry_dsn = env::var("SENTRY_DSN").ok();
 		let app_env = env::var("APP_ENV").unwrap_or_else(|_| "development".to_string());
+		let tigerbeetle_address = env::var("TIGERBEETLE_ADDRESS").unwrap_or_else(|_| "127.0.0.1:3001".to_string());
+		let tigerbeetle_cluster_id = env::var("TIGERBEETLE_CLUSTER_ID")
+			.unwrap_or_else(|_| "0".to_string())
+			.parse()
+			.context("TIGERBEETLE_CLUSTER_ID must be an integer")?;
 		Ok(Self {
 			database_url,
 			bind_addr,
 			sentry_dsn,
 			app_env,
+			tigerbeetle_address,
+			tigerbeetle_cluster_id,
 		})
 	}
 }
