@@ -4,4 +4,4 @@
 !.env.example
 
 # TigerBeetle Client
-.tb-client/
+.tb-client

@@ -4355,9 +4355,10 @@ dependencies = [
 
 [[package]]
 name = "tigerbeetle"
-version = "0.16.0"
+version = "0.0.0"
 dependencies = [
  "bitflags",
+ "futures",
 ]
 
 [[package]]

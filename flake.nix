@@ -58,6 +58,7 @@
             AGENTS.md
             CLAUDE.md
             .claude/
+            .pre-commit-config.yaml
           '';
           jobs = {
             warnings.augment = [ "tokei" "code-duplication" ];
@@ -112,15 +113,43 @@
             url = "https://github.com/tigerbeetle/tigerbeetle/archive/refs/tags/0.17.6.tar.gz";
             hash = "sha256-b519nsDbas+XOw3ulAnzpk2KwtJkeOC3e13urM2tUSM=";
           };
-          nativeBuildInputs = [ pkgs.zig ];
+          # TigerBeetle pins its zig version exactly (0.17.6 → zig 0.14.1);
+          # the default pkgs.zig is too new and build.zig @compileErrors out.
+          nativeBuildInputs = [ pkgs.zig_0_14 pkgs.git ];
+          # build.zig runs `git tag --merged HEAD^` at configure time and
+          # unconditionally consumes 4+ version-shaped tags from the result;
+          # the release tarball has no .git, so fabricate a history with
+          # enough tags. They only feed lazily-evaluated fetch_release steps
+          # that clients:rust never depends on, so the values are arbitrary.
+          postPatch = ''
+            git init -q
+            git -c user.name=nix -c user.email=nix@localhost add -A
+            git -c user.name=nix -c user.email=nix@localhost commit -qm base
+            for v in 0.17.1 0.17.2 0.17.3 0.17.4 0.17.5; do git tag "$v"; done
+            git -c user.name=nix -c user.email=nix@localhost commit -qm head --allow-empty
+          '';
           buildPhase = ''
-            zig build clients:rust -Drelease
+            export ZIG_GLOBAL_CACHE_DIR="$TMPDIR/zig-cache"
+            # -Dgit-commit: report the real 0.17.6 tag commit instead of the
+            # fabricated repo's HEAD.
+            zig build clients:rust -Drelease -Dgit-commit=64899c7a41fd3d74c68da7bb2efcb7d208abd5f2
           '';
           installPhase = ''
             mkdir -p $out
             cp -r src/clients/rust/* $out/
           '';
         };
+
+        # Symlink the TigerBeetle Rust client (with pre-built native assets) so
+        # the path dependency in backend/Cargo.toml resolves — needed both by
+        # run-backend and by plain cargo / rust-analyzer in the dev shell.
+        linkTbClient = ''
+          tb_client_dir="$(git rev-parse --show-toplevel)/backend/.tb-client"
+          if [ ! -L "$tb_client_dir" ] || [ "$(readlink "$tb_client_dir")" != "${tigerbeetleClient}" ]; then
+            rm -f "$tb_client_dir"
+            ln -s "${tigerbeetleClient}" "$tb_client_dir"
+          fi
+        '';
 
         # backend (Axum). Migrations run automatically on startup, so a reachable
         # Postgres is the only prerequisite (`.#db`, or `.#dev` which boots one
@@ -134,13 +163,7 @@
             repo="$(git rev-parse --show-toplevel)"
             cd "$repo"
 
-            # Symlink the TigerBeetle Rust client (with pre-built native assets)
-            # so the path dependency in backend/Cargo.toml resolves.
-            tb_client_dir="$repo/backend/.tb-client"
-            if [ ! -L "$tb_client_dir" ] || [ "$(readlink "$tb_client_dir")" != "${tigerbeetleClient}" ]; then
-              rm -f "$tb_client_dir"
-              ln -s "${tigerbeetleClient}" "$tb_client_dir"
-            fi
+            ${linkTbClient}
 
             export DATABASE_URL="''${DATABASE_URL:-postgres://postgres@localhost:5432/ev_backend}"
             export BIND_ADDR="''${BIND_ADDR:-0.0.0.0:8080}"
@@ -311,6 +334,8 @@
                 # host proc-macros (missing LLVM-21 symbols → abort). The fallback only kicks
                 # in when normal resolution fails — exactly rust-lld's case, never clang's.
                 export DYLD_FALLBACK_LIBRARY_PATH="${rust}/lib''${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}"
+
+                ${linkTbClient}
               '';
 
             packages = [

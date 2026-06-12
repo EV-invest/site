@@ -2,15 +2,19 @@ cargo-features = ["codegen-backend"]
 
 [workspace]
 members = ["backend", "domain", "pc"]
+# `.tb-client` symlinks into the read-only nix store; without the exclude, cargo treats it as an in-workspace package and `cargo autoinherit` (pre-commit hook) tries to rewrite its manifest -> EROFS
+exclude = ["backend/.tb-client"]
 resolver = "3"
 
 [workspace.dependencies]
 anyhow = "1.0.102"
 async-trait = "0.1.89"
 axum = "0.8.9"
+bitflags = "2.6.0"
 dioxus = { version = "0.7", features = ["web", "router"] }
 domain = { path = "domain" }
 dotenvy = "0.15.7"
+futures = { version = "0.3.31", default-features = false }
 getrandom = { version = "0.3", features = ["wasm_js"] }
 jiff = "0.2"
 sentry = "0.48.2"
@@ -19,6 +23,8 @@ serde_json = "1.0.150"
 sqlx = "0.9.0"
 tailwind_fuse = "0.3"
 thiserror = "2.0.18"
+# via the symlink (kept current by the flake shellHook), not the canonicalized store path - hardcoding the hash goes stale on every tigerbeetle derivation rebuild
+tigerbeetle = { path = "backend/.tb-client" }
 time = "0.3"
 tokio = "1.52.3"
 tower = "0.5.3"

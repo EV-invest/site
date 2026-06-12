@@ -24,6 +24,7 @@ no need to enter the dev shell first.
 | `nix run .#backend` | backend only (needs a DB — `.#db` or `.#dev`) | 8080 |
 | `nix run .#pc` | pc only (Tailwind watch + `dx serve`) | 3001 |
 | `nix run .#db` | local Postgres (cluster under `.pg/`, trust auth) | 5432 |
+| `nix run .#tb` | local TigerBeetle (data under `.tb/`, single replica) | 3001 |
 
 `.#dev` starts Postgres first and waits for it before launching the backend (which
 migrates on boot); one Ctrl-C tears the whole stack down. Per-app build, test, and

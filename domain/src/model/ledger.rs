@@ -14,7 +14,7 @@ pub type TransferId = u128;
 
 /// Bitflags for account behaviour, mirroring the TigerBeetle `AccountFlags`
 /// semantics but expressed as a domain type so the core stays I/O-free.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct AccountFlags(pub u16);
 
 impl AccountFlags {
@@ -42,7 +42,7 @@ impl std::ops::BitOr for AccountFlags {
 }
 
 /// Bitflags for transfer behaviour.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TransferFlags(pub u16);
 
 impl TransferFlags {
@@ -70,7 +70,7 @@ impl std::ops::BitOr for TransferFlags {
 }
 
 /// A financial account managed by the ledger.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct LedgerAccount {
 	pub id: AccountId,
 	pub debits_pending: u128,
@@ -85,7 +85,7 @@ pub struct LedgerAccount {
 
 /// Data needed to create a new ledger account. The server assigns `id` and
 /// `timestamp`; balance fields start at zero.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct NewLedgerAccount {
 	pub id: AccountId,
 	pub ledger: u32,
@@ -94,7 +94,7 @@ pub struct NewLedgerAccount {
 }
 
 /// A double-entry transfer between two accounts.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct LedgerTransfer {
 	pub id: TransferId,
 	pub debit_account_id: AccountId,
@@ -108,7 +108,7 @@ pub struct LedgerTransfer {
 }
 
 /// Data needed to create a new transfer. The server assigns `timestamp`.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct NewLedgerTransfer {
 	pub id: TransferId,
 	pub debit_account_id: AccountId,
@@ -121,7 +121,7 @@ pub struct NewLedgerTransfer {
 }
 
 /// Historical balance snapshot for a point in time.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AccountBalance {
 	pub debits_pending: u128,
 	pub debits_posted: u128,

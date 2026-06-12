@@ -188,7 +188,12 @@ impl Ledger for TigerBeetleLedger {
 		let tb_accounts: Vec<tb::Account> = accounts.iter().map(to_tb_account).collect();
 
 		for chunk in tb_accounts.chunks(BATCH_SIZE) {
-			let results = self.client.create_accounts(chunk).map_err(|e| map_packet_error("create_accounts", e))?;
+			let results = self
+				.client
+				.create_accounts(chunk)
+				.map_err(map_closed_error)?
+				.await
+				.map_err(|e| map_packet_error("create_accounts", e))?;
 			for result in &results {
 				match result.status {
 					tb::CreateAccountStatus::Created | tb::CreateAccountStatus::Exists => {}
@@ -199,7 +204,12 @@ impl Ledger for TigerBeetleLedger {
 
 		// Look up to return full state with server-assigned balances.
 		let ids: Vec<u128> = accounts.iter().map(|a| a.id).collect();
-		let looked_up = self.client.lookup_accounts(&ids).map_err(|e| map_packet_error("lookup_accounts", e))?;
+		let looked_up = self
+			.client
+			.lookup_accounts(&ids)
+			.map_err(map_closed_error)?
+			.await
+			.map_err(|e| map_packet_error("lookup_accounts", e))?;
 		Ok(looked_up.into_iter().map(from_tb_account).collect())
 	}
 
@@ -208,7 +218,12 @@ impl Ledger for TigerBeetleLedger {
 			return Ok(Vec::new());
 		}
 
-		let results = self.client.lookup_accounts(ids).map_err(|e| map_packet_error("lookup_accounts", e))?;
+		let results = self
+			.client
+			.lookup_accounts(ids)
+			.map_err(map_closed_error)?
+			.await
+			.map_err(|e| map_packet_error("lookup_accounts", e))?;
 
 		Ok(results.into_iter().map(from_tb_account).collect())
 	}
@@ -221,7 +236,12 @@ impl Ledger for TigerBeetleLedger {
 		let tb_transfers: Vec<tb::Transfer> = transfers.iter().map(to_tb_transfer).collect();
 
 		for chunk in tb_transfers.chunks(BATCH_SIZE) {
-			let results = self.client.create_transfers(chunk).map_err(|e| map_packet_error("create_transfers", e))?;
+			let results = self
+				.client
+				.create_transfers(chunk)
+				.map_err(map_closed_error)?
+				.await
+				.map_err(|e| map_packet_error("create_transfers", e))?;
 			for result in &results {
 				match result.status {
 					tb::CreateTransferStatus::Created | tb::CreateTransferStatus::Exists => {}
@@ -232,7 +252,12 @@ impl Ledger for TigerBeetleLedger {
 
 		// Look up to return full state with server-assigned timestamps.
 		let ids: Vec<u128> = transfers.iter().map(|t| t.id).collect();
-		let looked_up = self.client.lookup_transfers(&ids).map_err(|e| map_packet_error("lookup_transfers", e))?;
+		let looked_up = self
+			.client
+			.lookup_transfers(&ids)
+			.map_err(map_closed_error)?
+			.await
+			.map_err(|e| map_packet_error("lookup_transfers", e))?;
 		Ok(looked_up.into_iter().map(from_tb_transfer).collect())
 	}
 
@@ -241,14 +266,24 @@ impl Ledger for TigerBeetleLedger {
 			return Ok(Vec::new());
 		}
 
-		let results = self.client.lookup_transfers(ids).map_err(|e| map_packet_error("lookup_transfers", e))?;
+		let results = self
+			.client
+			.lookup_transfers(ids)
+			.map_err(map_closed_error)?
+			.await
+			.map_err(|e| map_packet_error("lookup_transfers", e))?;
 
 		Ok(results.into_iter().map(from_tb_transfer).collect())
 	}
 
 	async fn get_account_balances(&self, account_id: AccountId) -> Result<Vec<AccountBalance>, DomainError> {
 		let filter = tb::AccountFilter { account_id, ..Default::default() };
-		let results = self.client.get_account_balances(filter).map_err(|e| map_packet_error("get_account_balances", e))?;
+		let results = self
+			.client
+			.get_account_balances(filter)
+			.map_err(map_closed_error)?
+			.await
+			.map_err(|e| map_packet_error("get_account_balances", e))?;
 
 		Ok(results.into_iter().map(from_tb_balance).collect())
 	}
@@ -258,6 +293,10 @@ impl Ledger for TigerBeetleLedger {
 
 fn map_init_error(err: tb::InitStatus) -> DomainError {
 	DomainError::Repository(format!("tigerbeetle client init failed: {err:?}"))
+}
+
+fn map_closed_error(_: tb::ClientClosed) -> DomainError {
+	DomainError::Repository("tigerbeetle client is closed".into())
 }
 
 fn map_packet_error(op: &str, err: tb::PacketStatus) -> DomainError {
