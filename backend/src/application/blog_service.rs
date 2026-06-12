@@ -28,7 +28,7 @@ impl BlogService {
 	}
 
 	pub async fn get(&self, id: Uuid) -> Result<Blog, DomainError> {
-		self.repository.find_by_id(id).await?.ok_or(DomainError::NotFound { entity: "blog", id })
+		self.repository.find_by_id(id).await?.ok_or(DomainError::NotFound { entity: "blog", id: id.to_string() })
 	}
 
 	pub async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Blog>, DomainError> {
