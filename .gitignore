@@ -87,6 +87,7 @@ venv/
 .pg/
 ## Local TigerBeetle
 .tb/
+.tb-client
 ## LLMs
 AGENTS.md
 CLAUDE.md

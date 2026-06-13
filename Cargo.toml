@@ -2,8 +2,11 @@ cargo-features = ["codegen-backend"]
 
 [workspace]
 members = ["backend", "domain", "pc"]
-# `.tb-client` symlinks into the read-only nix store; without the exclude, cargo treats it as an in-workspace package and `cargo autoinherit` (pre-commit hook) tries to rewrite its manifest -> EROFS
-exclude = ["backend/.tb-client"]
+# `.tb-client` must live at the repo root, NOT inside a member dir: cargo's
+# exclude check is `!explicit_member && excluded`, and member matching is
+# prefix-based — anything under `backend/` counts as part of member "backend"
+# and can never be excluded.
+exclude = [".tb-client"]
 resolver = "3"
 
 [workspace.dependencies]
@@ -24,7 +27,7 @@ sqlx = "0.9.0"
 tailwind_fuse = "0.3"
 thiserror = "2.0.18"
 # via the symlink (kept current by the flake shellHook), not the canonicalized store path - hardcoding the hash goes stale on every tigerbeetle derivation rebuild
-tigerbeetle = { path = "backend/.tb-client" }
+tigerbeetle = { path = ".tb-client" }
 time = "0.3"
 tokio = "1.52.3"
 tower = "0.5.3"

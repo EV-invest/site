@@ -54,6 +54,7 @@
             .pg/
             ## Local TigerBeetle
             .tb/
+            .tb-client
             ## LLMs
             AGENTS.md
             CLAUDE.md
@@ -103,6 +104,72 @@
         };
 
         # ── TigerBeetle Rust client assets ──────────────────────────────────
+        # Upstream's precompiled zig (fully static on linux, system-libs-only
+        # on macOS) instead of nixpkgs zig: the nixpkgs build dynamically links
+        # a separate ~500MB libLLVM, turning the one-time client build below
+        # into a multi-GB substituter download. The official tarball is ~50MB.
+        zigBin =
+          let
+            dist = {
+              x86_64-linux = { suffix = "x86_64-linux"; sha256 = "24aeeec8af16c381934a6cd7d95c807a8cb2cf7df9fa40d359aa884195c4716c"; };
+              aarch64-linux = { suffix = "aarch64-linux"; sha256 = "f7a654acc967864f7a050ddacfaa778c7504a0eca8d2b678839c21eea47c992b"; };
+              x86_64-darwin = { suffix = "x86_64-macos"; sha256 = "b0f8bdfb9035783db58dd6c19d7dea89892acc3814421853e5752fe4573e5f43"; };
+              aarch64-darwin = { suffix = "aarch64-macos"; sha256 = "39f3dc5e79c22088ce878edc821dedb4ca5a1cd9f5ef915e9b3cc3053e8faefa"; };
+            }.${system};
+          in
+          pkgs.stdenvNoCC.mkDerivation {
+            pname = "zig-bin";
+            version = "0.14.1";
+            src = pkgs.fetchurl {
+              url = "https://ziglang.org/download/0.14.1/zig-${dist.suffix}-0.14.1.tar.xz";
+              inherit (dist) sha256;
+            };
+            dontConfigure = true;
+            dontBuild = true;
+            # static binary — patchelf/strip would be a no-op at best
+            dontFixup = true;
+            installPhase = ''
+              mkdir -p $out/bin
+              cp zig $out/bin/
+              # zig resolves its std lib relative to the (symlink-resolved)
+              # binary path, checking ../lib among others
+              cp -r lib $out/lib
+            '';
+          };
+
+        # Official precompiled server binary. nixpkgs' tigerbeetle lags behind
+        # (0.17.2) and a cluster evicts any client released after it
+        # (client_release_too_high) — the server must be >= the 0.17.6 client
+        # built below. The release binaries are static (zig-built), so they
+        # run on NixOS unpatched.
+        tigerbeetleBin =
+          let
+            dist = {
+              x86_64-linux = { file = "tigerbeetle-x86_64-linux.zip"; hash = "sha256-butV+rwsBnpLCCOV9KNzvCNCC8QbG/AR7ZRnl+Uyl7Y="; };
+              aarch64-linux = { file = "tigerbeetle-aarch64-linux.zip"; hash = "sha256-JmsczIvW67WTrK0iCEDHcu9lhMyK84ZvhIs+lgL2bAs="; };
+              x86_64-darwin = { file = "tigerbeetle-universal-macos.zip"; hash = "sha256-83nhQqHYu6PPKu4rH6rjD/J3hJinhXQ6b7C4hZ9//v8="; };
+              aarch64-darwin = { file = "tigerbeetle-universal-macos.zip"; hash = "sha256-83nhQqHYu6PPKu4rH6rjD/J3hJinhXQ6b7C4hZ9//v8="; };
+            }.${system};
+          in
+          pkgs.stdenvNoCC.mkDerivation {
+            pname = "tigerbeetle-bin";
+            version = "0.17.6";
+            src = pkgs.fetchurl {
+              url = "https://github.com/tigerbeetle/tigerbeetle/releases/download/0.17.6/${dist.file}";
+              inherit (dist) hash;
+            };
+            nativeBuildInputs = [ pkgs.unzip ];
+            # the zip contains the bare binary at its root
+            unpackPhase = "unzip $src";
+            dontConfigure = true;
+            dontBuild = true;
+            dontFixup = true;
+            installPhase = ''
+              mkdir -p $out/bin
+              install -m755 tigerbeetle $out/bin/
+            '';
+          };
+
         # Builds the native C client library + header so the official
         # tigerbeetle Rust crate can link against them. The output is the
         # src/clients/rust/ directory with compiled assets in place, ready
@@ -114,8 +181,8 @@
             hash = "sha256-b519nsDbas+XOw3ulAnzpk2KwtJkeOC3e13urM2tUSM=";
           };
           # TigerBeetle pins its zig version exactly (0.17.6 → zig 0.14.1);
-          # the default pkgs.zig is too new and build.zig @compileErrors out.
-          nativeBuildInputs = [ pkgs.zig_0_14 pkgs.git ];
+          # newer zig is rejected by build.zig with @compileError.
+          nativeBuildInputs = [ zigBin pkgs.git ];
           # build.zig runs `git tag --merged HEAD^` at configure time and
           # unconditionally consumes 4+ version-shaped tags from the result;
           # the release tarball has no .git, so fabricate a history with
@@ -132,21 +199,36 @@
             export ZIG_GLOBAL_CACHE_DIR="$TMPDIR/zig-cache"
             # -Dgit-commit: report the real 0.17.6 tag commit instead of the
             # fabricated repo's HEAD.
-            zig build clients:rust -Drelease -Dgit-commit=64899c7a41fd3d74c68da7bb2efcb7d208abd5f2
+            # -Dconfig-release*: without them the client stamps itself as dev
+            # release 65535.0.0 and any versioned cluster evicts it on connect
+            # (client_release_too_high).
+            zig build clients:rust -Drelease \
+              -Dgit-commit=64899c7a41fd3d74c68da7bb2efcb7d208abd5f2 \
+              -Dconfig-release=0.17.6 -Dconfig-release-client-min=0.17.6
           '';
           installPhase = ''
             mkdir -p $out
             cp -r src/clients/rust/* $out/
+            # own workspace root: belt to the `workspace.exclude` suspenders in
+            # the consuming repo — if the exclude ever stops matching, cargo
+            # errors loudly (multiple workspace roots) instead of silently
+            # adopting the read-only store package as a workspace member.
+            printf '\n[workspace]\n' >> $out/Cargo.toml
           '';
         };
 
         # Symlink the TigerBeetle Rust client (with pre-built native assets) so
-        # the path dependency in backend/Cargo.toml resolves — needed both by
-        # run-backend and by plain cargo / rust-analyzer in the dev shell.
+        # the path dependency in the workspace Cargo.toml resolves — needed both
+        # by run-backend and by plain cargo / rust-analyzer in the dev shell.
+        # Lives at the repo root, NOT under backend/: cargo's workspace exclude
+        # can never match a path inside a member's directory (member matching is
+        # prefix-based and overrides excludes), so a vendored package there gets
+        # adopted as a workspace member and manifest-rewriting pre-commit hooks
+        # (cargo autoinherit) EROFS on the read-only store copy.
         linkTbClient = ''
-          tb_client_dir="$(git rev-parse --show-toplevel)/backend/.tb-client"
+          tb_client_dir="$(git rev-parse --show-toplevel)/.tb-client"
           if [ ! -L "$tb_client_dir" ] || [ "$(readlink "$tb_client_dir")" != "${tigerbeetleClient}" ]; then
-            rm -f "$tb_client_dir"
+            rm -rf "$tb_client_dir"
             ln -s "${tigerbeetleClient}" "$tb_client_dir"
           fi
         '';
@@ -157,7 +239,7 @@
         # environment (or a sourced .env) wins via `:-`.
         runBackend = pkgs.writeShellApplication {
           name = "run-backend";
-          runtimeInputs = with pkgs; [ rust pkg-config openssl git tigerbeetle zig ];
+          runtimeInputs = with pkgs; [ rust pkg-config openssl git ];
           text = ''
             ${dyldFallback}
             repo="$(git rev-parse --show-toplevel)"
@@ -245,7 +327,7 @@
         # Listens on 127.0.0.1:3001 — matches backend/.env.example.
         runTigerbeetle = pkgs.writeShellApplication {
           name = "run-tigerbeetle";
-          runtimeInputs = with pkgs; [ tigerbeetle git ];
+          runtimeInputs = [ tigerbeetleBin pkgs.git ];
           text = ''
             repo="$(git rev-parse --show-toplevel)"
             export TB_DATA="$repo/.tb/data"
@@ -345,8 +427,7 @@
               rust
               mold
               postgresql
-              tigerbeetle
-              zig
+              tigerbeetleBin
               playwright-driver.browsers
             ] ++ pre-commit-check.enabledPackages ++ combined.enabledPackages;
 
