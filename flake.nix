@@ -69,6 +69,8 @@
         };
         readme = v_flakes.readme-fw {
           inherit pkgs pname;
+          # Repo is `EV-invest/site`, but the project (pname/gist) keeps `ev_site`.
+          repo = "EV-invest/site";
           defaults = true;
           lastSupportedVersion = "nightly-1.92";
           rootDir = ./.;

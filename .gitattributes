@@ -16,14 +16,12 @@
 *.bmp -filter
 *.tiff -filter
 *.webp -filter
-*.svg -filter
 
 # Documents
 *.pdf filter=lfs diff=lfs merge=ours -text
 *.excalidraw filter=lfs diff=lfs merge=ours -text
 
 # Data
-*.json -filter
 *.csv -filter
 *.parquet -filter
 *.pkl -filter
