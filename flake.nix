@@ -258,25 +258,25 @@
           '';
         };
 
-        # pc (Dioxus / WASM). Build Tailwind once, keep it rebuilding in the
-        # background (the `@source` scan in pc/input.css picks up class names from
-        # RSX), then serve. dx defaults to :8080 like the backend, so pin pc to
+        # cabinet (Dioxus / WASM). Build Tailwind once, keep it rebuilding in the
+        # background (the `@source` scan in cabinet/input.css picks up class names from
+        # RSX), then serve. dx defaults to :8080 like the backend, so pin cabinet to
         # :3001 to avoid a clash under `.#dev`.
-        runPc = pkgs.writeShellApplication {
-          name = "run-pc";
+        runCabinet = pkgs.writeShellApplication {
+          name = "run-cabinet";
           runtimeInputs = with pkgs; [ rust dioxus-cli nodejs git ];
           text = ''
             ${dyldFallback}
             repo="$(git rev-parse --show-toplevel)"
             cd "$repo"
-            npm run pc:css
-            npm run pc:css:watch & css=$!
+            npm run cabinet:css
+            npm run cabinet:css:watch & css=$!
             trap 'kill "$css" 2>/dev/null || true' EXIT INT TERM
             # `--interactive false`: dx's default full-screen TUI assumes it owns
             # the terminal and gets corrupted (stuck "0%", N/A) when it shares
             # stdout with the css watcher or the other `.#dev` processes. Plain
             # streaming logs are the right fit for a backgrounded dev process.
-            exec dx serve --package pc --port "''${PC_PORT:-3001}" --interactive false
+            exec dx serve --package cabinet --port "''${CABINET_PORT:-3001}" --interactive false
           '';
         };
 
@@ -349,7 +349,7 @@
         };
 
         # ── full dev orchestrator ───────────────────────────────────────────
-        # `nix run .#dev` → Postgres + TigerBeetle + backend + landing + pc,
+        # `nix run .#dev` → Postgres + TigerBeetle + backend + landing + cabinet,
         # all together. Postgres starts first, then TigerBeetle; backend only
         # launches once both accept connections. A single trap tears the whole
         # tree down on Ctrl-C / exit.
@@ -378,18 +378,18 @@
             ${runBackend}/bin/run-backend & pids+=($!)
             echo "▶ landing  (:3000)"
             ${runLanding}/bin/run-landing & pids+=($!)
-            echo "▶ pc       (:3001)"
-            ${runPc}/bin/run-pc & pids+=($!)
+            echo "▶ cabinet       (:3001)"
+            ${runCabinet}/bin/run-cabinet & pids+=($!)
 
             wait
           '';
         };
       in
       {
-        # `nix run .#dev`     → everything (postgres + tigerbeetle + backend + landing + pc)
+        # `nix run .#dev`     → everything (postgres + tigerbeetle + backend + landing + cabinet)
         # `nix run .#landing` → Next.js dev server only
         # `nix run .#backend` → Axum API only (needs a DB: `.#db` or `.#dev`)
-        # `nix run .#pc`      → Dioxus app + Tailwind watch only
+        # `nix run .#cabinet`      → Dioxus app + Tailwind watch only
         # `nix run .#db`      → local Postgres only
         # `nix run .#tb`      → local TigerBeetle only
         # (`.#prod` deliberately omitted — docker-vs-nix still undecided.)
@@ -397,7 +397,7 @@
           dev = { type = "app"; program = "${runDev}/bin/run-dev"; };
           landing = { type = "app"; program = "${runLanding}/bin/run-landing"; };
           backend = { type = "app"; program = "${runBackend}/bin/run-backend"; };
-          pc = { type = "app"; program = "${runPc}/bin/run-pc"; };
+          cabinet = { type = "app"; program = "${runCabinet}/bin/run-cabinet"; };
           db = { type = "app"; program = "${runPostgres}/bin/run-postgres"; };
           tb = { type = "app"; program = "${runTigerbeetle}/bin/run-tigerbeetle"; };
         };

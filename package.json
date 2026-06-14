@@ -1,7 +1,7 @@
 {
   "name": "ev-site",
   "private": true,
-  "description": "Root delegator — landing (Next.js) in landing/, PC (Dioxus) in pc/.",
+  "description": "Root delegator — landing (Next.js) in landing/, Cabinet (Dioxus) in cabinet/.",
   "scripts": {
     "dev": "npm --prefix landing run dev",
     "build": "npm --prefix landing run build",
@@ -11,8 +11,8 @@
     "lint": "npm --prefix landing run lint",
     "format": "npm --prefix landing run format",
     "test:visual": "npm --prefix landing run test:visual",
-    "pc:css": "npx --yes @tailwindcss/cli@^4 -i pc/input.css -o pc/assets/tailwind.css",
-    "pc:css:watch": "npx --yes @tailwindcss/cli@^4 -i pc/input.css -o pc/assets/tailwind.css --watch"
+    "cabinet:css": "npx --yes @tailwindcss/cli@^4 -i cabinet/input.css -o cabinet/assets/tailwind.css",
+    "cabinet:css:watch": "npx --yes @tailwindcss/cli@^4 -i cabinet/input.css -o cabinet/assets/tailwind.css --watch"
   },
   "devDependencies": {
     "tailwindcss": "^4.3.0"

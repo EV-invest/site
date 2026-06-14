@@ -1,8 +1,8 @@
 [application]
-name = "pc"
+name = "cabinet"
 
 [web.app]
-title = "EV Fund PC"
+title = "EV Fund Cabinet"
 
 [web.resource.dev]
 style = []

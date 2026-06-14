@@ -1,9 +1,9 @@
 [package]
-name = "pc"
+name = "cabinet"
 version = "0.1.0"
 edition = "2024"
 publish = false
-default-run = "pc"
+default-run = "cabinet"
 
 [dependencies]
 dioxus.workspace = true
