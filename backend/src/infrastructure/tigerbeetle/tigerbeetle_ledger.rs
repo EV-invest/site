@@ -6,8 +6,9 @@
 
 use async_trait::async_trait;
 use domain::{
+	architecture::Gateway,
 	error::DomainError,
-	model::ledger::{AccountBalance, AccountFlags, AccountId, LedgerAccount, LedgerTransfer, NewLedgerAccount, NewLedgerTransfer, TransferFlags, TransferId},
+	model::ledger::{AccountBalance, AccountFlags, AccountId, Amount, Code, LedgerAccount, LedgerCode, LedgerTransfer, NewLedgerAccount, NewLedgerTransfer, TransferFlags, TransferId},
 };
 use tigerbeetle as tb;
 
@@ -22,6 +23,11 @@ pub struct TigerBeetleLedger {
 }
 
 impl TigerBeetleLedger {
+	/// Identifier for the external system this gateway fronts. An inherent const
+	/// rather than a `Gateway` associated const, which would break the object
+	/// safety of `Arc<dyn Ledger>`.
+	pub const SYSTEM: &'static str = "tigerbeetle";
+
 	/// Create a new TigerBeetle-backed ledger adapter.
 	///
 	/// `cluster_id` is the TigerBeetle cluster identifier (use `0` for
@@ -32,6 +38,8 @@ impl TigerBeetleLedger {
 		Ok(Self { client })
 	}
 }
+
+impl Gateway for TigerBeetleLedger {}
 
 // ── Domain ↔ TB mapping ────────────────────────────────────────────────────
 
@@ -105,57 +113,60 @@ fn transfer_flags_from_tb(flags: tb::TransferFlags) -> TransferFlags {
 
 fn to_tb_account(a: &NewLedgerAccount) -> tb::Account {
 	tb::Account {
-		id: a.id,
-		ledger: a.ledger,
-		code: a.code,
+		id: a.id.raw(),
+		ledger: a.ledger.get(),
+		code: a.code.get(),
 		flags: account_flags_to_tb(a.flags),
 		..Default::default()
 	}
 }
 
-fn from_tb_account(a: tb::Account) -> LedgerAccount {
-	LedgerAccount {
-		id: a.id,
+/// Rebuild a domain account from a TB record. `ledger`/`code` are re-validated
+/// through their value-object constructors; a failure means TB returned data the
+/// domain considers impossible — a corrupt-data repository error, not a 4xx.
+fn from_tb_account(a: tb::Account) -> Result<LedgerAccount, DomainError> {
+	Ok(LedgerAccount {
+		id: AccountId::from_raw(a.id),
 		debits_pending: a.debits_pending,
 		debits_posted: a.debits_posted,
 		credits_pending: a.credits_pending,
 		credits_posted: a.credits_posted,
-		ledger: a.ledger,
-		code: a.code,
+		ledger: LedgerCode::parse(a.ledger).map_err(corrupt_record)?,
+		code: Code::parse(a.code).map_err(corrupt_record)?,
 		flags: account_flags_from_tb(a.flags),
 		timestamp: a.timestamp,
-	}
+	})
 }
 
 fn to_tb_transfer(t: &NewLedgerTransfer) -> tb::Transfer {
 	// TB uses id=0 to mean "no pending transfer"; the domain uses Option.
 	// TB itself rejects id=0 at creation, so the sentinel round-trips safely.
 	tb::Transfer {
-		id: t.id,
-		debit_account_id: t.debit_account_id,
-		credit_account_id: t.credit_account_id,
-		amount: t.amount,
-		pending_id: t.pending_id.unwrap_or(0),
-		ledger: t.ledger,
-		code: t.code,
+		id: t.id.raw(),
+		debit_account_id: t.debit_account_id.raw(),
+		credit_account_id: t.credit_account_id.raw(),
+		amount: t.amount.get(),
+		pending_id: t.pending_id.map(|p| p.raw()).unwrap_or(0),
+		ledger: t.ledger.get(),
+		code: t.code.get(),
 		flags: transfer_flags_to_tb(t.flags),
 		..Default::default()
 	}
 }
 
-fn from_tb_transfer(t: tb::Transfer) -> LedgerTransfer {
-	LedgerTransfer {
-		id: t.id,
-		debit_account_id: t.debit_account_id,
-		credit_account_id: t.credit_account_id,
-		amount: t.amount,
+fn from_tb_transfer(t: tb::Transfer) -> Result<LedgerTransfer, DomainError> {
+	Ok(LedgerTransfer {
+		id: TransferId::from_raw(t.id),
+		debit_account_id: AccountId::from_raw(t.debit_account_id),
+		credit_account_id: AccountId::from_raw(t.credit_account_id),
+		amount: Amount::new(t.amount),
 		// TB uses id=0 to mean "no pending transfer".
-		pending_id: if t.pending_id == 0 { None } else { Some(t.pending_id) },
-		ledger: t.ledger,
-		code: t.code,
+		pending_id: if t.pending_id == 0 { None } else { Some(TransferId::from_raw(t.pending_id)) },
+		ledger: LedgerCode::parse(t.ledger).map_err(corrupt_record)?,
+		code: Code::parse(t.code).map_err(corrupt_record)?,
 		flags: transfer_flags_from_tb(t.flags),
 		timestamp: t.timestamp,
-	}
+	})
 }
 
 fn from_tb_balance(b: tb::AccountBalance) -> AccountBalance {
@@ -203,14 +214,14 @@ impl Ledger for TigerBeetleLedger {
 		}
 
 		// Look up to return full state with server-assigned balances.
-		let ids: Vec<u128> = accounts.iter().map(|a| a.id).collect();
+		let ids: Vec<u128> = accounts.iter().map(|a| a.id.raw()).collect();
 		let looked_up = self
 			.client
 			.lookup_accounts(&ids)
 			.map_err(map_closed_error)?
 			.await
 			.map_err(|e| map_packet_error("lookup_accounts", e))?;
-		Ok(looked_up.into_iter().map(from_tb_account).collect())
+		looked_up.into_iter().map(from_tb_account).collect()
 	}
 
 	async fn lookup_accounts(&self, ids: &[AccountId]) -> Result<Vec<LedgerAccount>, DomainError> {
@@ -218,14 +229,15 @@ impl Ledger for TigerBeetleLedger {
 			return Ok(Vec::new());
 		}
 
+		let raw_ids: Vec<u128> = ids.iter().map(|id| id.raw()).collect();
 		let results = self
 			.client
-			.lookup_accounts(ids)
+			.lookup_accounts(&raw_ids)
 			.map_err(map_closed_error)?
 			.await
 			.map_err(|e| map_packet_error("lookup_accounts", e))?;
 
-		Ok(results.into_iter().map(from_tb_account).collect())
+		results.into_iter().map(from_tb_account).collect()
 	}
 
 	async fn create_transfers(&self, transfers: &[NewLedgerTransfer]) -> Result<Vec<LedgerTransfer>, DomainError> {
@@ -251,14 +263,14 @@ impl Ledger for TigerBeetleLedger {
 		}
 
 		// Look up to return full state with server-assigned timestamps.
-		let ids: Vec<u128> = transfers.iter().map(|t| t.id).collect();
+		let ids: Vec<u128> = transfers.iter().map(|t| t.id.raw()).collect();
 		let looked_up = self
 			.client
 			.lookup_transfers(&ids)
 			.map_err(map_closed_error)?
 			.await
 			.map_err(|e| map_packet_error("lookup_transfers", e))?;
-		Ok(looked_up.into_iter().map(from_tb_transfer).collect())
+		looked_up.into_iter().map(from_tb_transfer).collect()
 	}
 
 	async fn lookup_transfers(&self, ids: &[TransferId]) -> Result<Vec<LedgerTransfer>, DomainError> {
@@ -266,18 +278,22 @@ impl Ledger for TigerBeetleLedger {
 			return Ok(Vec::new());
 		}
 
+		let raw_ids: Vec<u128> = ids.iter().map(|id| id.raw()).collect();
 		let results = self
 			.client
-			.lookup_transfers(ids)
+			.lookup_transfers(&raw_ids)
 			.map_err(map_closed_error)?
 			.await
 			.map_err(|e| map_packet_error("lookup_transfers", e))?;
 
-		Ok(results.into_iter().map(from_tb_transfer).collect())
+		results.into_iter().map(from_tb_transfer).collect()
 	}
 
 	async fn get_account_balances(&self, account_id: AccountId) -> Result<Vec<AccountBalance>, DomainError> {
-		let filter = tb::AccountFilter { account_id, ..Default::default() };
+		let filter = tb::AccountFilter {
+			account_id: account_id.raw(),
+			..Default::default()
+		};
 		let results = self
 			.client
 			.get_account_balances(filter)
@@ -290,6 +306,12 @@ impl Ledger for TigerBeetleLedger {
 }
 
 // ── Error mapping ───────────────────────────────────────────────────────────
+
+/// A value read back from TigerBeetle failed domain re-validation: TB returned
+/// data the domain considers impossible (e.g. a zero ledger/code).
+fn corrupt_record(err: DomainError) -> DomainError {
+	DomainError::Repository(format!("corrupt tigerbeetle record: {err}"))
+}
 
 fn map_init_error(err: tb::InitStatus) -> DomainError {
 	DomainError::Repository(format!("tigerbeetle client init failed: {err:?}"))

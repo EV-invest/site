@@ -2,11 +2,17 @@ use jiff::Timestamp;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::error::DomainError;
+use crate::{
+	architecture::{AggregateRoot, Entity, Id},
+	error::DomainError,
+};
 
 const TITLE_MAX_LEN: usize = 200;
+const BODY_MAX_LEN: usize = 100_000;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+/// Unique identifier for a [`Blog`].
+pub type BlogId = Id<BlogTag, Uuid>;
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(transparent)]
 pub struct Title(String);
 
@@ -31,7 +37,7 @@ impl Title {
 	}
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(transparent)]
 pub struct Slug(String);
 
@@ -59,20 +65,59 @@ impl Slug {
 	}
 }
 
+/// The blog body. A value object so the one real invariant — a size cap — is
+/// enforced at the boundary instead of letting an unbounded `String` through.
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct Body(String);
+
+impl Body {
+	pub fn parse(raw: String) -> Result<Self, DomainError> {
+		if raw.len() > BODY_MAX_LEN {
+			return Err(DomainError::Validation(format!("body must be at most {BODY_MAX_LEN} bytes")));
+		}
+		Ok(Self(raw))
+	}
+
+	pub fn as_str(&self) -> &str {
+		&self.0
+	}
+
+	pub fn into_string(self) -> String {
+		self.0
+	}
+}
+
+/// Tag giving the blog its own identity newtype.
+pub struct BlogTag;
+
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Blog {
-	pub id: Uuid,
+	pub id: BlogId,
 	pub title: Title,
 	pub slug: Slug,
-	pub body: String,
+	pub body: Body,
 	pub published: bool,
 	pub created_at: Timestamp,
+}
+
+impl Entity for Blog {
+	type Id = BlogId;
+
+	fn id(&self) -> BlogId {
+		self.id
+	}
+}
+
+impl AggregateRoot for Blog {
+	const NAME: &'static str = "blog";
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct NewBlog {
 	pub title: Title,
 	pub slug: Slug,
-	pub body: String,
+	pub body: Body,
 	pub published: bool,
 }

@@ -1,16 +1,18 @@
 use async_trait::async_trait;
 use domain::{
+	architecture::Gateway,
 	error::DomainError,
 	model::ledger::{AccountBalance, AccountId, LedgerAccount, LedgerTransfer, NewLedgerAccount, NewLedgerTransfer, TransferId},
 };
 
 /// Outbound port for the financial ledger.
 ///
-/// Abstracts the double-entry accounting store (TigerBeetle) behind
-/// domain-level operations. The core depends on this trait; concrete adapters
-/// in `crate::infrastructure` implement it.
+/// A [`Gateway`], not a `Repository`: TigerBeetle is an external transactional
+/// system that owns its own identity, invariants, and atomicity, so it can never
+/// enroll in our Postgres [`domain::architecture::UnitOfWork`]. The core depends
+/// on this trait; the concrete adapter in `crate::infrastructure` implements it.
 #[async_trait]
-pub trait Ledger: Send + Sync {
+pub trait Ledger: Gateway {
 	/// Create one or more accounts. Returns the created accounts in server
 	/// order with assigned timestamps.
 	async fn create_accounts(&self, accounts: &[NewLedgerAccount]) -> Result<Vec<LedgerAccount>, DomainError>;

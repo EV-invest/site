@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use domain::{
+	architecture::AggregateRoot,
 	error::DomainError,
-	model::blog::{Blog, NewBlog},
+	model::blog::{Blog, BlogId, NewBlog},
 };
-use uuid::Uuid;
 
 use crate::domain::port::blog_repository::BlogRepository;
 
@@ -27,8 +27,11 @@ impl BlogService {
 		self.repository.create(new_blog).await
 	}
 
-	pub async fn get(&self, id: Uuid) -> Result<Blog, DomainError> {
-		self.repository.find_by_id(id).await?.ok_or(DomainError::NotFound { entity: "blog", id: id.to_string() })
+	pub async fn get(&self, id: BlogId) -> Result<Blog, DomainError> {
+		self.repository.find_by_id(id).await?.ok_or(DomainError::NotFound {
+			entity: Blog::NAME,
+			id: id.to_string(),
+		})
 	}
 
 	pub async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Blog>, DomainError> {
@@ -41,7 +44,10 @@ mod tests {
 	use std::sync::{Arc, Mutex};
 
 	use async_trait::async_trait;
-	use domain::model::blog::{Slug, Title};
+	use domain::{
+		architecture::{Reader, Repository},
+		model::blog::{Body, Slug, Title},
+	};
 	use jiff::Timestamp;
 
 	use super::*;
@@ -53,11 +59,19 @@ mod tests {
 		blogs: Mutex<Vec<Blog>>,
 	}
 
+	impl Repository for InMemoryBlogRepository {
+		type Aggregate = Blog;
+	}
+
+	impl Reader for InMemoryBlogRepository {
+		type Aggregate = Blog;
+	}
+
 	#[async_trait]
 	impl BlogRepository for InMemoryBlogRepository {
 		async fn create(&self, new_blog: NewBlog) -> Result<Blog, DomainError> {
 			let blog = Blog {
-				id: Uuid::new_v4(),
+				id: BlogId::new(),
 				title: new_blog.title,
 				slug: new_blog.slug,
 				body: new_blog.body,
@@ -68,7 +82,7 @@ mod tests {
 			Ok(blog)
 		}
 
-		async fn find_by_id(&self, id: Uuid) -> Result<Option<Blog>, DomainError> {
+		async fn find_by_id(&self, id: BlogId) -> Result<Option<Blog>, DomainError> {
 			Ok(self.blogs.lock().unwrap().iter().find(|b| b.id == id).cloned())
 		}
 
@@ -86,7 +100,7 @@ mod tests {
 		NewBlog {
 			title: Title::parse("Hello World".into()).unwrap(),
 			slug: Slug::parse("hello-world".into()).unwrap(),
-			body: "first post".into(),
+			body: Body::parse("first post".into()).unwrap(),
 			published: true,
 		}
 	}
@@ -108,7 +122,7 @@ mod tests {
 	#[tokio::test]
 	async fn get_missing_blog_returns_not_found() {
 		let svc = service();
-		let err = svc.get(Uuid::new_v4()).await.unwrap_err();
+		let err = svc.get(BlogId::new()).await.unwrap_err();
 		assert!(matches!(err, DomainError::NotFound { entity: "blog", .. }));
 	}
 
@@ -128,7 +142,7 @@ mod tests {
 			let nb = NewBlog {
 				title: Title::parse(format!("Post {i}")).unwrap(),
 				slug: Slug::parse(format!("post-{i}")).unwrap(),
-				body: String::new(),
+				body: Body::parse(String::new()).unwrap(),
 				published: false,
 			};
 			svc.create(nb).await.unwrap();

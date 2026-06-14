@@ -6,19 +6,29 @@ lines.
 
 ## Layout
 
+The pure core lives outside `backend`:
+
+- **`ev` (external, `architecture` feature)** — generic, I/O-free DDD tactical
+  building-block traits (`Identifier`/`Id`, `Entity`, `AggregateRoot`,
+  `Repository`, `Reader`, `Gateway`, `UnitOfWork`, `DomainEvent`, `Specification`).
+  wasm-safe; lives in [`EV-invest/lib`](https://github.com/EV-invest/lib), pulled in
+  as a git dependency and re-exported by `domain` as `domain::architecture`.
+- **`domain/`** — the shared domain types (`Blog`, ledger models, value objects,
+  `DomainError`) implementing the architecture traits. See [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
+
+`backend` holds the adapters and wiring:
+
 ```
 src/
 ├── main.rs            composition root — wires adapters into use cases and serves
 ├── config.rs          AppConfig from environment
-├── domain/            core (pure: no HTTP, no SQL)
-│   ├── model/         entities & value objects (Blog, NewBlog)
-│   ├── port/          traits the core depends on (BlogRepository, Ledger) — the "ports"
-│   └── error.rs       DomainError
+├── domain/
+│   └── port/          outbound ports the core depends on (BlogRepository, Ledger)
 ├── application/       use cases over the ports (BlogService, LedgerService)
 ├── infrastructure/    driven adapters implementing the ports
 │   ├── db.rs          PgPool + migrations
 │   ├── persistence/   PostgresBlogRepository (sqlx)
-│   └── tigerbeetle/   TigerBeetleLedger (official tigerbeetle crate)
+│   └── tigerbeetle/   TigerBeetleLedger (official tigerbeetle crate; a Gateway)
 └── api/               driving adapter — HTTP (axum)
     ├── router.rs      routes + middleware, mounted under /api/v1
     ├── state.rs       AppState (shared services)
@@ -27,8 +37,9 @@ src/
     └── error.rs       DomainError ▶ HTTP status mapping
 ```
 
-Dependency direction: `api ─▶ application ─▶ domain ◀─ infrastructure`.
-Everything points inward at `domain`; the core depends on nothing outward.
+Dependency direction: `api ─▶ application ─▶ domain/port ◀─ infrastructure`,
+with every crate pointing inward at the pure `domain` types and the `ev` architecture module
+(reached via `domain::architecture`). The core depends on nothing outward.
 
 ## Run only backend
 

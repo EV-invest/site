@@ -1,7 +1,8 @@
 use async_trait::async_trait;
 use domain::{
+	architecture::{Reader, Repository},
 	error::DomainError,
-	model::blog::{Blog, NewBlog, Slug, Title},
+	model::blog::{Blog, BlogId, Body, NewBlog, Slug, Title},
 };
 use jiff::Timestamp;
 use sqlx::{FromRow, postgres::PgPool};
@@ -41,14 +42,24 @@ impl TryFrom<BlogRow> for Blog {
 	/// repository error, never as a client-facing validation error.
 	fn try_from(row: BlogRow) -> Result<Self, Self::Error> {
 		Ok(Self {
-			id: row.id,
+			id: BlogId::from_raw(row.id),
 			title: Title::parse(row.title).map_err(corrupt_row)?,
 			slug: Slug::parse(row.slug).map_err(corrupt_row)?,
-			body: row.body,
+			body: Body::parse(row.body).map_err(corrupt_row)?,
 			published: row.published,
 			created_at: Timestamp::new(row.created_at.unix_timestamp(), row.created_at.nanosecond() as i32).map_err(|e| DomainError::Repository(format!("invalid timestamp: {e}")))?,
 		})
 	}
+}
+
+// ── Port implementation ──────────────────────────────────────────────────────
+
+impl Repository for PostgresBlogRepository {
+	type Aggregate = Blog;
+}
+
+impl Reader for PostgresBlogRepository {
+	type Aggregate = Blog;
 }
 
 #[async_trait]
@@ -57,7 +68,7 @@ impl BlogRepository for PostgresBlogRepository {
 		let row = sqlx::query_as::<_, BlogRow>("INSERT INTO blogs (title, slug, body, published) VALUES ($1, $2, $3, $4) RETURNING id, title, slug, body, published, created_at")
 			.bind(new_blog.title.as_str())
 			.bind(new_blog.slug.as_str())
-			.bind(&new_blog.body)
+			.bind(new_blog.body.as_str())
 			.bind(new_blog.published)
 			.fetch_one(&self.pool)
 			.await
@@ -65,9 +76,9 @@ impl BlogRepository for PostgresBlogRepository {
 		row.try_into()
 	}
 
-	async fn find_by_id(&self, id: Uuid) -> Result<Option<Blog>, DomainError> {
+	async fn find_by_id(&self, id: BlogId) -> Result<Option<Blog>, DomainError> {
 		let row = sqlx::query_as::<_, BlogRow>("SELECT id, title, slug, body, published, created_at FROM blogs WHERE id = $1")
-			.bind(id)
+			.bind(id.raw())
 			.fetch_optional(&self.pool)
 			.await
 			.map_err(map_sqlx_error)?;

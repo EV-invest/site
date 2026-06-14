@@ -1,6 +1,6 @@
 use domain::{
 	error::DomainError,
-	model::blog::{Blog, NewBlog, Slug, Title},
+	model::blog::{Blog, Body, NewBlog, Slug, Title},
 };
 use jiff::Timestamp;
 use serde::{Deserialize, Serialize};
@@ -28,7 +28,7 @@ impl TryFrom<CreateBlogRequest> for NewBlog {
 		Ok(Self {
 			title: Title::parse(req.title)?,
 			slug: Slug::parse(req.slug)?,
-			body: req.body,
+			body: Body::parse(req.body)?,
 			published: req.published,
 		})
 	}
@@ -64,10 +64,10 @@ fn default_limit() -> i64 {
 impl From<Blog> for BlogResponse {
 	fn from(blog: Blog) -> Self {
 		Self {
-			id: blog.id,
+			id: blog.id.raw(),
 			title: blog.title.into_string(),
 			slug: blog.slug.into_string(),
-			body: blog.body,
+			body: blog.body.into_string(),
 			published: blog.published,
 			created_at: blog.created_at,
 		}

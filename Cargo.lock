@@ -454,6 +454,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cabinet"
+version = "0.1.0"
+dependencies = [
+ "dioxus",
+ "domain",
+ "getrandom 0.3.4",
+ "tailwind_fuse",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "cc"
 version = "1.2.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1428,6 +1439,7 @@ dependencies = [
 name = "domain"
 version = "0.1.0"
 dependencies = [
+ "ev",
  "getrandom 0.3.4",
  "jiff",
  "serde",
@@ -1519,6 +1531,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f1a05365e3b1c6d1650318537c7460c6923f1abdd272ad6842baa2b509957a06"
 dependencies = [
  "num-traits",
+]
+
+[[package]]
+name = "ev"
+version = "0.1.0"
+source = "git+https://github.com/EV-invest/lib.git#92aa394c014db7b031f99b9390e9ae86fd8a8759"
+dependencies = [
+ "async-trait",
+ "jiff",
+ "serde",
+ "uuid",
 ]
 
 [[package]]
@@ -3028,17 +3051,6 @@ dependencies = [
  "redox_syscall",
  "smallvec",
  "windows-link",
-]
-
-[[package]]
-name = "pc"
-version = "0.1.0"
-dependencies = [
- "dioxus",
- "domain",
- "getrandom 0.3.4",
- "tailwind_fuse",
- "wasm-bindgen",
 ]
 
 [[package]]
