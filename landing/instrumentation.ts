@@ -5,7 +5,7 @@
  * - `nodejs`  → `sentry.server.config.ts` (API routes, RSC, SSR)
  * - `edge`    → `sentry.edge.config.ts`   (`proxy.ts` middleware)
  *
- * `onRequestError` wires Sentry into Next.js 15's built-in server-error hook
+ * `onRequestError` wires Sentry into Next.js's built-in server-error hook
  * so unhandled errors in Server Components and Route Handlers are captured
  * automatically without wrapping each handler manually.
  */

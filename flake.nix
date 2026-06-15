@@ -97,6 +97,16 @@
           text = ''
             repo="$(git rev-parse --show-toplevel)"
             cd "$repo/landing"
+            # Sentry (features/error-monitoring). One project DSN drives both the
+            # browser (NEXT_PUBLIC_) and server/edge runtimes. Sourced from the
+            # app-scoped LANDING_SENTRY_DSN — NOT the shared SENTRY_DSN — so an
+            # ambient SENTRY_DSN can't funnel landing + backend into one project
+            # under `.#dev`. Override LANDING_SENTRY_DSN per-env; set it empty to
+            # disable. Source-map upload (SENTRY_AUTH_TOKEN) is CI-only, never set here.
+            export NEXT_PUBLIC_SENTRY_DSN="''${LANDING_SENTRY_DSN:-https://702d594df36cfbd3c5a711613d3981e7@o4511508657012736.ingest.de.sentry.io/4511508677066832}"
+            export SENTRY_DSN="''${LANDING_SENTRY_DSN:-https://702d594df36cfbd3c5a711613d3981e7@o4511508657012736.ingest.de.sentry.io/4511508677066832}"
+            export NEXT_PUBLIC_APP_ENV="''${NEXT_PUBLIC_APP_ENV:-development}"
+            export APP_ENV="''${APP_ENV:-development}"
             if [ ! -x node_modules/.bin/next ] \
                || [ package-lock.json -nt node_modules/.package-lock.json ]; then
               npm ci
@@ -254,6 +264,13 @@
             export RUST_LOG="''${RUST_LOG:-info,backend=debug}"
             export TIGERBEETLE_ADDRESS="''${TIGERBEETLE_ADDRESS:-127.0.0.1:3001}"
             export TIGERBEETLE_CLUSTER_ID="''${TIGERBEETLE_CLUSTER_ID:-0}"
+            # Sentry (src/error_reporter.rs) — config.rs reads SENTRY_DSN + APP_ENV;
+            # init is disabled when the DSN is empty. Sourced from app-scoped
+            # BACKEND_SENTRY_DSN — NOT the shared SENTRY_DSN — so an ambient
+            # SENTRY_DSN can't funnel backend + landing into one project under
+            # `.#dev`. Override BACKEND_SENTRY_DSN per-env; set it empty to disable.
+            export SENTRY_DSN="''${BACKEND_SENTRY_DSN:-https://408591d5c466dc8ab815aaa3eeb1ee9f@o4511508657012736.ingest.de.sentry.io/4511508712259664}"
+            export APP_ENV="''${APP_ENV:-development}"
             exec cargo run -p backend
           '';
         };
@@ -272,6 +289,13 @@
             npm run cabinet:css
             npm run cabinet:css:watch & css=$!
             trap 'kill "$css" 2>/dev/null || true' EXIT INT TERM
+            # Sentry (features/error_monitoring) — public browser DSN, baked into
+            # the wasm bundle at compile time via option_env!. Override per-env by
+            # exporting CABINET_SENTRY_DSN / CABINET_APP_ENV (export empty to
+            # disable monitoring). option_env! doesn't trigger a cargo rebuild on
+            # its own, so a changed value needs `cargo clean -p cabinet` to apply.
+            export CABINET_SENTRY_DSN="''${CABINET_SENTRY_DSN:-https://83d2b337105b3e4651e9fe3fd41c844b@o4511508657012736.ingest.de.sentry.io/4511569023139920}"
+            export CABINET_APP_ENV="''${CABINET_APP_ENV:-development}"
             # `--interactive false`: dx's default full-screen TUI assumes it owns
             # the terminal and gets corrupted (stuck "0%", N/A) when it shares
             # stdout with the css watcher or the other `.#dev` processes. Plain

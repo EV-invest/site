@@ -5,6 +5,15 @@ edition = "2024"
 publish = false
 default-run = "cabinet"
 
+# FSD layout mirrors `landing`: module folders live at the crate root, not under
+# `src/`, so Cargo needs explicit paths to the lib and bin entry points.
+[lib]
+path = "lib.rs"
+
+[[bin]]
+name = "cabinet"
+path = "main.rs"
+
 [dependencies]
 dioxus.workspace = true
 domain.workspace = true
