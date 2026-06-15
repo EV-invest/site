@@ -15,11 +15,10 @@ name = "cabinet"
 path = "main.rs"
 
 [dependencies]
+ev = { git = "https://github.com/EV-invest/lib.git", rev = "4cb3b1abc5f9ff3b5db8494aa687a44d995ec9cc", default-features = false, features = ["uikit"] }
+
 dioxus.workspace = true
 domain.workspace = true
-# Shared dep-light UI kit. Components live in `ev::uikit` (they carry their own
-# `tailwind_fuse`), so the cabinet no longer needs a local `cn!` or that crate.
-ev = { git = "https://github.com/EV-invest/lib.git", rev = "4cb3b1abc5f9ff3b5db8494aa687a44d995ec9cc", default-features = false, features = ["uikit"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom.workspace = true

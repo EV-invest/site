@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, ArrowUpRight } from "lucide-react";
-import { Button } from "@/shared/ui/bricks/button";
+import { Button } from "@ev/uikit";
 import { Text } from "@/shared/ui/text";
 import { Logo } from "@/shared/ui/logo";
 import { Reveal } from "@/shared/ui/reveal";

@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "../../../public/tokens.css";
+@import "@ev/uikit/styles/tokens.css";
+
+/* The shared UI kit ships compiled, so its utility classes live in node_modules.
+   Tailwind ignores node_modules by default — point it at the kit's dist so the
+   classes baked into `@ev/uikit` components are generated. */
+@source "../../node_modules/@ev/uikit/dist";
 
 @custom-variant dark (&:is(.dark *));
 

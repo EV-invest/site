@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Slider } from "@/shared/ui/bricks/slider";
 import {
+  Slider,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/shared/ui/bricks/select";
-import { Button } from "@/shared/ui/bricks/button";
+  Button,
+} from "@ev/uikit";
 import { Heading, Text } from "@/shared/ui/text";
 import { cn, notifyPlaceholder } from "@/shared/lib/utils";
 import {
@@ -66,8 +66,8 @@ export function InvestmentCalculator({ className }: { className?: string }) {
               min={AMOUNT.min}
               max={AMOUNT.max}
               step={AMOUNT.step}
-              value={[inputs.amount]}
-              onValueChange={([amount]) => setInputs({ ...inputs, amount })}
+              value={inputs.amount}
+              onValueChange={amount => setInputs({ ...inputs, amount })}
               aria-label="Principal investment"
               className="[&_[data-slot=slider-track]]:bg-main-black/50 [&_[data-slot=slider-range]]:bg-main-accent-t1 [&_[data-slot=slider-thumb]]:border-main-accent-t1"
             />
