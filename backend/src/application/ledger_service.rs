@@ -12,6 +12,13 @@ use domain::{
 
 use crate::domain::port::ledger::Ledger;
 
+/// Ubiquitous-language names for the ledger read models, used in
+/// `NotFound { entity, .. }`. The ledger types are reached through a [`Ledger`]
+/// gateway, not a `Repository`, so they implement no `AggregateRoot` and carry
+/// no `NAME` const to borrow — these keep the lookup sites from drifting.
+const ACCOUNT: &str = "account";
+const TRANSFER: &str = "transfer";
+
 #[derive(Clone)]
 pub struct LedgerService {
 	ledger: Arc<dyn Ledger>,
@@ -29,7 +36,7 @@ impl LedgerService {
 	pub async fn get_account(&self, id: AccountId) -> Result<LedgerAccount, DomainError> {
 		let results = self.ledger.lookup_accounts(&[id]).await?;
 		results.into_iter().next().ok_or(DomainError::NotFound {
-			entity: "account",
+			entity: ACCOUNT,
 			id: id.to_string(),
 		})
 	}
@@ -41,7 +48,7 @@ impl LedgerService {
 	pub async fn get_transfer(&self, id: TransferId) -> Result<LedgerTransfer, DomainError> {
 		let results = self.ledger.lookup_transfers(&[id]).await?;
 		results.into_iter().next().ok_or(DomainError::NotFound {
-			entity: "transfer",
+			entity: TRANSFER,
 			id: id.to_string(),
 		})
 	}
@@ -56,7 +63,10 @@ mod tests {
 	use std::sync::{Arc, Mutex};
 
 	use async_trait::async_trait;
-	use domain::model::ledger::{AccountFlags, TransferFlags};
+	use domain::{
+		architecture::Gateway,
+		model::ledger::{AccountFlags, Amount, Code, LedgerCode, TransferFlags},
+	};
 
 	use super::*;
 
@@ -66,6 +76,8 @@ mod tests {
 		accounts: Mutex<Vec<LedgerAccount>>,
 		transfers: Mutex<Vec<LedgerTransfer>>,
 	}
+
+	impl Gateway for InMemoryLedger {}
 
 	#[async_trait]
 	impl Ledger for InMemoryLedger {
@@ -130,9 +142,9 @@ mod tests {
 
 	fn sample_account() -> NewLedgerAccount {
 		NewLedgerAccount {
-			id: 1,
-			ledger: 1,
-			code: 1,
+			id: AccountId::from_raw(1),
+			ledger: LedgerCode::parse(1).unwrap(),
+			code: Code::parse(1).unwrap(),
 			flags: AccountFlags::HISTORY,
 		}
 	}
@@ -142,17 +154,17 @@ mod tests {
 		let svc = service();
 		let created = svc.create_accounts(vec![sample_account()]).await.unwrap();
 		assert_eq!(created.len(), 1);
-		assert_eq!(created[0].id, 1);
+		assert_eq!(created[0].id, AccountId::from_raw(1));
 
-		let fetched = svc.get_account(1).await.unwrap();
-		assert_eq!(fetched.id, 1);
-		assert_eq!(fetched.code, 1);
+		let fetched = svc.get_account(AccountId::from_raw(1)).await.unwrap();
+		assert_eq!(fetched.id, AccountId::from_raw(1));
+		assert_eq!(fetched.code.get(), 1);
 	}
 
 	#[tokio::test]
 	async fn get_missing_account_returns_not_found() {
 		let svc = service();
-		let err = svc.get_account(999).await.unwrap_err();
+		let err = svc.get_account(AccountId::from_raw(999)).await.unwrap_err();
 		assert!(matches!(err, DomainError::NotFound { entity: "account", .. }));
 	}
 
@@ -162,15 +174,15 @@ mod tests {
 		// First create the accounts.
 		svc.create_accounts(vec![
 			NewLedgerAccount {
-				id: 1,
-				ledger: 1,
-				code: 1,
+				id: AccountId::from_raw(1),
+				ledger: LedgerCode::parse(1).unwrap(),
+				code: Code::parse(1).unwrap(),
 				flags: AccountFlags::NONE,
 			},
 			NewLedgerAccount {
-				id: 2,
-				ledger: 1,
-				code: 1,
+				id: AccountId::from_raw(2),
+				ledger: LedgerCode::parse(1).unwrap(),
+				code: Code::parse(1).unwrap(),
 				flags: AccountFlags::NONE,
 			},
 		])
@@ -178,27 +190,27 @@ mod tests {
 		.unwrap();
 
 		let transfer = NewLedgerTransfer {
-			id: 100,
-			debit_account_id: 1,
-			credit_account_id: 2,
-			amount: 42,
+			id: TransferId::from_raw(100),
+			debit_account_id: AccountId::from_raw(1),
+			credit_account_id: AccountId::from_raw(2),
+			amount: Amount::new(42),
 			pending_id: None,
-			ledger: 1,
-			code: 1,
+			ledger: LedgerCode::parse(1).unwrap(),
+			code: Code::parse(1).unwrap(),
 			flags: TransferFlags::NONE,
 		};
 		let created = svc.create_transfers(vec![transfer]).await.unwrap();
 		assert_eq!(created.len(), 1);
-		assert_eq!(created[0].amount, 42);
+		assert_eq!(created[0].amount.get(), 42);
 
-		let fetched = svc.get_transfer(100).await.unwrap();
-		assert_eq!(fetched.amount, 42);
+		let fetched = svc.get_transfer(TransferId::from_raw(100)).await.unwrap();
+		assert_eq!(fetched.amount.get(), 42);
 	}
 
 	#[tokio::test]
 	async fn get_missing_transfer_returns_not_found() {
 		let svc = service();
-		let err = svc.get_transfer(999).await.unwrap_err();
+		let err = svc.get_transfer(TransferId::from_raw(999)).await.unwrap_err();
 		assert!(matches!(err, DomainError::NotFound { entity: "transfer", .. }));
 	}
 }

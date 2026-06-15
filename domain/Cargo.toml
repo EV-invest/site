@@ -6,9 +6,11 @@ publish = false
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom.workspace = true
+ev = { workspace = true, features = ["wasm"] }
 uuid = { version = "1", features = ["js"] }
 
 [dependencies]
+ev.workspace = true
 jiff = { workspace = true, features = ["serde"] }
 serde.workspace = true
 thiserror.workspace = true

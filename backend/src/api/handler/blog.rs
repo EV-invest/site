@@ -3,7 +3,7 @@ use axum::{
 	extract::{Path, Query, State},
 	http::StatusCode,
 };
-use domain::model::blog::NewBlog;
+use domain::model::blog::{BlogId, NewBlog};
 use uuid::Uuid;
 
 use crate::api::{
@@ -43,7 +43,7 @@ pub async fn create_blog(State(state): State<AppState>, Json(payload): Json<Crea
 	),
 )]
 pub async fn get_blog(State(state): State<AppState>, Path(id): Path<Uuid>) -> Result<Json<BlogResponse>, ApiError> {
-	let blog = state.blog_service.get(id).await?;
+	let blog = state.blog_service.get(BlogId::from_raw(id)).await?;
 	Ok(Json(blog.into()))
 }
 
