@@ -74,7 +74,7 @@
           defaults = true;
           lastSupportedVersion = "nightly-1.92";
           rootDir = ./.;
-          badges = [ "msrv" "crates_io" "docs_rs" "loc" "ci" ];
+          badges = [ "msrv" "loc" "ci" ];
         };
         combined = v_flakes.utils.combine { inherit rust; modules = [ rs github readme ]; };
 
