@@ -17,10 +17,14 @@ path = "main.rs"
 [dependencies]
 dioxus.workspace = true
 domain.workspace = true
-tailwind_fuse.workspace = true
+# Shared dep-light UI kit. Components live in `ev::uikit` (they carry their own
+# `tailwind_fuse`), so the cabinet no longer needs a local `cn!` or that crate.
+ev = { git = "https://github.com/EV-invest/lib.git", rev = "4cb3b1abc5f9ff3b5db8494aa687a44d995ec9cc", default-features = false, features = ["uikit"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom.workspace = true
+# Layer the wasm/browser backends onto `ev` only for the wasm target.
+ev = { git = "https://github.com/EV-invest/lib.git", rev = "4cb3b1abc5f9ff3b5db8494aa687a44d995ec9cc", default-features = false, features = ["uikit", "wasm"] }
 # Pinned to match the wasm-bindgen-cli that nixpkgs' dioxus-cli (`dx`) bundles.
 # dx fails the build unless the `wasm-bindgen` crate and its CLI match exactly;
 # bump this in lockstep whenever the pinned dioxus-cli changes its CLI version.
