@@ -2,7 +2,7 @@
 @import "../public/tokens.css";
 
 /* Scan Dioxus RSX source for class names */
-@source "./src/**/*.rs";
+@source "./**/*.rs";
 
 @layer base {
   *, *::before, *::after {
