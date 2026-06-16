@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { Button } from "@ev/uikit";
+import { Button } from "@evinvest/uikit";
 import { Text } from "@/shared/ui/text";
 import { useExperimentEvent } from "@/features/ab-variant";
 

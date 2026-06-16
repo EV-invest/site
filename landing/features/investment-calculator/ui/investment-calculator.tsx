@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
   Button,
-} from "@ev/uikit";
+} from "@evinvest/uikit";
 import { Heading, Text } from "@/shared/ui/text";
 import { cn, notifyPlaceholder } from "@/shared/lib/utils";
 import {

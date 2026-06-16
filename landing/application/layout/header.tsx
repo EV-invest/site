@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@ev/uikit";
+import { Button } from "@evinvest/uikit";
 import { Logo } from "@/shared/ui/logo";
 import { notifyPlaceholder } from "@/shared/lib/utils";
 

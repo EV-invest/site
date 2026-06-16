@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { TrendingUp, MapPin, ArrowUpRight } from "lucide-react";
-import { Button } from "@ev/uikit";
+import { Button } from "@evinvest/uikit";
 import { Heading, Text } from "@/shared/ui/text";
 import { Reveal } from "@/shared/ui/reveal";
 import { notifyPlaceholder } from "@/shared/lib/utils";

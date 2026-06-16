@@ -16,7 +16,7 @@
     "test:visual:update": "playwright test --update-snapshots"
   },
   "dependencies": {
-    "@ev/uikit": "^0.1.0",
+    "@evinvest/uikit": "^0.1.0",
     "@hey-api/client-fetch": "^0.13.1",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",

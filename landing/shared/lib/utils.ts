@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { toast } from "@ev/uikit";
+import { toast } from "@evinvest/uikit";
 
 // Kept local (not re-exported from the kit) so it stays server-safe: the kit
 // bundle is a `"use client"` module, whereas `cn` is used in server components.
