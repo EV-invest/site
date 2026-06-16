@@ -277,8 +277,8 @@
 
         # cabinet (Dioxus / WASM). Build Tailwind once, keep it rebuilding in the
         # background (the `@source` scan in cabinet/input.css picks up class names from
-        # RSX), then serve. dx defaults to :8080 like the backend, so pin cabinet to
-        # :3001 to avoid a clash under `.#dev`.
+        # RSX), then serve. dx defaults to :8080 like the backend, and :3001 is
+        # TigerBeetle, so pin cabinet to :8081 to avoid a clash under `.#dev`.
         runCabinet = pkgs.writeShellApplication {
           name = "run-cabinet";
           runtimeInputs = with pkgs; [ rust dioxus-cli nodejs git ];
@@ -300,7 +300,7 @@
             # the terminal and gets corrupted (stuck "0%", N/A) when it shares
             # stdout with the css watcher or the other `.#dev` processes. Plain
             # streaming logs are the right fit for a backgrounded dev process.
-            exec dx serve --package cabinet --port "''${CABINET_PORT:-3001}" --interactive false
+            exec dx serve --package cabinet --port "''${CABINET_PORT:-8081}" --interactive false
           '';
         };
 
@@ -402,7 +402,7 @@
             ${runBackend}/bin/run-backend & pids+=($!)
             echo "▶ landing  (:3000)"
             ${runLanding}/bin/run-landing & pids+=($!)
-            echo "▶ cabinet       (:3001)"
+            echo "▶ cabinet       (:8081)"
             ${runCabinet}/bin/run-cabinet & pids+=($!)
 
             wait

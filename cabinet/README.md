@@ -1,7 +1,7 @@
 # cabinet
 
 Internal app for the EV Investment fund — Dioxus 0.7 (web/WASM), laid out with
-Feature-Sliced Design mirroring `landing`. Serves on `:3001`.
+Feature-Sliced Design mirroring `landing`. Serves on `:8081`.
 
 ## Layout
 
@@ -29,10 +29,10 @@ Depends on the shared `domain` crate; never on `backend`.
 ## Run only cabinet
 
 ```sh
-nix run .#cabinet                 # → http://localhost:3001
+nix run .#cabinet                 # → http://localhost:8081
 ```
 This builds Tailwind once (`npm run cabinet:css`), keeps it rebuilding in the background
-(`cabinet:css:watch`), then runs `dx serve --package cabinet --port 3001 --interactive false`.
+(`cabinet:css:watch`), then runs `dx serve --package cabinet --port 8081 --interactive false`.
 
 > **Don't run bare `dx serve`** — it serves the static `assets/tailwind.css` but
 > does NOT build it, so you'd get stale or empty CSS. Use `nix run .#cabinet` (or run
