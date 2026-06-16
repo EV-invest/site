@@ -24,7 +24,7 @@ export function HeroB() {
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif-display font-light text-white leading-[1.05]">
             Invest in{" "}
-            <span className="italic text-main-accent-t1">Quy Nhon</span>
+            <span className="italic text-main-accent-t1 font-serif">Quy Nhon</span>
             <br />
             Through Institutional Vision.
           </h1>

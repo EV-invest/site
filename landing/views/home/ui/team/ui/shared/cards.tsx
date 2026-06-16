@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { type LucideIcon } from "lucide-react";
-import { Button } from "@/shared/ui/bricks/button";
+import { Button } from "@evinvest/uikit";
 import { Text } from "@/shared/ui/text";
 
 /**

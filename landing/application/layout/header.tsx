@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/shared/ui/bricks/button";
+import { Button } from "@evinvest/uikit";
 import { Logo } from "@/shared/ui/logo";
 import { notifyPlaceholder } from "@/shared/lib/utils";
 
@@ -17,7 +17,7 @@ export function Header() {
   // 1. HEADER (Minimalist, floating)
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 border-b ${
+      className={`fixed top-0 left-0 w-full z-[60] transition-all duration-500 border-b ${
         hasScrolled
           ? "bg-main-black/90 backdrop-blur-md border-main-mist/10 py-4"
           : "bg-transparent border-transparent py-6"

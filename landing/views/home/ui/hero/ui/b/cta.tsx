@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/shared/ui/bricks/button";
+import { Button } from "@evinvest/uikit";
 import { useExperimentEvent } from "@/features/ab-variant";
 
 /**

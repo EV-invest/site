@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, ArrowUpRight } from "lucide-react";
-import { Button } from "@/shared/ui/bricks/button";
+import { Button } from "@evinvest/uikit";
 import { Text } from "@/shared/ui/text";
 import { Logo } from "@/shared/ui/logo";
 import { Reveal } from "@/shared/ui/reveal";
@@ -69,7 +69,7 @@ export function ResearchA() {
           </span>
           <h2 className="text-3xl sm:text-5xl font-serif-display text-white font-light leading-tight">
             Bridgewater-Grade{" "}
-            <span className="italic text-main-accent-t1">
+            <span className="italic text-main-accent-t1 font-serif">
               Research &amp; Insights
             </span>
           </h2>
