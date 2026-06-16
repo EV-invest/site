@@ -33,7 +33,7 @@ no need to enter the dev shell first.
 | `nix run .#dev` | everything: Postgres → backend → landing → cabinet | — |
 | `nix run .#landing` | landing only | 3000 |
 | `nix run .#backend` | backend only (needs a DB — `.#db` or `.#dev`) | 8080 |
-| `nix run .#cabinet` | cabinet only (Tailwind watch + `dx serve`) | 3001 |
+| `nix run .#cabinet` | cabinet only (Tailwind watch + `dx serve`) | 8081 |
 | `nix run .#db` | local Postgres (cluster under `.pg/`, trust auth) | 5432 |
 | `nix run .#tb` | local TigerBeetle (data under `.tb/`, single replica) | 3001 |
 
