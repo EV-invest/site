@@ -24,7 +24,7 @@ export function TeamB() {
             </span>
             <h2 className="text-3xl sm:text-5xl font-serif-display text-white font-light">
               Led by{" "}
-              <span className="italic text-main-accent-t1">Institutional Pioneers</span>
+              <span className="italic text-main-accent-t1 font-serif">Institutional Pioneers</span>
             </h2>
             <Text className="max-w-xl">
               The EV Investment team combines international experience in

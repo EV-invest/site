@@ -20,7 +20,7 @@ export function HeroA() {
       <HeroACanvas cta={<HeroACta />}>
         <h1 className="text-4xl sm:text-6xl md:text-8xl font-serif-display font-light text-white leading-tight mb-6">
           Invest in{" "}
-          <span className="italic text-main-accent-t1">Quy Nhon</span>
+          <span className="italic text-main-accent-t1 font-serif">Quy Nhon</span>
           <br />
           Through Institutional Vision.
         </h1>

@@ -26,7 +26,7 @@ export function PortfolioA() {
             </span>
             <h2 className="text-3xl sm:text-5xl font-serif-display text-white font-light">
               Premium Asset{" "}
-              <span className="italic text-main-accent-t1">Portfolio</span>
+              <span className="italic text-main-accent-t1 font-serif">Portfolio</span>
             </h2>
           </div>
           <Text className="max-w-md mt-4 md:mt-0">
