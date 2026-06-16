@@ -16,7 +16,7 @@
     "test:visual:update": "playwright test --update-snapshots"
   },
   "dependencies": {
-    "@evinvest/uikit": "^0.1.1",
+    "@evinvest/uikit": "^0.1.2",
     "@hey-api/client-fetch": "^0.13.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@sentry/nextjs": "^10.56.0",
