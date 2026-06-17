@@ -1,7 +1,7 @@
 cargo-features = ["codegen-backend"]
 
 [workspace]
-members = ["backend", "domain", "cabinet"]
+members = ["backend", "cabinet", "domain"]
 # `.tb-client` must live at the repo root, NOT inside a member dir: cargo's
 # exclude check is `!explicit_member && excluded`, and member matching is
 # prefix-based — anything under `backend/` counts as part of member "backend"
@@ -17,10 +17,10 @@ bitflags = "2.6.0"
 dioxus = { version = "0.7", features = ["web", "router"] }
 domain = { path = "domain" }
 dotenvy = "0.15.7"
+ev = { git = "https://github.com/EV-invest/lib.git", default-features = false, features = ["architecture"] }
 futures = { version = "0.3.31", default-features = false }
 getrandom = { version = "0.3", features = ["wasm_js"] }
 jiff = "0.2"
-ev = { git = "https://github.com/EV-invest/lib.git", default-features = false, features = ["architecture"] }
 sentry = "0.48.2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.150"

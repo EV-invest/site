@@ -12,7 +12,7 @@ const BODY_MAX_LEN: usize = 100_000;
 
 /// Unique identifier for a [`Blog`].
 pub type BlogId = Id<BlogTag, Uuid>;
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(transparent)]
 pub struct Title(String);
 
@@ -37,7 +37,7 @@ impl Title {
 	}
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(transparent)]
 pub struct Slug(String);
 
@@ -67,7 +67,7 @@ impl Slug {
 
 /// The blog body. A value object so the one real invariant — a size cap — is
 /// enforced at the boundary instead of letting an unbounded `String` through.
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(transparent)]
 pub struct Body(String);
 
@@ -90,7 +90,6 @@ impl Body {
 
 /// Tag giving the blog its own identity newtype.
 pub struct BlogTag;
-
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Blog {
